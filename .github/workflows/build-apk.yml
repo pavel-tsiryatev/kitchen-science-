@@ -1,5 +1,4 @@
-
-          name: Build Android APK
+name: Build Android APK
 
 on:
   push:
@@ -89,4 +88,3 @@ jobs:
               <application
                   android:label="Кухня: наука вкуса"
                   android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
-
