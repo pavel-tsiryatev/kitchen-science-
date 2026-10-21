@@ -18,35 +18,59 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Generate Native Android WebView Project & Build APK
+      - name: Download Command Line Tools & Accept Licenses
         run: |
+          mkdir -p $HOME/cmdline-tools
+          curl -s https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -o commandlinetools.zip
+          unzip -q commandlinetools.zip -d $HOME/cmdline-tools
+          mkdir -p $HOME/android-sdk/cmdline-tools/latest
+          mv $HOME/cmdline-tools/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
+          export ANDROID_HOME=$HOME/android-sdk
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+      - name: Generate Native Android Project & Build
+        run: |
+          export ANDROID_HOME=$HOME/android-sdk
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
           mkdir -p android-app/app/src/main/java/ru/kitchen/science
           mkdir -p android-app/app/src/main/assets
           cp index.html android-app/app/src/main/assets/index.html
 
           cat << 'EOF' > android-app/settings.gradle
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
           rootProject.name = "KitchenScience"
           include ':app'
           EOF
 
           cat << 'EOF' > android-app/build.gradle
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.2.0' }
-          }
-          allprojects {
-              repositories { google(); mavenCentral() }
+          plugins {
+              id 'com.android.application' version '8.2.2' apply false
           }
           EOF
 
           cat << 'EOF' > android-app/app/build.gradle
-          apply plugin: 'com.android.application'
+          plugins {
+              id 'com.android.application'
+          }
+
           android {
               namespace 'ru.kitchen.science'
               compileSdk 34
+
               defaultConfig {
                   applicationId "ru.kitchen.science"
                   minSdk 24
@@ -54,6 +78,7 @@ jobs:
                   versionCode 1
                   versionName "1.0"
               }
+
               compileOptions {
                   sourceCompatibility JavaVersion.VERSION_17
                   targetCompatibility JavaVersion.VERSION_17
@@ -82,6 +107,7 @@ jobs:
 
           cat << 'EOF' > android-app/app/src/main/java/ru/kitchen/science/MainActivity.java
           package ru.kitchen.science;
+
           import android.app.Activity;
           import android.os.Bundle;
           import android.webkit.WebSettings;
@@ -90,6 +116,7 @@ jobs:
 
           public class MainActivity extends Activity {
               private WebView webView;
+
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
@@ -102,16 +129,20 @@ jobs:
                   webView.loadUrl("file:///android_asset/index.html");
                   setContentView(webView);
               }
+
               @Override
               public void onBackPressed() {
-                  if (webView != null && webView.canGoBack()) webView.goBack();
-                  else super.onBackPressed();
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
               }
           }
           EOF
 
           cd android-app
-          gradle wrapper --gradle-version 8.4
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
           ./gradlew assembleDebug
 
       - name: Upload Compiled APK
