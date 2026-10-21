@@ -1,4 +1,5 @@
-name: Build Android APK
+
+          name: Build Android APK
 
 on:
   push:
@@ -18,21 +19,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Download Command Line Tools & Accept Licenses
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.5'
+
+      - name: Accept Android SDK Licenses
         run: |
-          mkdir -p $HOME/cmdline-tools
-          curl -s https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -o commandlinetools.zip
-          unzip -q commandlinetools.zip -d $HOME/cmdline-tools
-          mkdir -p $HOME/android-sdk/cmdline-tools/latest
-          mv $HOME/cmdline-tools/cmdline-tools/* $HOME/android-sdk/cmdline-tools/latest/
-          export ANDROID_HOME=$HOME/android-sdk
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Generate Native Android Project & Build
         run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
           mkdir -p android-app/app/src/main/java/ru/kitchen/science
           mkdir -p android-app/app/src/main/assets
           cp index.html android-app/app/src/main/assets/index.html
@@ -92,62 +89,4 @@ jobs:
               <application
                   android:label="Кухня: наука вкуса"
                   android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:configChanges="orientation|screenSize|keyboardHidden">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
 
-          cat << 'EOF' > android-app/app/src/main/java/ru/kitchen/science/MainActivity.java
-          package ru.kitchen.science;
-
-          import android.app.Activity;
-          import android.os.Bundle;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
-
-          public class MainActivity extends Activity {
-              private WebView webView;
-
-              @Override
-              protected void onCreate(Bundle savedInstanceState) {
-                  super.onCreate(savedInstanceState);
-                  webView = new WebView(this);
-                  WebSettings s = webView.getSettings();
-                  s.setJavaScriptEnabled(true);
-                  s.setDomStorageEnabled(true);
-                  s.setAllowFileAccess(true);
-                  webView.setWebViewClient(new WebViewClient());
-                  webView.loadUrl("file:///android_asset/index.html");
-                  setContentView(webView);
-              }
-
-              @Override
-              public void onBackPressed() {
-                  if (webView != null && webView.canGoBack()) {
-                      webView.goBack();
-                  } else {
-                      super.onBackPressed();
-                  }
-              }
-          }
-          EOF
-
-          cd android-app
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          ./gradlew assembleDebug
-
-      - name: Upload Compiled APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: kuhnya-nauka-vkusa-apk
-          path: android-app/app/build/outputs/apk/debug/app-debug.apk
-          
