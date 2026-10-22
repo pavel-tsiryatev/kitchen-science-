@@ -1,0 +1,8 @@
+{
+  "appId": "com.kitchen.science",
+  "appName": "Кухня",
+  "webDir": "www",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto"
+  }
+}
