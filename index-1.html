@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FBF8F3">
+<title>Кухня: наука вкуса</title>
+<style>
+:root {
+  --bg:#F7F3EB;--surface:#FBF8F1;--surface-alt:#EAE2D5;--text:#29271F;--text-muted:#766B5C;
+  --primary:#8F5A33;--primary-soft:#F0E2D3;--secondary:#6F795A;--secondary-soft:#E4E7D8;
+  --border:#DDD3C2;--warn:#8A5A0B;--warn-soft:#F6EBD0;--danger:#A33B35;--danger-soft:#F5E1DD;
+  --tint-phys:#E3E7E3;--shadow:none;--radius:14px;--font-scale:1;
+  --serif:Georgia,"Noto Serif","Times New Roman",serif;--mono:ui-monospace,"Roboto Mono",Menlo,Consolas,monospace;
+}
+[data-theme="dark"] {
+  --bg:#1C1814;--surface:#251F1A;--surface-alt:#302922;--text:#EFE8DC;--text-muted:#AFA391;
+  --primary:#D9A67A;--primary-soft:#3A2C20;--secondary:#A3AF8A;--secondary-soft:#2A2E22;
+  --border:#3D352C;--warn:#E0B04F;--warn-soft:#3A3020;--danger:#E58A80;--danger-soft:#3C2522;--tint-phys:#26302E;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: calc(16px * var(--font-scale));
+  line-height: 1.55;
+  overscroll-behavior-y: none;
+}
+header.app-bar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.app-title {
+  font-weight: 800; font-size: 1.15rem; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.app-title span.badge {
+  font-size: 0.7rem; background: var(--primary-soft); color: var(--primary);
+  padding: 2px 8px; border-radius: 99px; font-weight: 700;
+}
+.icon-btn {
+  background: var(--surface-alt); border: 1px solid var(--border);
+  color: var(--text); border-radius: 12px; padding: 8px 11px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+}
+main#app-Main {
+  padding: 14px 16px 96px 16px;
+  max-width: 680px; margin: 0 auto;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card-clickable { cursor: pointer; transition: transform 0.12s ease; }
+.card-clickable:active { transform: scale(0.985); }
+.section-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
+}
+@media (max-width: 360px) { .section-grid { grid-template-columns: 1fr; } }
+.sec-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  cursor: pointer; box-shadow: var(--shadow);
+}
+.sec-card:active { transform: scale(0.98); }
+.sec-letter {
+  display: inline-block; width: 28px; height: 28px; line-height: 28px;
+  text-align: center; border-radius: 8px;
+  background: var(--primary-soft); color: var(--primary);
+  font-weight: 800; font-size: 0.85rem; margin-bottom: 8px;
+}
+.sec-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; line-height: 1.25; }
+.sec-meta { font-size: 0.76rem; color: var(--text-muted); }
+.tag {
+  display: inline-block; padding: 3px 9px; border-radius: 99px;
+  font-size: 0.74rem; font-weight: 600; margin-right: 6px; margin-bottom: 4px;
+  background: var(--surface-alt); color: var(--text-muted);
+}
+.tag.olive { background: var(--secondary-soft); color: var(--secondary); }
+.tag.terra { background: var(--primary-soft); color: var(--primary); }
+.search-box {
+  width: 100%; padding: 13px 15px; border-radius: 14px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  color: var(--text); font-size: 0.98rem; margin-bottom: 12px; outline: none;
+}
+.search-box:focus { border-color: var(--primary); }
+.pill-bar {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.pill-bar::-webkit-scrollbar { display: none; }
+.pill {
+  white-space: nowrap; padding: 7px 14px; border-radius: 99px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-muted); font-size: 0.84rem; font-weight: 600; cursor: pointer;
+}
+.pill.active {
+  background: var(--primary); color: #FFF; border-color: var(--primary);
+}
+.art-block {
+  margin-bottom: 14px; padding: 14px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+}
+.art-block h4 {
+  margin: 0 0 6px 0; font-size: 0.92rem; text-transform: uppercase;
+  letter-spacing: 0.03em; color: var(--primary);
+}
+.art-block.olive h4 { color: var(--secondary); }
+.art-block.warn { background: var(--warn-soft); border-color: var(--warn); }
+.art-block.warn h4 { color: var(--warn); }
+.art-block.Summary { background: var(--secondary-soft); border-color: var(--secondary); }
+.art-block.Summary h4 { color: var(--secondary); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 11px 16px; border-radius: 12px; font-weight: 700; font-size: 0.9rem;
+  border: none; cursor: pointer; background: var(--primary); color: #FFF;
+}
+.btn.secondary { background: var(--secondary); color: #FFF; }
+.btn.outline {
+  background: transparent; color: var(--text); border: 1.5px solid var(--border);
+}
+.btn.full { width: 100%; }
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+  background: var(--surface); border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.nav-item {
+  background: none; border: none; color: var(--text-muted);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 0.68rem; font-weight: 600; padding: 4px 2px; cursor: pointer;
+}
+.nav-item .nav-ic { font-size: 1.2rem; line-height: 1; }
+.nav-item.active { color: var(--primary); font-weight: 800; }
+.progress-bar {
+  width: 100%; height: 8px; background: var(--surface-alt);
+  border-radius: 99px; overflow: hidden; margin: 8px 0;
+}
+.progress-fill {
+  height: 100%; background: var(--secondary); transition: width 0.25s ease;
+}
+.input-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 6px;
+  margin-bottom: 8px; align-items: center;
+}
+input.field, select.field, textarea.field {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 0.92rem;
+}
+table.comp-table {
+  width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 8px;
+}
+table.comp-table th, table.comp-table td {
+  border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top;
+}
+table.comp-table th { background: var(--surface-alt); font-weight: 700; }
+.quiz-opt {
+  display: block; width: 100%; text-align: left; padding: 11px 14px;
+  margin-bottom: 8px; border-radius: 12px; border: 1.5px solid var(--border);
+  background: var(--bg); color: var(--text); font-size: 0.9rem; cursor: pointer;
+}
+.quiz-opt.correct { background: var(--secondary-soft); border-color: var(--secondary); font-weight: 700; }
+.quiz-opt.wrong { background: var(--danger-soft); border-color: var(--danger); }
+@media (max-width:400px){.input-row{grid-template-columns:1fr 1fr 1fr auto}.input-row>:first-child{grid-column:1/-1}}
+.btn,.icon-btn,.quiz-opt{min-height:44px}.pill{min-height:40px}.nav-item{min-height:48px}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+[data-theme="dark"] .btn:not(.outline),[data-theme="dark"] .pill.active{color:#1B1210}
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:90%;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:100}
+#toast.show{opacity:1}.calc-out{overflow-wrap:anywhere}.err{color:var(--danger);font-size:.82rem;min-height:1.2em}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.calc-out strong{font-size:1.2rem}
+/* ===== Редизайн v3: журнал + лаборатория ===== */
+body{letter-spacing:.005em}
+h1,h2,h3{font-family:var(--serif)}
+.ic{width:1.3em;height:1.3em;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.25em;flex:none}
+header.app-bar{padding:calc(10px + env(safe-area-inset-top)) 16px 10px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}.brand b{display:block;font:700 1.2rem/1.05 var(--serif)}.brand .s{font-size:.78rem;color:var(--text-muted)}.mark-ic{color:var(--secondary)}
+.card{box-shadow:none;border-radius:14px}.card-clickable:active{transform:none;background:var(--surface-alt)}
+.screen-title{font:700 1.7rem/1.15 var(--serif);margin:6px 0 2px}.sub{color:var(--text-muted);margin:0 0 14px;font-size:.92rem}
+.btn{background:var(--secondary);color:#fff;border-radius:12px}.btn.secondary{background:var(--primary)}.btn.outline{background:transparent;color:var(--text)}
+.pill.active{background:var(--secondary);border-color:var(--secondary);color:#fff}
+.nav-item .ic{width:24px;height:24px}.nav-item.active{color:var(--secondary)}
+.bottom-nav{border-top:1px solid var(--border)}
+.cover{position:relative;border-radius:18px;overflow:hidden;background:#2A241C;color:#F4EDE0;min-height:360px;margin-bottom:14px}
+.cover .crumb{position:absolute;inset:0;width:100%;height:100%;stroke:none;stroke-width:initial}
+.cover-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;background:rgba(24,18,12,.62)}
+.mark{align-self:flex-start;font:700 .68rem var(--mono);letter-spacing:.08em;padding:3px 8px;border:1px solid #D9A67A;color:#EBC9A5;border-radius:4px;margin-bottom:10px}
+.cover h2{font:700 1.8rem/1.12 var(--serif);margin:0 0 8px;color:#fff}.cover p{margin:0 0 14px;font-size:.93rem;color:#E6DCCB}
+.cover-foot{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:#E6DCCB}.cover .btn{background:#A3AF8A;color:#1B1710}
+.searchbar{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 14px;border:1.5px solid var(--border);border-radius:14px;background:var(--surface);color:var(--text-muted);font:inherit;cursor:pointer;text-align:left}
+.eyebrow{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 10px}.eyebrow h3{margin:0;font-size:1.2rem}
+.link{background:none;border:none;color:var(--primary);font:600 .85rem inherit;cursor:pointer;min-height:44px;padding:0 4px}.mono-s{font:.8rem var(--mono);color:var(--text-muted)}
+.dirs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dir{text-align:left;border:none;border-radius:14px;padding:14px;color:var(--text);display:flex;flex-direction:column;gap:4px;min-height:116px;font:inherit;cursor:pointer}
+.dir b{font:700 1rem/1.2 var(--serif)}.dir span{font-size:.78rem;color:var(--text-muted)}.dir .ic{width:26px;height:26px;margin-bottom:6px;color:var(--secondary)}
+.t-chem{background:var(--secondary-soft)}.t-phys{background:var(--tint-phys)}.t-tech{background:var(--primary-soft)}.t-exp{background:var(--surface-alt)}
+.list{border-top:1px solid var(--border)}
+.row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 2px;border:none;border-bottom:1px solid var(--border);background:none;color:var(--text);text-align:left;font:inherit;cursor:pointer;min-height:60px}
+.row .ic{color:var(--secondary)}.row b{display:block;font-size:.97rem}.row small{color:var(--text-muted);font-size:.8rem}.row .go{margin-left:auto;color:var(--text-muted)}
+.card-ed{display:flex;gap:12px;align-items:flex-start}.tile{flex:0 0 46px;height:46px;border-radius:12px;display:grid;place-items:center;color:var(--secondary)}
+.ed-t{font:700 1.04rem/1.25 var(--serif);margin:0 0 4px}.ed-d{font-size:.85rem;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ed-m{font:.74rem var(--mono);color:var(--text-muted);margin-top:6px}
+.art-head{margin:4px 0 20px}.kicker{font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--primary)}
+.art-head h2{font:700 1.75rem/1.15 var(--serif);margin:8px 0 14px}
+.lead{border-left:3px solid var(--primary);padding:2px 0 2px 14px;font-size:1.02rem;max-width:62ch}
+.lead .lbl{display:block;font:700 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--primary);margin-bottom:4px}
+.art-block{background:none;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:0 0 16px;margin-bottom:18px;max-width:62ch}
+.art-block h4{font:700 1.2rem/1.25 var(--serif);text-transform:none;letter-spacing:0;color:var(--text);margin:0 0 6px}
+.art-block.olive{background:var(--secondary-soft);border:none;border-radius:14px;padding:14px}
+.art-block.warn{background:var(--warn-soft);border:1px solid var(--warn);border-radius:14px;padding:14px}.art-block.warn h4{color:var(--warn)}
+.art-block.Summary{background:var(--surface-alt);border:none;border-radius:14px;padding:14px}.art-block.Summary h4{color:var(--text)}
+.seg{display:inline-flex;background:var(--surface-alt);border-radius:99px;padding:3px}
+.seg button{border:none;background:none;color:var(--text);padding:8px 16px;border-radius:99px;min-height:40px;font:600 .88rem inherit;cursor:pointer}.seg button.on{background:var(--secondary);color:#fff}
+[data-theme="dark"] .seg button.on{color:#1B1710}
+input[type=number].field,.calc-out,#bTotal{font-family:var(--mono)}
+input.field,select.field,textarea.field{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;min-height:44px}
+.note{background:var(--surface);border-left:4px solid var(--primary);border-radius:6px 14px 14px 6px}
+.search-box{background:var(--surface);min-height:48px}
+
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h13v16H7a2 2 0 01-2-2zM5 18a2 2 0 012-2h11"/></symbol><symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3M7.5 15h9"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/>', back:'<path d="M15 6l-6 6 6 6"/></symbol><symbol id="i-atom" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></symbol><symbol id="i-therm" viewBox="0 0 24 24"><path d="M10 14V5a2 2 0 014 0v9a4 4 0 11-4 0z"/></symbol><symbol id="i-hat" viewBox="0 0 24 24"><path d="M7 17h10v3H7zM7 17a4 4 0 01-1-7.7 4 4 0 017.5-2 4 4 0 015.5 3.7A4 4 0 0117 17"/></symbol><symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4M12 17v.5"/>', check:'<path d="M5 12l4 4 10-10"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/>', pencil:'<path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/>', trash:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/></symbol></defs></svg>
+<header class="app-bar">
+  <div class="brand" onclick="navigate('home')"><svg class="ic mark-ic" style="width:30px;height:30px" aria-hidden="true"><use href="#i-flask"/></svg><div><b>Кухня.</b><span class="s">Наука вкуса</span></div></div>
+  <button class="icon-btn" onclick="navigate('settings')" title="Настройки" aria-label="Настройки"><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg></button>
+</header>
+
+<main id="app-Main"></main>
+
+<nav class="bottom-nav" aria-label="Основная навигация">
+  <button class="nav-item active" data-tab="home" onclick="navigate('home')"><svg class="ic"><use href="#i-home"/></svg><span>Главная</span></button>
+  <button class="nav-item" data-tab="catalog" onclick="navigate('catalog')"><svg class="ic"><use href="#i-book"/></svg><span>Библиотека</span></button>
+  <button class="nav-item" data-tab="tools" onclick="navigate('tools')"><svg class="ic"><use href="#i-flask"/></svg><span>Лаборатория</span></button>
+  <button class="nav-item" data-tab="favorites" onclick="navigate('favorites')"><svg class="ic"><use href="#i-bookmark"/></svg><span>Сохранённое</span></button>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+// ==================== 1. НАУЧНАЯ БАЗА ДАННЫХ (36 СТАТЕЙ, 8 РАЗДЕЛОВ) ====================
+const SECTIONS = [
+  { id: 'A', letter: 'А', title: 'Выпечка и тесто', desc: 'Клейковина, брожение, закваски, виды теста и физика печного подъёма' },
+  { id: 'B', letter: 'Б', title: 'Десерты и кондитерская химия', desc: 'Карамелизация, сиропы, темперирование шоколада, пены и гидроколлоиды' },
+  { id: 'C', letter: 'В', title: 'Мясо, птица и рыба', desc: 'Денатурация белков, сочность, реакция Майяра, коллаген и рассолы' },
+  { id: 'D', letter: 'Г', title: 'Соусы, супы и текстуры', desc: 'Эмульсии, желатинизация крахмала, экстракция бульонов и реология' },
+  { id: 'E', letter: 'Д', title: 'Химия вкуса и аромата', desc: 'Рецепторы, ретроназальное обоняние, баланс 5 вкусов и летучие эфиры' },
+  { id: 'F', letter: 'Е', title: 'Ферментация и хранение', desc: 'Лактоферментация, кристаллы льда, окисление липидов и безопасность' },
+  { id: 'G', letter: 'Ж', title: 'Физика кухни', desc: 'Теплопроводность, конвекция, испарение, теплоёмкость посуды и инерция' },
+  { id: 'H', letter: 'З', title: 'Кулинарная лаборатория', desc: 'Управляемые домашние эксперименты с контролем температуры, pH и соли' }
+];
+
+const ARTICLES = [
+  // --- РАЗДЕЛ А: ВЫПЕЧКА И ТЕСТО ---
+  {
+    id: 'a1', sec: 'A', title: 'Формирование клейковины и развитие глютеновой сетки',
+    idea: 'Клейковина (глютен) не содержится в сухой муке в готовом виде — она образуется только при гидратации белков глиадина и глютенина и их механическом или временном выстраивании в вязкоупругую сеть.',
+    what: 'При добавлении воды к пшеничной муке два нерастворимых запасных белка — мономерный глиадин и полимерный глютенин — поглощают до двукратной массы воды. В процессе замеса или аутолиза между цепочками глютенина образуются дисульфидные (-S-S-) и водородные связи.',
+    why: 'Глиадин отвечает за растяжимость и текучесть теста (способность надуваться без разрыва), а глютенин — за упругость и прочность (способность удерживать форму и пузырьки углекислого газа). Механическое растяжение разворачивает скрученные белковые молекулы и выстраивает их вдоль линий натяжения.',
+    factors: 'Гидратация (оптимум для хлеба 60–75%), содержание белка в муке (7–9% для бисквитов и пирожных, 12–14% для подового хлеба), соль (укрепляет сеть, экранируя одноимённые электрические заряды на белках), жиры и сахар (обволакивают белки и конкурируют за воду, тормозя развитие глютена).',
+    practice: 'Используйте аутолиз: смешайте только муку и воду за 30–45 минут до внесения соли и дрожжей. Мука успевает полностью пропитаться водой, клейковина начинает формироваться без замеса, и тесто становится податливее (вклад ферментов, вероятно, вторичен).',
+    mistakes: 'Недомес: тесто рвётся, не проходит тест на «глютеновое окно», хлеб получается плоским. Перемес (особенно в планетарном миксере): разрыв дисульфидных связей, тесто становится липким и теряет способность держать газ.',
+    experiment: 'Замесите два одинаковых шарика (по 50 г муки и 30 г воды, по 1 минуте). Первый сразу растяните пальцами до просвета («глютеновое окно»), второй накройте и оставьте на 30 минут, затем растяните так же. Меняется только время отдыха, поэтому разницу можно связывать именно с ним.',
+    related: ['a2', 'a4', 'h5'],
+    summary: 'Вода запускает гидратацию глиадина и глютенина, время и складывания выстраивают сеть, соль её укрепляет, а масло укорачивает.',
+    sources: 'Harold McGee «On Food and Cooking» (гл. 10); Calvel R. «The Taste of Bread».',
+    quiz: { q: 'Какой белок муки отвечает преимущественно за упругость и сопротивление растяжению?', opts: ['Глютенин', 'Глиадин', 'Альбумин', 'Казеин'], a: 0, exp: 'Полимерный глютенин формирует длинные сшитые цепи, дающие тесту упругий возврат, тогда как глиадин обеспечивает растяжимость.' }
+  },
+  {
+    id: 'a2', sec: 'A', title: 'Дрожжевое брожение и симбиоз закваски',
+    idea: 'Дрожжи превращают простые сахара в углекислый газ и этанол для подъёма теста, а молочнокислые бактерии закваски создают молочную и уксусную кислоты, формирующие аромат, структуру мякиша и длительную свежесть хлеба.',
+    what: 'Фермент амилаза в муке расщепляет повреждённый крахмал до мальтозы и глюкозы. Дрожжи (Saccharomyces cerevisiae) метаболизируют глюкозу на CO2 (разрыхляет тесто) и этанол. В спонтанной закваске дикие дрожжи работают в симбиозе с бактериями Lactobacillus.',
+    why: 'Гомоферментативные лактобактерии производят мягкую молочную кислоту (сливочно-йогуртовый профиль), а гетероферментативные — более резкую уксусную кислоту, этанол и CO2. Подкисление теста (pH порядка 4.5–5.5) создаёт условия для работы фитазы муки, которая расщепляет фитиновую кислоту и повышает доступность минералов.',
+    factors: 'Температура: 26–28°C благоприятствует молочнокислым бактериям (мягкая кислинка), 10–16°C и более жидкая консистенция закваски, как правило, смещают баланс в сторону уксусной кислоты (это тенденции, а не строгие правила). При 55–60°C в духовке дрожжи погибают.',
+    practice: 'Для сложного аромата проводите холодную ретардацию (расстойку заготовки в холодильнике при +4°C в течение 12–18 часов): дрожжи почти засыпают, а ферменты и лактобактерии продолжают накапливать вкусовые прекурсоры.',
+    mistakes: 'Расстойка при температуре выше 35°C приводит к перекисанию и протеолизу (разжижению) клейковины: тесто превращается в липкую лужу.',
+    experiment: 'Разделите дрожжевое тесто на две части: одну выбродите 1.5 часа в тепле (28°C), вторую — 14 часов в холодильнике (4°C). Испеките одновременно и сравните цвет корочки (эффект остаточных сахаров для реакции Майяра) и аромат.',
+    related: ['a1', 'a5', 'f1'],
+    summary: 'Дрожжи дают объём за счёт CO2, а время, температура и лактобактерии управляют кислотностью, ароматом и скоростью черствения.',
+    sources: 'Michael Gänzle (2014) «Enzymatic and bacterial conversions during sourdough fermentation»; Modernist Bread.',
+    quiz: { q: 'Что происходит при холодной ферментации теста в холодильнике при +4°C?', opts: ['Активность дрожжей резко падает, но ферментативное накопление вкуса продолжается', 'Дрожжи полностью погибают', 'Клейковина мгновенно разрушается', 'Выделяется только уксусный альдегид'], a: 0, exp: 'При +4°C деление дрожжей практически останавливается, но амилазы и молочнокислые бактерии медленно формируют сахара и органические кислоты.' }
+  },
+  {
+    id: 'a3', sec: 'A', title: 'Архитектура теста: песочное, слоёное, заварное и бисквитное',
+    idea: 'Четыре классических вида кондитерского теста используют четыре разных физических механизма разрыхления: жировую изоляцию (песочное), паровую ламинацию (слоёное), внутреннюю паровую полость (заварное) и воздушную пену (бисквит).',
+    what: 'В песочном тесте жир обволакивает частицы муки («шортенинг»), не давая воде создать длинные нити глютена. В слоёном сотни чередующихся слоёв масла и теста работают как паровые барьеры. В заварном крахмал клейстеризуется ещё в сотейнике. В бисквите каркас строится из взбитых яичных белков.',
+    why: 'При выпечке слоёного теста вода из масла вскипает при 100°C и паром расталкивает тонкие листы теста до того, как клейковина и крахмал зафиксируют форму. В заварном тесте (шу, эклеры) плотная клейстеризованная оболочка удерживает пар внутри, выдувая центральную полость.',
+    factors: 'Температура сливочного масла: для песочного и слоёного критично 13–16°C (масло пластично, но не тает). Если масло растает при раскатке слоёного теста, слои сольются и получится обычная булочка.',
+    practice: 'В песочное тесто добавляйте ледяную воду по чайной ложке и часть воды заменяйте водкой (в водно-спиртовой среде глютен развивается заметно хуже, поэтому тесто легко раскатывать, а при выпечке он испаряется, оставляя рассыпчатую текстуру).',
+    mistakes: 'Слишком густое заварное тесто не поднимается, а слишком жидкое — опадает после духовки, так как стенки эклера ещё не успели высохнуть и карамелизоваться.',
+    experiment: 'Сделайте два маленьких песочных печенья: одно вымешивайте руками 3 минуты до тепла, второе порубите холодным ножом за 20 секунд. Испеките и разломите: первое будет жёстким, второе — рассыпчатым.',
+    related: ['a1', 'a4', 'b4'],
+    summary: 'Хотите рассыпчатость — блокируйте глютен жиром и холодом; хотите слоистость — чередуйте целые пласты твёрдого масла и теста.',
+    sources: 'Paula Figoni «How Baking Works» (Wiley); Harold McGee «On Food and Cooking».',
+    quiz: { q: 'Какой физический процесс создаёт подъём в классическом слоёном и заварном тесте без добавления дрожжей и соды?', opts: ['Расширение водяного пара (в 1600 раз по объёму при переходе воды в пар)', 'Выделение углекислого газа из муки', 'Карамелизация лактозы', 'Окисление жирных кислот'], a: 0, exp: 'При испарении 1 мл жидкой воды превращается примерно в 1600 мл водяного пара, который механически раздвигает слои или стенки теста.' }
+  },
+  {
+    id: 'a4', sec: 'A', title: 'Роль ингредиентов: сахар, жиры, яйца, вода и соль',
+    idea: 'Каждый базовый ингредиент выпечки выступает либо «строителем структуры» (мука, яичный белок, вода), либо «тендерайзером — размягчителем» (сахар, жиры, желток). Искусство рецептуры — баланс этих двух сил.',
+    what: 'Строители создают жёсткий трёхмерный каркас за счёт коагуляции белков и желатинизации крахмала. Размягчители вмешиваются в этот каркас: сахар гигроскопичен и перетягивает на себя воду, повышая температуру желатинизации крахмала; жиры прерывают белковые связи.',
+    why: 'Повышение доли сахара сдвигает момент затвердевания теста в духовке к более высоким температурам (на несколько градусов и более, точные значения зависят от рецептуры), давая газам больше времени на расширение изделия. Соль (1.8–2.2% от веса муки) сдерживает скорость брожения дрожжей и укрепляет клейковину.',
+    factors: 'Яичный желток содержит эмульгатор лецитин, который связывает воду и жир в однородную эмульсию, что, вероятно, помогает мякишу дольше оставаться мягким (черствение — в основном ретроградация крахмала, вклад эмульгаторов зависит от рецепта).',
+    practice: 'Если хлеб без соли пресный, липкий в замесе и быстро бледнеет в печи — это следствие того, что без соли дрожжи съедают все сахара ещё на расстойке, не оставляя их для реакции Майяра в корке.',
+    mistakes: 'Уменьшение сахара в классическом рецепте кекса или бисквита на 50% не просто делает его менее сладким — оно делает мякиш сухим, плотным и резиновым, так как крахмал и глютен забирают всю свободную воду.',
+    experiment: 'Сравните черствение двух кусочков домашней сдобы: один испеките на воде, другой с добавлением 1 желтка и 10% сливочного масла. Через 48 часов второй, скорее всего, дольше сохранит мягкость (жиры и эмульгаторы замедляют черствение).',
+    related: ['a1', 'a3', 'd2'],
+    summary: 'Мука и белки строят каркас; жиры и сахар делают его нежным и влажным; соль управляет прочностью глютена и скоростью дрожжей.',
+    sources: 'Shirley Corriher «BakeWise»; Paula Figoni «How Baking Works».',
+    quiz: { q: 'К чему приведёт резкое сокращение сахара в рецепте классического кекса?', opts: ['Мякиш станет более плотным, сухим и грубым из-за избыточного развития глютена и ранней клейстеризации крахмала', 'Кекс станет более влажным и нежным', 'Кекс не пропечётся внутри из-за избытка жира', 'Повысится сладость за счёт крахмала'], a: 0, exp: 'Сахар связывает воду и ограничивает набухание крахмала и белков муки. Без него развивается жёсткая клейковина.' }
+  },
+  {
+    id: 'a5', sec: 'A', title: 'Разрыхлители, сода, печной подъём и физика корочки',
+    idea: 'Пищевая сода требует внешней кислоты для реакции, пекарский порошок содержит кислоту внутри себя, а финальный взрывной рост хлеба в печи (Oven Spring) зависит от влажности поверхности и пара в первые 10 минут выпечки.',
+    what: 'Гидрокарбонат натрия (NaHCO3, сода) реагирует с кислотами (кефир, лимонный сок, мёд, какао натуральное), выделяя CO2 сразу при смешивании. Двойной разрыхлитель содержит соду, крахмал и две соли-кислоты: одна реагирует в холодном тесте, вторая — только при нагреве выше 60°C.',
+    why: 'При посадке хлеба в горячую духовку происходит «печной подъём»: газы расширяются по закону Шарля, растворённый в воде CO2 переходит в газ, а дрожжи ускоряют метаболизм вплоть до гибели при 55°C. Пар на корке конденсируется, отдавая скрытую теплоту и сохраняя поверхность эластичной.',
+    factors: 'Без пара в первые 10–12 минут поверхность хлеба быстро высыхает и превращается в жёсткий панцирь: расширяющиеся внутри газы рвут корку в самом слабом месте сбоку вместо раскрытия по надрезу.',
+    practice: 'Для домашнего подового хлеба выпекайте первые 20 минут под предварительно раскалённым чугунным колпаком (утятницей): испаряющаяся из самого теста влага создаёт идеальную паровую камеру.',
+    mistakes: 'Гашение соды уксусом в ложке над миской бессмысленно: весь углекислый газ улетает в воздух кухни, а в тесто попадает лишь раствор ацетата натрия.',
+    experiment: 'Смешайте 1/2 ч. л. соды с мукой в сухом виде, а уксус добавьте в жидкие ингредиенты (воду/молоко). Соедините их быстро — вы увидите, как пузырьки рождаются непосредственно внутри теста.',
+    related: ['a2', 'b1', 'g2'],
+    summary: 'Никогда не гасите соду в ложке; смешивайте её с мукой, а кислоту — с жидкостью. Для высокого хлеба обеспечьте пар в первые 15 минут.',
+    sources: 'Modernist Bread (Vol. 3); Harold McGee «On Food and Cooking».',
+    quiz: { q: 'Почему гасить пищевую соду уксусом в столовой ложке перед добавлением в тесто — кулинарная ошибка?', opts: ['Углекислый газ выделяется в воздух до попадания в тесто и не совершает работы по разрыхлению', 'Образуется ядовитое соединение', 'Уксус блокирует работу муки', 'Сода реагирует только при 200°C'], a: 0, exp: 'Реакция нейтрализации проходит мгновенно в ложке, и ценный газ CO2 улетучивается мимо теста.' }
+  },
+
+  // --- РАЗДЕЛ Б: ДЕСЕРТЫ И КОНДИТЕРСКОЕ ДЕЛО ---
+  {
+    id: 'b1', sec: 'B', title: 'Карамелизация сахара и реакция Майяра: точные различия',
+    idea: 'Карамелизация и реакция Майяра — это два совершенно разных химических пути неферментативного потемнения: карамелизация — термический распад чистых углеводов, а реакция Майяра требует участия аминокислот (белков) и редуцирующих сахаров.',
+    what: 'При реакции Майяра карбонильная группа редуцирующего сахара (глюкоза, фруктоза, лактоза) реагирует с нуклеофильной аминогруппой аминокислоты, образуя соединение Амадори, а затем сотни летучих гетероциклических молекул (пиразины, фураны, тиофены) и коричневые полимеры — меланоидины.',
+    why: 'Карамелизация не нуждается в белках: это пиролиз (термическая дегидратация и фрагментация) молекул сахара. Фруктоза карамелизуется уже при 110°C, галактоза и глюкоза при ~160°C, сахароза при 160–180°C. Реакция Майяра идёт заметно уже при 130–140°C (а при высоком pH и долгом времени — даже при 90–100°C, как в топлёном молоке).',
+    factors: 'Вода тормозит обе реакции (пока есть жидкая вода, температура не поднимается выше 100°C). Щелочная среда (пищевая сода) резко ускоряет реакцию Майяра, депротонируя аминогруппы белков.',
+    practice: 'Смазывание выпечки яйцом с молоком даёт глубокий румянец именно за счёт реакции Майяра (белки яйца + лактоза молока). А сухая варка сахара в сотейнике до янтарного цвета — чистая карамелизация.',
+    mistakes: 'Называть обжарку стейка или лука до золотистости за 5 минут «карамелизацией» неверно: в мясе идёт реакция Майяра, а настоящая карамелизация лука занимает 40–45 минут томления.',
+    experiment: 'Нагрейте на сковороде две капли: 1) раствор чистого сахара в воде и 2) раствор сахара с щепоткой сухого молока (источник белка). Вторая капля потемнеет значительно раньше и даст аромат выпечки и ириски.',
+    related: ['c2', 'e4', 'h1'],
+    summary: 'Сахар в одиночестве при 160°C+ — это карамелизация. Сахар + белок при 130°C+ — это реакция Майяра с мясным или хлебным ароматом.',
+    sources: 'Hodge J.E. (1953) «Chemistry of Browning Reactions in Model Systems»; Harold McGee «On Food and Cooking».',
+    quiz: { q: 'Что обязательно требуется для протекания реакции Майяра в отличие от карамелизации?', opts: ['Аминокислоты (белки) и редуцирующие сахара', 'Только чистая сахароза и температура выше 170°C', 'Присутствие дрожжей', 'Кислотная среда с pH ниже 3.0'], a: 0, exp: 'Реакция Майяра — это конденсация аминогруппы белка/аминокислоты и карбонильной группы сахара.' }
+  },
+  {
+    id: 'b2', sec: 'B', title: 'Кристаллизация сахара и физика кондитерских сиропов',
+    idea: 'Консистенция любого сахарного изделия — от жидкой помадки и тягучей ириски до хрустящего леденца — определяется концентрацией сахара (которая однозначно связана с температурой кипения сиропа) и контролем роста кристаллов сахарозы.',
+    what: 'По мере выкипания воды концентрация сахарозы растёт, и температура кипения сиропа повышается: 112–115°C — «мягкий шарик» (85% сахара, помадка), 121°C — «твёрдый шарик» (92%, итальянская меренга), 145–154°C — «твердый хруст» (99%, леденцы).',
+    why: 'Охлаждённый густой сироп пересыщен. Если в него попадёт хотя бы один сухой кристаллик сахара со стенки сотейника или сироп активно перемешают при высокой температуре, запустится цепная кристаллизация — гладкая карамель превратится в мутную сахарную крошку.',
+    factors: '«Интерферирующие агенты» — молекулы другой формы (глюкозный сироп, кукурузный сироп, инвертный сахар или капля лимонного сока, расщепляющая сахарозу на глюкозу и фруктозу) встраиваются между молекулами сахарозы и физически мешают им сомкнуться в кристаллическую решётку.',
+    practice: 'При варке карамели «мокрым способом» добавьте 10–15% глюкозного сиропа или пару капель лимонного сока, накройте крышкой на первые 2 минуты кипения (конденсат смоет кристаллы со стенок) и не мешайте сироп ложкой.',
+    mistakes: 'Перемешивание кипящего сахарного сиропа венчиком или ложкой на этапе после полного растворения сахара провоцирует мгновенное засахаривание.',
+    experiment: 'Сварите сироп из 100 г сахара и 30 г воды до 140°C в двух ковшиках: в один добавьте 1/4 ч. л. лимонного сока, во второй — ничего, и интенсивно помешайте оба ложкой. Первый останется прозрачным стеклом, второй побелеет и кристаллизуется.',
+    related: ['b1', 'b4', 'g2'],
+    summary: 'Температура кипения сиропа — точный индикатор остатка воды, а кислота или глюкозный сироп — страховка от кристаллизации.',
+    sources: 'Hartel R.W. «Confectionery Science and Technology» (Springer).',
+    quiz: { q: 'Зачем при варке сахарного сиропа для карамели добавляют несколько капель лимонного сока?', opts: ['Кислота гидролизует часть сахарозы на глюкозу и фруктозу, которые мешают сахарозе кристаллизоваться', 'Для снижения температуры кипения воды', 'Для ускорения испарения влаги', 'Чтобы отбелить сахар'], a: 0, exp: 'Инверсия сахарозы создаёт смесь моносахаридов (глюкозы и фруктозы), блокирующих рост кристаллической решётки.' }
+  },
+  {
+    id: 'b3', sec: 'B', title: 'Темперирование шоколада и полиморфизм какао-масла',
+    idea: 'Какао-масло способно застывать в шести различных кристаллических формах (I–VI), но только форма V (бета-кристаллы) плавится при 33.8°C, даёт зеркальный глянец, звонкий хруст и не тает мгновенно в пальцах.',
+    what: 'Триглицериды какао-масла при хаотичном охлаждении выстраиваются в рыхлые, нестабильные формы I–IV (плавятся при 17–28°C). Такой шоколад матовый, мягкий и через пару дней покрывается серым жировым налётом («поседением»), когда кристаллы сами перестраиваются в более плотные.',
+    why: 'Темперирование — это управляемый температурный цикл (растопить все кристаллы при 45–50°C -> охладить при перемешивании до 27–28°C для зарождения кристаллов форм IV и V -> слегка подогреть до рабочей температуры 31–32°C для тёмного шоколада, чтобы расплавить нестабильную форму IV и оставить только затравку формы V).',
+    factors: 'Температура помещения (оптимально 18–21°C), постоянное движение массы (сдвиговое усилие ускоряет кристаллизацию) и полное отсутствие воды (даже 1 капля воды склеит частицы сахара и какао в густой комок — «схватывание» шоколада).',
+    practice: 'Самый надёжный домашний метод — «посев» (каллетами): растопите 75% тёмного шоколада до 45°C, снимите с нагрева и вмешивайте 25% мелко рубленого темперированного шоколада (в нём уже есть готовые кристаллы формы V), пока температура не опустится до 31.5°C.',
+    mistakes: 'Молочный и белый шоколад при нагреве выше примерно 45°C могут загустеть и стать зернистыми (виноваты молочные белки и сахара); тёмный выше 50–55°C рискует пригореть и потерять вкус.',
+    experiment: 'Растопите кусочек тёмного шоколада до 48°C: половину сразу вылейте на пергамент, а во вторую вмешайте натёртый на тёрке твёрдый шоколад до охлаждения (31°C). Через 20 минут сравните блеск и хруст при разломе.',
+    related: ['b2', 'b4', 'd1'],
+    summary: 'Шоколад темперируют ради выращивания кристаллов формы V (плавление ~34°C), обеспечивающих глянец, усадку в форме и звонкий разлом.',
+    sources: 'Beckett S.T. «The Science of Chocolate» (Royal Society of Chemistry).',
+    quiz: { q: 'Какая кристаллическая форма какао-масла является целевой при темперировании шоколада?', opts: ['Форма V (бета), плавящаяся при ~33.8°C', 'Форма I (гамма), плавящаяся при 17°C', 'Форма III, дающая матовую поверхность', 'Аморфная стекловидная фаза без кристаллов'], a: 0, exp: 'Именно полиморфная форма V обладает плотной упаковкой триглицеридов, дающей блеск, хруст и таяние во рту (34°C).' }
+  },
+  {
+    id: 'b4', sec: 'B', title: 'Меренги, взбитые сливки, муссы и ганаши: физика пен и эмульсий',
+    idea: 'Меренга стабилизируется развёрнутыми белками вокруг пузырьков воздуха, а взбитые сливки — каркасом из полукристаллического молочного жира. Поэтому жир убивает меренгу, а перегрев разрушает сливки.',
+    what: 'В яичном белке при работе венчика механическая сила разворачивает глобулярные белки (овальбумин, кональбумин). Гидрофильные концы молекул остаются в воде, а гидрофобные поворачиваются к воздуху и сцепляются друг с другом. В сливках (жирность от 30%) венчик сдирает мембраны с жировых шариков, и они слипаются вокруг пузырьков воздуха.',
+    why: 'Капля жира в яичном белке конкурирует с гидрофобными участками белков, покрывая пузырьки воздуха масляной плёнкой, которая не способна сшиваться в прочный каркас. В сливках же при температуре выше 10°C молочный жир становится жидким: вместо воздушного каркаса капли жира просто сливаются в комки сливочного масла.',
+    factors: 'Кислота (кремор тартар или лимонный сок) в меренге привносит протоны H+, снижая образование избыточных дисульфидных связей и защищая белок от переосаживания (отсечения жидкости). Сахар делает водную прослойку вязкой, замедляя стекание жидкости из стенок пузырьков.',
+    practice: 'Для идеальных взбитых сливок охладите венчик, чашу и сами сливки (33–35%) до +2...+4°C. Для глянцевой меренги вводите мелкий сахар постепенно после появления мягких пиков («пивной пены»).',
+    mistakes: 'Если продолжать взбивать сливки после плотных пиков ещё 30 секунд, произойдёт инверсия фаз: эмульсия «жир в воде» превратится в сливочное масло и пахту.',
+    experiment: 'Взбейте два яичных белка в отдельных чистых пиалах: в первый добавьте щепотку лимонной кислоты, второй взбивайте без всего. Взбивайте оба на максимуме 4 минуты: белок без кислоты расслоится на хлопья и лужицу воды, а с кислотой останется гладким.',
+    related: ['b5', 'c1', 'd1'],
+    summary: 'Белковой пене нужны чистота от жира, кислота и сахар для вязкости; сливочной пене нужны минимум 30% жира и глубокий холод (4°C).',
+    sources: 'Foegeding E.A. (2006) «Food protein functionality: Egg white foams»; McGee «On Food and Cooking».',
+    quiz: { q: 'Почему сливки жирностью 10–20% невозможно взбить в устойчивую пышную пену классическим способом?', opts: ['Недостаточно жировых глобул для построения сплошного кристаллического каркаса вокруг пузырьков воздуха', 'В них слишком мало лактозы', 'В них отсутствует белок казеин', 'Вода закипает от трения венчика'], a: 0, exp: 'Для образования непрерывной трёхмерной сетки из частично коалесцированных шариков жира требуется концентрация липидов не менее 30%.' }
+  },
+  {
+    id: 'b5', sec: 'B', title: 'Желатин, агар-агар, пектин, заварные кремы и чизкейки',
+    idea: 'Желирующие агенты создают совершенно разные текстуры из-за разной природы полимеров: белковый желатин тает во рту (30–35°C) и даёт упругий гель, а полисахаридный агар-агар плавится только при 85°C и даёт плотный ломкий срез.',
+    what: 'Желатин (частично гидролизованный коллаген) набухает в холодной воде, растворяется при 50–60°C и при охлаждении до +4°C скручивается в тройные спирали, удерживающие воду. Агар-агар (из красных водорослей) требует кипячения (95–100°C) для расправления цепей агарозы и застывает уже при 35–40°C.',
+    why: 'Уникальный гистерезис агара (плавится при 85°C, застывает при 38°C) позволяет подавать тёплые гели и хранить мармелад без холодильника, но во рту (36.6°C) он не тает, как желатин, поэтому ощущается более хрупким. Пектин NH требует кальция и кислоты, а яблочный HM-пектин — минимум 55–60% сахара и pH 2.8–3.4.',
+    factors: 'Сырые ананас, киви, папайя и имбирь содержат протеолитические ферменты (бромелайн, актинидин), которые буквально разрезают белковые цепочки желатина — желе с ними никогда не застынет без предварительного прогрева пюре до 85°C.',
+    practice: 'В заварном креме (Crème Pâtissière) крахмал позволяет довести смесь до кипения (95°C) без сворачивания яичных желтков: длинные полимеры амилозы физически мешают белкам желтка сблизиться в плотные хлопья.',
+    mistakes: 'Выпечка чизкейка при 180°C без водяной бани перегревает края выше 85°C: яичные белки в творожном сыре сжимаются, выдавливают сыворотку, и при остывании центр чизкейка трескается. Оптимум — внутренняя температура центра 65–68°C.',
+    experiment: 'Залейте раствором желатина два кусочка киви: один сырой, а второй прокипячённый в микроволновке 1 минуту. В стакане с сырым киви желе останется водой из-за фермента актинидина.',
+    related: ['c1', 'c3', 'd2'],
+    summary: 'Желатин боится кипячения и сырого киви/ананаса, но нежно тает во рту; агар требует кипячения 1–2 минуты и держит форму в тепле.',
+    sources: 'Phillips G.O., Williams P.A. «Handbook of Hydrocolloids» (Woodhead Publishing).',
+    quiz: { q: 'Почему мусс или желе на желатине со свежим непрогретым пюре киви или ананаса не застывает?', opts: ['Протеолитические ферменты (актинидин, бромелайн) расщепляют белковые цепи желатина', 'Витамин С растворяет воду', 'Фруктоза блокирует охлаждение', 'Кислота превращает желатин в газ'], a: 0, exp: 'Желатин — это белок, а протеазы тропических фруктов режут пептидные связи. Прогрев пюре выше 80°C инактивирует эти ферменты.' }
+  },
+
+  // --- РАЗДЕЛ В: МЯСО, ПТИЦА И РЫБА ---
+  {
+    id: 'c1', sec: 'C', title: 'Денатурация белков и контроль сочности мяса',
+    idea: 'Сочность готового куска мяса на 90% определяется не временем нахождения на сковороде, а максимальной температурой, до которой нагрелся его геометрический центр.',
+    what: 'Мышечная ткань состоит на ~75% из воды, на 20% из белков (миозин, актин, саркоплазматические белки и коллаген) и на 3–5% из жира. При нагревании белковые спирали разворачиваются (денатурируют), коагулируют и сжимают мышечные волокна.',
+    why: 'При 50°C начинает сворачиваться миозин — мясо становится упругим, но удерживает сок. При 60°C сжимается перимизий и розовеет миоглобин. При 66–73°C происходит необратимое сокращение актина: мышечные пучки сжимаются как выкручиваемая губка, выбрасывая до 20–30% внутриклеточной влаги.',
+    factors: 'Отдых мяса после жарки (5–10 минут для стейка, 20 минут для крупного ростбифа): при остывании центра с 60°C до 52°C вязкость мясного сока увеличивается, а расслабленные волокна перестают выталкивать жидкость наружу при разрезе.',
+    practice: 'Используйте игольчатый термометр: снимайте говяжий стейк с огня при 52–54°C в центре (для Medium Rare с учётом доходящего тепла), куриную грудку — при 65–66°C (с выдержкой 3 минуты), лосось — при 50–52°C.',
+    mistakes: 'Разрезание горячего стейка прямо на сковороде для проверки готовности приводит к мгновенной потере до 8–10% сока на разделочную доску.',
+    experiment: 'Нагрейте два одинаковых кусочка куриного филе в воде: первый до внутренней температуры 65°C, второй до 82°C. Взвесьте оба до и после: второй потеряет в 2 раза больше массы и станет волокнисто-сухим.',
+    related: ['c2', 'c5', 'g4'],
+    summary: 'Не ориентируйтесь на минуты в рецепте — измеряйте температуру центра: миозин сворачивается нежно при 50–55°C, а актин выжимает мясо насухо выше 68°C.',
+    sources: 'Tornberg E. (2005) «Effects of heat on meat proteins — Implications on structure and quality of meat products»; J. Kenji López-Alt «The Food Lab».',
+    quiz: { q: 'При достижении какого температурного порога внутри мышечного волокна денатурирует актин, вызывая резкую потерю сочности мяса?', opts: ['66–73°C', '38–42°C', '95–100°C', '140–150°C'], a: 0, exp: 'Денатурация актина при 66–73°C вызывает продольное сжатие миофибрилл и принудительное вытеснение связанной воды.' }
+  },
+  {
+    id: 'c2', sec: 'C', title: 'Миф о «запечатывании соков» и химия мясной корочки',
+    idea: 'Обжаривание мяса на раскалённой сковороде НЕ «запечатывает соки внутри» — корочка водопроницаема. Смысл жёсткой обжарки исключительно в создании сотен новых молекул вкуса и аромата через реакцию Майяра.',
+    what: 'В 1850 году химик Юстус фон Либих предположил, что при 200°C на поверхности стейка образуется герметичная белковая плёнка. Однако уже в 1930-х годах точные весовые измерения доказали: обжаренный на старте кусок мяса теряет столько же (или даже больше) влаги, чем запечённый при ровной температуре.',
+    why: 'Поверхность жарящегося мяса непрерывно шипит — а шипение и есть звук закипающей и выходящей сквозь корочку воды. Но когда поверхностный слой обезвоживается и его температура превышает 140°C, аминокислоты и сахара (рибоза, глюкоза) вступают в реакцию Майяра, а жиры окисляются, создавая богатый мясной профиль.',
+    factors: 'Влага на поверхности — главный враг корочки. На испарение 1 г жидкой воды с поверхности стейка уходит в 5 раз больше энергии, чем на нагрев этого грамма от 0°C до 100°C.',
+    practice: 'Тщательно промокните стейк бумажными полотенцами перед жаркой или оставьте открытым на решётке в холодильнике на 4–12 часов: подсохшая пелликула (поверхность) даст румяную корочку за 60 секунд без перегрева середины.',
+    mistakes: 'Выкладывание влажного мяса из вакуумного пакета сразу на сковороду превращает жарку в тушение в собственном соку с серым цветом поверхности.',
+    experiment: 'Положите два медальона на одну сковороду: один промокните насухо бумажной салфеткой, второй сбрызните 1 ч. л. воды. Первый покроется румяной корочкой за 90 секунд, второй останется бледно-серым.',
+    related: ['b1', 'c1', 'g2'],
+    summary: 'Корочка не удерживает сок (это делает низкая температура центра), но дарит до 80% аромата жареного мяса. Сухая поверхность = быстрая корочка.',
+    sources: 'McGee H. «On Food and Cooking»; López-Alt J.K. «The Food Lab» (Reverse Sear analysis).',
+    quiz: { q: 'Какова истинная научная роль быстрого обжаривания стейка при высокой температуре?', opts: ['Запуск реакции Майяра и термического распада липидов для создания вкуса и аромата', 'Создание герметичной водонепроницаемой корки, блокирующей выход пара', 'Стерилизация внутренней части мышцы на глубину 3 см', 'Снижение теплопроводности металла сковороды'], a: 0, exp: 'Корочка полностью проницаема для пара и мясного сока; её назначение — синтез вкусоароматических соединений.' }
+  },
+  {
+    id: 'c3', sec: 'C', title: 'Коллаген и желатин: наука долгого томления и тушения',
+    idea: 'Вырезка (филе-миньон) и голяшка (рулька, лопатка, грудинка) требуют противоположных режимов: нежные мышцы готовят быстро до 55–60°C, а рабочие мышцы с обилием соединительной ткани томят часами при 75–90°C для гидролиза коллагена в желатин.',
+    what: 'Рабочие мышцы животного пронизаны прочными белковыми канатами — тройными спиралями коллагена. При быстрой жарке до 60°C коллаген остаётся жёстким и неразжёвываемым. Но при нагреве выше 68–70°C во влажной среде в течение нескольких часов водородные связи распадаются, и коллаген переходит в жидкий желатин.',
+    why: 'При 70–85°C сами мышечные волокна уже потеряли свою клеточную воду и сжались (актин денатурировал), но расплавившийся коллаген заполняет межволоконное пространство вязким, обволакивающим желатиновым гелем и каплями вытопленного внутримышечного жира. Это создаёт иллюзию невероятной сочности.',
+    factors: 'Гидролиз коллагена зависит одновременно от температуры и времени: при 60°C он занимает 24–48 часов (су-вид), при 85–90°C — 2.5–3.5 часа (томление в духовке), при 115–120°C в скороварке — 45 минут.',
+    practice: 'При тушении (гуляш, оссобуко, щёчки) не допускайте бурного кипения при 100°C: томите в духовке под крышкой при 140–150°C (температура жидкости внутри будет ~85–88°C). После выключения дайте мясу остыть прямо в бульоне до 50°C — волокна впитают часть желированного соуса обратно.',
+    mistakes: 'Попытка «тушить» постную свиную корейку или куриную грудку 2 часа в надежде, что они станут мягче: в них почти нет коллагена, поэтому они просто превратятся в сухие волокна.',
+    experiment: 'Возьмите говяжью голяшку с прожилками: отрежьте маленький ломтик и пожарьте 3 минуты (он будет резиновым), а остальной кусок томите 3 часа при 85–90°C (прожилки превратятся в нежнейшее желе).',
+    related: ['b5', 'c1', 'd3'],
+    summary: 'Постные нежные отрубы жарьте быстро до 55–65°C; коллагеновые жилистые отрубы томите долго при 80–90°C до превращения прожилок в желатин.',
+    sources: 'Bailey A.J., Light N.D. (1989) «Connective Tissue in Meat and Meat Products».',
+    quiz: { q: 'Почему томлёные говяжьи щёчки или грудинка ощущаются сочными и нежными, хотя их внутренняя температура достигала 85–90°C?', opts: ['Жёсткий соединительный белок коллаген гидролизовался в обволакивающий желатин, смазывающий мышечные волокна', 'Мышечные волокна при 90°C не теряют внутриклеточную воду', 'Крахмал внутри мышц превратился в сахар', 'В щёчках отсутствует белок актин'], a: 0, exp: 'Хотя актин сжался и вытеснил воду, расплавленный желатин и внутримышечный жир удерживаются между волокнами, давая бархатистую сочность.' }
+  },
+  {
+    id: 'c4', sec: 'C', title: 'Маринование, сухой посол и рассолы (брайнинг)',
+    idea: 'Крупные молекулы маринада (ароматы трав, чеснока, специй, масел) проникают в мясо максимум на 1–3 мм. Глубоко внутрь куска проходят только маленькие ионы поваренной соли (Na+ и Cl-), которые меняют структуру белков и удерживают влагу.',
+    what: 'Молекулы сахаров и ароматических соединений имеют массу 150–500 дальтон и движутся в плотной мышечной ткани крайне медленно. Ионы натрия и хлора (масса 23 и 35 дальтон) диффундируют на глубину 2–3 см за 12–24 часа.',
+    why: 'На первом этапе (0–15 минут) соль на поверхности вытягивает капли влаги по закону осмоса. На втором этапе (от 45 минут до 24 часов) концентрированный солевой раствор всасывается обратно внутрь клеток и частично растворяет нити миозина (эффект высаливания/всаливания). Ослабленная сетка миозина при жарке сжимается слабее и удерживает на 10–15% больше собственного сока.',
+    factors: 'Кислотные маринады (уксус, лимонный сок, кефир, киви) при долгом воздействии (более 2–4 часов) денатурируют поверхностные белки без нагрева, превращая верхние 3 мм мяса в рыхлую кашеобразную или сухую корку.',
+    practice: 'Солите стейк или птицу (сухой посол: 1–1.2% соли от веса мяса) либо за 45 минут — 12 часов до жарки, либо непосредственно за 1 минуту до сковороды. Худшее время — за 10–20 минут (лужа сока выступила наружу, но ещё не впиталась обратно).',
+    mistakes: 'Замачивание шашлыка в уксусе или лимонном соке на сутки «для мягкости»: кислота коагулирует белки так же, как пережарка, делая мясо сухим внутри и кашеобразным снаружи.',
+    experiment: 'Посолите три куска мяса: за 1 час, за 15 минут и за 10 секунд до жарки. У куска «15 минут» на поверхности будет стоять вода, которая помешает обжарке; кусок «1 час» будет сухим снаружи и самым сочным внутри.',
+    related: ['c1', 'c2', 'h2'],
+    summary: 'Ароматический маринад работает только на поверхности (1–3 мм), а глубокую сочность обеспечивает предварительный сухой посол минимум за 45–60 минут.',
+    sources: 'Offer G., Trinick J. (1983) «On the mechanism of water holding in meat: The swelling and shrinking of myofibrils»; AmazingRibs Science (Meathead Goldwyn).',
+    quiz: { q: 'Почему не рекомендуется солить стейк за 10–15 минут до выкладывания на раскалённую сковороду?', opts: ['За это время соль вытянет влагу на поверхность по закону осмоса, но раствор ещё не успеет впитаться обратно', 'Соль полностью испарится с поверхности мяса', 'Соль разрушит коллаген до состояния воды', 'Натрий заблокирует работу плиты'], a: 0, exp: 'На отметке 10–15 минут поверхность мяса максимально мокрая, что сорвёт реакцию Майяра. Нужно либо жарить сразу, либо ждать от 45 минут.' }
+  },
+  {
+    id: 'c5', sec: 'C', title: 'Кривые пастеризации: температура, время и безопасность птицы и рыбы',
+    idea: 'Пищевая безопасность (уничтожение бактерий Salmonella и Listeria) — это не одна фиксированная температура (например, 74°C), а математическая функция температуры И времени выдержки.',
+    what: 'В кулинарных таблицах часто указывают 74°C (165°F) для курицы, потому что при 74°C гибель 99.99999% бактерий Salmonella (7-log10 редукция) происходит практически мгновенно (по таблицам FSIS — менее 10 секунд). Но при 74°C куриная грудка уже теряет значительную часть влаги и становится сухой.',
+    why: 'По официальным таблицам пастеризации USDA FSIS та же самая безопасная 7-log10 редукция сальмонеллы достигается при внутренней температуре около 66°C (150°F) за ≈3 минуты или около 63°C (145°F) за ≈9 минут (для курицы жирностью около 5%; точные значения зависят от жирности и вида птицы). Эти таблицы составлены для промышленной готовой продукции, где температура измеряется в самой холодной точке и удерживается по всему куску.',
+    factors: 'У рыбы мышечные волокна короткие (миотомы), разделённые нежнейшими прослойками коллагена (миокомматами), который плавится уже при 45–50°C. Поэтому рыба при нагреве выше 60°C мгновенно распадается на сухие хлопья.',
+    practice: 'Для домашней кухни ориентир безопасности — 74°C (165°F) в самой толстой части, замеренный щуповым термометром. Сочности добавят точный термометр (не передерживайте выше цели), заблаговременный посол и 5 минут отдыха. Низкие температуры с выдержкой (су-вид) требуют точного измерения и контроля времени и не рекомендуются детям, пожилым, беременным и людям с ослабленным иммунитетом.',
+    mistakes: 'Готовить куриное филе «пока не перестанет выделяться розовый сок, до 85°C» — верный способ получить сухую вату. Цвет сока зависит от pH мышцы и миоглобина, а не от наличия бактерий.',
+    experiment: 'Сравните две куриные грудки, доведённые термометром до 74°C (после 5 минут отдыха) и до 85°C: первая будет упругой и глянцевой на срезе, вторая — матовой и крошащейся.',
+    related: ['c1', 'f4', 'g4'],
+    summary: 'Пастеризация = Температура × Время: безопасность определяется температурой и временем. Дома ориентируйтесь на 74°C в самой толстой части; более низкие температуры допустимы только при точном измерении и достаточной выдержке (таблицы FSIS).',
+    sources: 'USDA FSIS «Time-Temperature Tables for Cooking Ready-to-Eat Poultry Products» (значения зависят от жирности и вида птицы); Douglas Baldwin «A Practical Guide to Sous Vide Cooking».',
+    quiz: { q: 'От чего зависит микробиологическая пастеризация мяса и птицы согласно таблицам USDA FSIS?', opts: ['От комбинации достигнутой внутренней температуры и времени её удержания', 'Исключительно от изменения цвета мясного сока с розового на прозрачный', 'Только от нагрева выше 100°C', 'От количества добавленного перца и чеснока'], a: 0, exp: 'Термическая инактивация патогенов подчиняется логарифмическому закону: при 74°C — практически мгновенно, при 66°C — около 3 минут, при 63°C — около 9 минут (для курицы ~5% жира).' }
+  },
+
+  // --- РАЗДЕЛ Г: СОУСЫ, СУПЫ И ТЕКСТУРЫ ---
+  {
+    id: 'd1', sec: 'D', title: 'Эмульсии и их стабилизация: майонез, винегрет и голландский соус',
+    idea: 'Кулинарная эмульсия — это дисперсия микрокапель одной жидкости в другой (обычно жира в воде), которую удерживают от слияния молекулы-посредники (эмульгаторы) с гидрофильной «головой» и липофильным «хвостом».',
+    what: 'Масло и вода не смешиваются из-за высокого поверхностного натяжения (вода образует прочные водородные связи и выталкивает неполярные молекулы жира). В майонезе и голландском соусе до 75–80% объёма составляет масло, разбитое венчиком или блендером на капли диаметром 1–5 мкм внутри тончайшей водной плёнки.',
+    why: 'Фосфолипиды яичного желтка (лецитин) и белки горчицы встраиваются на границу раздела фаз: жирорастворимый хвост погружается в каплю масла, а водорастворимая заряженная голова смотрит в воду. Одноимённо заряженные капли отталкиваются друг от друга, и соус густеет, так как тесно упакованным каплям некуда двигаться.',
+    factors: 'Критическое соотношение фаз: один желток способен удержать до 150–180 мл масла, но только если на старте есть минимум 1 ч. л. водной фазы (лимонного сока или воды), а масло вводится тонкой струйкой. В сливочных соусах (Beurre Blanc) при нагреве выше 65°C молочные белки сворачиваются, и масло отсекается.',
+    practice: 'Если майонез или голландский соус расслоился, не выбрасывайте его: положите в чистую пиалу 1 ч. л. тёплой воды или 1/2 желтка и по каплям при взбивании вводите в него расслоившуюся массу.',
+    mistakes: 'Вылить всё масло к желтку сразу при ручном взбивании венчиком (без погружного блендера): капли масла не успевают дробиться и сливаются в сплошную лужу.',
+    experiment: 'Встряхните в двух баночках 30 мл масла и 10 мл уксуса: в первую добавьте 1/2 ч. л. дижонской горчицы, во вторую — ничего. Без горчицы смесь разделится за 20 секунд, с горчицей останется густой эмульсией.',
+    related: ['b4', 'd4', 'h4'],
+    summary: 'Парадокс эмульсии: чем больше жидкого масла вы вмешиваете в майонез, тем гуще он становится из-за тесной упаковки микрокапель.',
+    sources: 'McClements D.J. «Food Emulsions: Principles, Practices, and Techniques» (CRC Press).',
+    quiz: { q: 'Почему майонез становится густым при добавлении жидкого растительного масла к жидкому желтку?', opts: ['Миллиарды микрокапель масла плотно упаковываются в тонкой водной прослойке и мешают друг другу течь', 'Растительное масло полимеризуется от кислорода за 1 минуту', 'Лимонная кислота замораживает триглицериды', 'Желток впитывает масло внутрь клеточного ядра'], a: 0, exp: 'Высокая объёмная доля дисперсной фазы (70–80% капель масла в 20% воды) создаёт пространственную пробку, резко повышая вязкость.' }
+  },
+  {
+    id: 'd2', sec: 'D', title: 'Желатинизация крахмала: загущение мукой (ру) и чистыми крахмалами',
+    idea: 'Крахмальные гранулы не растворяются в холодной воде, но при нагревании до 60–85°C необратимо впитывают воду, разбухают в десятки раз и выпускают цепи амилозы, превращая жидкость в густой кисель или соус.',
+    what: 'Гранула крахмала состоит из линейных цепочек амилозы (20–30%) и ветвистого амилопектина (70–80%). Если всыпать сухую муку сразу в кипящий бульон, внешний слой комочка мгновенно клейстеризуется и создаст водонепроницаемую капсулу с сухой мукой внутри.',
+    why: 'Чтобы гранулы разошлись поодиночке перед нагревом, их сначала разделяют либо жиром (зажарка «ру» — мука + сливочное масло 1:1 для бешамеля и велюте), либо холодной водой (крахмальная болтушка — «сларри»). Причём чем сильнее обжарено «ру» (белое -> золотистое -> тёмно-ореховое для гамбо), тем сильнее разрушены цепи крахмала и тем слабее его загущающая способность, но ярче ореховый вкус.',
+    factors: 'Кукурузный крахмал требует доведения до 95°C и даёт матовый плотный гель; картофельный и тапиоковый клейстеризуются уже при 62–68°C, дают глянцевый прозрачный соус, но при долгом кипячении или перемешивании их огромные гранулы лопаются, и соус снова становится тягуче-жидким.',
+    practice: 'Соусы на пшеничной муке («ру») обязательно проваривайте при слабом кипении 3–5 минут, чтобы полностью ушёл вкус сырой муки и завершился выход амилозы. Соусы на картофельном крахмале снимайте с огня сразу после закипания.',
+    mistakes: 'Оставить ложку, побывавшую во рту, в соусе или киселе на крахмале: фермент альфа-амилаза человеческой слюны за 15 минут разрежет цепочки крахмала и превратит густой пудинг в воду.',
+    experiment: 'Загустите два стакана воды (по 200 мл): один — 10 г кукурузного крахмала, второй — 10 г картофельного. Оцените температуру схватывания и прозрачность после остывания.',
+    related: ['a4', 'b5', 'd4'],
+    summary: 'Разделяйте гранулы крахмала холодной водой или маслом до нагрева; мучной соус проваривайте 3–5 минут, а картофельный не переваривайте.',
+    sources: 'BeMiller J., Whistler R. «Starch: Chemistry and Technology» (Academic Press).',
+    quiz: { q: 'Почему тёмное (сильно обжаренное ореховое) ру из муки и масла загущает соус заметно слабее, чем белое ру?', opts: ['При высокой температуре происходит пиролиз (декстринизация) длинных полимерных цепей крахмала на короткие фрагменты', 'Сливочное масло полностью испаряется', 'Клейковина превращается в сахар', 'Тёмный цвет отражает инфракрасные лучи'], a: 0, exp: 'Термическая деструкция (декстринизация) укорачивает макромолекулы амилозы и амилопектина: аромат усиливается, но вязкость падает.' }
+  },
+  {
+    id: 'd3', sec: 'D', title: 'Бульоны, желатин и экстракция вкусовых веществ',
+    idea: 'Прозрачный, насыщенный и бархатистый бульон рождается при закладке в холодную воду и томлении при 85–92°C без бурного кипения, которое взбивает жир и белковые хлопья в мутную необратимую эмульсию.',
+    what: 'Вкус бульону дают водорастворимые свободные аминокислоты (глутамат), нуклеотиды (инозинат в мясе и рыбе), минеральные соли и сахара из овощей. А ощущение «тела», густоты и обволакивания на губах даёт исключительно желатин, вываренный из соединительной ткани, хрящей, кожи и суставов.',
+    why: 'При закладке мяса и костей в холодную воду и медленном нагреве растворимые саркоплазматические белки выходят в воду постепенно и при 65–75°C слипаются в крупные хлопья (пену), которые легко снять шумовкой. Если же бульон бурлит при 100°C, конвекционные потоки разбивают коагулировавший белок и вытопленный жир в микрочастицы — бульон становится мутным и сальным на вкус.',
+    factors: 'В чистом филе (куриная грудка, говяжья вырезка) мало коллагена — бульон из них будет водянистым. Лучшее сырьё для бульона: куриные каркасы, крылья и лапки, говяжьи суставы, хвосты и голяшка. Запекание костей и кореньев при 200°C перед варкой обогащает бульон продуктами реакции Майяра.',
+    practice: 'Варите рыбный бульон (фюме) не дольше 25–30 минут (рыбный коллаген растворяется мгновенно, а при долгой варке кости дают известковую горечь), куриный — 2–3 часа, говяжий костный — 5–8 часов при 88°C («улыбка бульона» — редкие одиночные пузырьки).',
+    mistakes: 'Солить бульон в начале варки по вкусу готового супа: по мере выкипания воды на 30–50% концентрация соли станет несъедобной (особенно если бульон пойдёт на уваривание в соус демиглас).',
+    experiment: 'Охладите в холодильнике две чашки куриного бульона: одну сваренную из филе грудки, вторую — из крылышек и спинки. Вторая застынет в плотное дрожащее желе за счёт природного желатина.',
+    related: ['c3', 'd4', 'e2'],
+    summary: 'Тело бульону дают хрящи и суставы (коллаген), вкус — мясо и запечённые коренья, а прозрачность — медленный нагрев с холодной воды без бурления.',
+    sources: 'This H. «Molecular Gastronomy: Exploring the Science of Flavor»; Escoffier «Le Guide Culinaire».',
+    quiz: { q: 'Почему бурное кипение (100°C) делает мясной бульон мутным и даёт неприятный сальный привкус?', opts: ['Турбулентные потоки дробят вытопленный жир и белковые хлопья в стабильную мутную эмульсию', 'При 100°C желатин превращается в нерастворимый мел', 'Вода разлагается на водород и кислород', 'Соль выпадает в белый осадок'], a: 0, exp: 'Механическое перемешивание кипящими пузырями эмульгирует жир с денатурированными белками, лишая бульон чистоты вкуса и прозрачности.' }
+  },
+  {
+    id: 'd4', sec: 'D', title: 'Реология соусов: выпаривание, расслоение и баланс текстуры',
+    idea: 'Идеальный соус должен обладать псевдопластичностью (разжижаться при сдвиге на языке, раскрывая аромат, но держаться на куске продукта в тарелке), а при выпаривании концентрируются только нелетучие вещества — соль, сахара, кислоты и желатин.',
+    what: 'При уваривании (редукции) вина, сливок или бульона улетают вода, этанол и лёгкие летучие эфиры, в то время как масса минеральных солей, кислот, белков и желатина остаётся неизменной в меньшем объёме.',
+    why: 'Сливки жирностью 33% можно смело кипятить и уваривать — высокая концентрация жировых глобул и мембранных белков не даёт казеину свернуться в хлопья. Но сметана (15–20%) или молоко в кислом томатном или винном соусе при кипячении мгновенно сворачиваются, так как в кислой среде (pH около 4.6 — изоэлектрическая точка казеина) белки теряют заряд и слипаются.',
+    factors: 'Температура и жирность при монтировании соуса сливочным маслом (Monter au beurre): холодные кубики масла вводят в соус, снятый с огня (при 55–65°C), непрерывно вращая сотейник.',
+    practice: 'Чтобы сметана 15–20% не свернулась в горячем бефстроганове или подливе, смешайте её предварительно с 1 ч. л. муки или крахмала и вводите в самом конце без бурного кипячения.',
+    mistakes: 'Использовать для уваривания дешёвое столовое вино с избытком кислоты и танинов (или солёный магазинный бульон): после редукции в 4 раза кислота и соль станут в 4 раза агрессивнее.',
+    experiment: 'Затяните 50 мл уваренного бульона двумя способами: 1) растопите в нём 20 г масла при кипении без помешивания; 2) снимите с огня (60°C) и активно вмешайте 20 г ледяного масла кубиками. Второй даст густой глянцевый соус, первый — лужу жира сверху.',
+    related: ['d1', 'd2', 'd3'],
+    summary: 'Уваривайте несолёную основу, используйте сливки от 30% для кипячения в кислых соусах и монтируйте холодное масло без огня.',
+    sources: 'McGee H. «On Food and Cooking» (гл. 11: Sauces); Culinary Institute of America «The Professional Chef».',
+    quiz: { q: 'Почему нежирная сметана (15%) сворачивается хлопьями при кипячении в кислом соусе, а жирные сливки (33%) — нет?', opts: ['В кислой среде при нагреве казеин коагулирует, а в жирных сливках избыток жировых шариков физически блокирует слияние белковых хлопьев', 'В жирных сливках вообще нет белков', 'Сметана состоит из чистого крахмала', 'Жир понижает температуру кипения до 40°C'], a: 0, exp: 'При pH вблизи 4.6 и высокой температуре казеиновые мицеллы агрегируют; только высокая доля жира или стабилизатор (крахмал) удерживает однородность.' }
+  },
+
+  // --- РАЗДЕЛ Д: ХИМИЯ ВКУСА И АРОМАТА ---
+  {
+    id: 'e1', sec: 'E', title: 'Пять базовых вкусов и ретроназальное обоняние',
+    idea: 'Язык различает только базовые нелетучие вкусы (сладкий, солёный, кислый, горький, умами), а 80% того, что мы называем «вкусом клубники, кофе или стейка», — это ретроназальное обоняние летучих молекул при выдохе через носоглотку.',
+    what: 'Вкусовые сосочки языка реагируют на растворённые в слюне ионы (Na+ — солёный, H+ — кислый) и молекулы (сахара, глутамат, алкалоиды). Но летучие ароматические соединения во время пережёвывания нагреваются во рту до 36°C и с потоком выдыхаемого воздуха поднимаются из глотки в обонятельный эпителий носа сзади.',
+    why: 'Эволюционно каждый вкус решает задачу выживания: сладкий сигнализирует о быстрой энергии (углеводы), умами — о строительном белке (L-глутамат), солёный — о балансе электролитов, кислый предупреждает о незрелости или брожении, а горький (у которого 25 типов рецепторов T2R!) защищает от растительных токсинов и алкалоидов.',
+    factors: 'Текстура и вязкость: слишком густой соус или переизбыток желатина замедляют высвобождение как вкусовых ионов к сосочкам языка, так и летучих эфиров в воздух ротовой полости — поэтому густые блюда требуют на 15–20% более яркой приправы.',
+    practice: 'Если блюдо кажется «плоским», хотя соли и кислоты достаточно, ему не хватает не базового вкуса, а верхних летучих нот для ретроназального обоняния: добавьте при подаче цедру цитруса, свежую зелень или несколько капель ароматного нерафинированного масла.',
+    mistakes: 'Путать остроту (капсаицин перца чили, пиперин чёрного перца, аллилизотиоцианат горчицы и хрена) со вкусом: это не вкус, а стимуляция болевых и температурных рецепторов тройничного нерва (TRPV1 и TRPA1).',
+    experiment: 'Зажмите нос пальцами, закройте глаза и разжуйте кусочек яблока и кусочек сырого картофеля (или посыпьте язык смесью сахара с корицей): с зажатым носом вы почувствуете только сладость и текстуру, а при открытии носа мгновенно вспыхнет аромат корицы или яблока.',
+    related: ['e2', 'e3', 'e4'],
+    summary: 'Язык даёт фундамент из 5 вкусов, тройничный нерв — остроту и холодок мяты, а носоглотка на выдохе создаёт всё богатство гастрономического профиля.',
+    sources: 'Shepherd G.M. «Neurogastronomy: How the Brain Creates Flavor and Why It Matters» (Columbia University Press).',
+    quiz: { q: 'Через какой физиологический механизм человек воспринимает тонкие оттенки ванили, жареного кофе или базилика во время еды?', opts: ['Через ретроназальное обоняние — движение летучих молекул из ротовой полости в носоглотку при жевании и выдохе', 'Через специальные ванильные сосочки на кончике языка', 'Через барабанную перепонку', 'Через рецепторы солёного вкуса'], a: 0, exp: 'Обонятельные рецепторы распознают тысячи летучих молекул, попадающих из рта в носовую полость через хоаны при выдохе.' }
+  },
+  {
+    id: 'e2', sec: 'E', title: 'Матрица баланса: соль, кислота, сладость, горечь и умами',
+    idea: 'Базовые вкусы взаимодействуют в мозге и на рецепторах нелинейно: соль подавляет горечь и усиливает сладость, кислота балансирует жирность и приторность, а глутамат с нуклеотидами дают восьмикратную синергию умами.',
+    what: 'Ионы натрия (соль) селективно блокируют передачу сигнала от рецепторов горького вкуса T2R, благодаря чему скрытая сладость и аромат продукта выходят на передний план. Кислота стимулирует слюноотделение и расщепляет жировую плёнку на языке.',
+    why: 'Синергия умами — доказанный биохимический феномен: рецептор умами (гетеродимер T1R1+T1R3) имеет основной участок связывания для L-глутамата (томаты, пармезан, соевый соус, водоросли комбу) и аллостерический карман для 5-рибонуклеотидов — инозината (мясо, рыба, курица) и гуанилата (сушёные белые грибы, шиитаке). Вместе они усиливают сигнал рецептора в 7–8 раз.',
+    factors: 'Избыток соли нельзя «разбавить» сахаром без увеличения объёма, но умеренную пересоленность смягчают жиры (сливки, сливочное масло, сметана), которые обволакивают вкусовые сосочки, и кислота.',
+    practice: 'Соединяйте источники глутамата и инозината/гуанилата в одном блюде: говядина + томатная паста, куриный бульон + сушёные грибы, паста с мясным рагу + пармезан, заправка «Цезарь» (пармезан + анчоусы).',
+    mistakes: 'Пытаться убрать горечь крепкого эспрессо или грейпфрута ложкой сахара вместо микроскопической щепотки соли: соль блокирует рецептор горечи эффективнее и не утяжеляет вкус.',
+    experiment: 'Сварите крепкий горьковатый кофе или нарежьте грейпфрут на две дольки: на одну уроните буквально 3–4 кристаллика мелкой соли. Горечь заметно отступит, а фруктово-цитрусовые ноты станут ярче.',
+    related: ['d3', 'e1', 'e4'],
+    summary: 'Соль гасит горечь и раскрывает аромат; кислота облегчает жир; глутамат (томаты/сыр) + нуклеотиды (мясо/грибы) умножают умами в 8 раз.',
+    sources: 'Zhang F. et al. (2008) «Molecular mechanism for the umami taste synergism», PNAS; Samin Nosrat «Salt, Fat, Acid, Heat».',
+    quiz: { q: 'Какое сочетание продуктов создаёт биохимическую синергию вкуса умами (усиление в 7–8 раз)?', opts: ['Глутамат (томаты, пармезан) + нуклеотиды инозинат/гуанилат (мясо, рыба, сушёные грибы)', 'Сахароза + фруктоза', 'Лимонная кислота + яблочная кислота', 'Растительное масло + вода'], a: 0, exp: 'Связывание нуклеотида меняет конформацию рецептора T1R1+T1R3, многократно прочнее удерживая молекулу глутамата.' }
+  },
+  {
+    id: 'e3', sec: 'E', title: 'Роль жиров и воды в раскрытии ароматов специй и трав',
+    idea: 'Большинство летучих ароматических молекул специй и пряностей гидрофобны (жирорастворимы), поэтому для их извлечения и доставки к рецепторам нужен тёплый жир, а не кипящая вода.',
+    what: 'Эфирные масла кумина (зиры), кориандра, кардамона, гвоздики, корицы, чеснока и перца состоят из терпенов, фенолов и альдегидов с неполярной структурой. В воде они почти не растворяются и быстро улетучиваются с паром.',
+    why: 'Растительное или топлёное масло выступает как неполярный органический растворитель: при прогреве специй в масле при 110–130°C клеточные стенки семян разрушаются, эфирные масла переходят в липидную фазу и равномерно распределяются по всему объёму блюда. Кроме того, жир на языке удерживает ароматные молекулы, обеспечивая долгое послевкусие.',
+    factors: 'Разделяйте «жёсткие» и «нежные» травы: розмарин, тимьян и шалфей содержат малолетучие терпены в плотных листьях — их закладывают в начале тушения. Кинза, петрушка, укроп и зелёный базилик богаты легколетучими эфирами (линалоол, гексеналь), которые улетучиваются за 3 минуты кипения — их добавляют только при выключении огня.',
+    practice: 'Используйте индийскую технику «тадка» (блуминг специй): сначала прогрейте цельные сухие специи на сухой сковороде 30–40 секунд до появления аромата, затем растолките и обжарьте в масле 20 секунд перед добавлением лука или жидкости.',
+    mistakes: 'Насыпать сухую зиру, куркуму или паприку прямо в кипящую воду супа в конце варки: специи останутся плавать пыльным порошком на поверхности и будут скрипеть на зубах.',
+    experiment: 'Размешайте по 1/4 ч. л. молотой паприки и зиры в ложке горячей воды и в ложке тёплого растительного масла. Масло мгновенно окрасится в рубиновый цвет (жирорастворимые каротиноиды) и раскроет глубокий пряный аромат.',
+    related: ['e1', 'e2', 'e4'],
+    summary: 'Сухие специи раскрывайте в тёплом масле; плотные травы (тимьян, розмарин) томят долго, а нежную зелень (базилик, кинзу) кладут в тарелку.',
+    sources: 'Farrimond S. «The Science of Spice» (DK); McGee «On Food and Cooking».',
+    quiz: { q: 'Почему сухие специи (зира, кориандр, куркума, паприка) рекомендуется кратковременно прогревать в масле, а не сыпать сразу в кипящую воду?', opts: ['Большинство их ароматических терпенов и пигментов жирорастворимы и переходят в масляную фазу при нагреве', 'В воде специи превращаются в соль', 'Масло полностью блокирует запах специй', 'Специи растворяются только при 250°C'], a: 0, exp: 'Неполярные эфирные масла и каротиноиды экстрагируются липидами, которые затем равномерно разносят вкус по блюду.' }
+  },
+  {
+    id: 'e4', sec: 'E', title: 'Как температура подачи и обжарка меняют восприятие вкуса',
+    idea: 'Чувствительность вкусовых рецепторов человека максимальна в диапазоне 20–35°C: ледяная еда кажется менее сладкой и ароматной, а обжигающе горячая скрывает тонкие оттенки под температурным сигналом.',
+    what: 'Кальциевые ионные каналы TRPM5 во вкусовых клетках языка, отвечающие за передачу сигнала сладкого, горького и умами в мозг, сильно зависят от температуры: при 15°C их проводимость в 3–4 раза ниже, чем при 35°C.',
+    why: 'Именно поэтому растаявшее при комнатной температуре мороженое или тёплый лимонад кажутся приторно-сладкими (в них закладывают избыток сахара с расчётом на подачу при -12°C или +4°C). С другой стороны, холодный суп из холодильника не пахнет, так как давление насыщенного пара летучих молекул при +5°C минимально, а жир застыл.',
+    factors: 'При сухой обжарке орехов, кунжута и специй (140–160°C) запускается реакция Штреккера (ветвь реакции Майяра), превращающая непахнущие аминокислоты в алкилпиразины с мощным жареным и ореховым ароматом.',
+    practice: 'Если вы готовите блюдо для холодной подачи (паштет, террин, картофельный салат, окрошка, гаспачо), приправляйте его солью, кислотой и перцем примерно на 20% ярче в тёплом виде — после охлаждения до +6°C баланс выровняется.',
+    mistakes: 'Дегустировать и окончательно солить суп в момент бурного кипения при 95°C: обожжённые сосочки не чувствуют тонкого баланса, и остывший до 60°C суп окажется пересоленным.',
+    experiment: 'Попробуйте один и тот же сладкий ягодный морс или сыр в двух состояниях: прямо из холодильника (+4°C) и нагретым до комнатной температуры (+22°C). Тёплый образец покажется значительно слаще и ароматнее.',
+    related: ['b1', 'e1', 'e2'],
+    summary: 'Холод приглушает сладость и аромат (блюда холодной подачи солите и приправляйте смелее), а финальную пробу горячих блюд снимайте при температуре подачи (55–65°C).',
+    sources: 'Talavera K. et al. (2005) «Heat activation of TRPM5 underlies thermal sensitivity of sweet taste», Nature.',
+    quiz: { q: 'Почему растаявшее мороженое кажется приторно-сладким по сравнению с замороженным?', opts: ['Рецепторные ионные каналы TRPM5 на языке при 25–35°C передают сигнал сладости в несколько раз интенсивнее, чем при 0°C', 'При таянии лактоза превращается в чистую сахарозу', 'Холод испаряет воду из мороженого', 'В тепле пропадает молочный жир'], a: 0, exp: 'Каналы TRPM5 термочувствительны: холод подавляет их активность, поэтому рецептура мороженого содержит повышенную долю сахара.' }
+  },
+
+  // --- РАЗДЕЛ Е: ФЕРМЕНТАЦИЯ И ХРАНЕНИЕ ---
+  {
+    id: 'f1', sec: 'F', title: 'Молочнокислое брожение: квашение овощей, йогурт и кефир',
+    idea: 'Молочнокислые бактерии выдерживают концентрацию соли 2–3%, подавляющую гнилостную микрофлору, и превращают сахара продукта в молочную кислоту, которая консервирует овощи и сворачивает казеин молока в нежный гель йогурта.',
+    what: 'На поверхности свежих листьев капусты и огурцов живут бактерии Leuconostoc mesenteroides и Lactobacillus plantarum. Когда мы добавляем 2% соли и убираем доступ кислорода (под рассолом), аэробные плесени и гнилостные бактерии погибают, а галофильные лактобактерии начинают размножаться.',
+    why: 'По мере накопления молочной кислоты pH рассола падает ниже 4.2, что полностью блокирует развитие патогенов (включая Clostridium botulinum). В молоке (при производстве йогурта на культурах L. bulgaricus и S. thermophilus при 40–43°C) молочная кислота нейтрализует отрицательный заряд казеиновых мицелл (до pH 4.6), и они сцепляются в пористую трёхмерную губку, удерживающую сыворотку.',
+    factors: 'Точная дозировка соли для овощей: ровно 2–2.5% от общей массы овощей и воды. Меньше 1.5% — ферменты пектиназы размягчат капусту в слизь; больше 4% — затормозятся сами лактобактерии.',
+    practice: 'При домашнем квашении взвешивайте овощи вместе с водой на кухонных весах и умножайте сумму на 0.02 (2% нейодированной соли). Следите, чтобы ни один кусочек не торчал над поверхностью рассола на воздухе.',
+    mistakes: 'Нагревать домашний йогурт при сквашивании выше 48–50°C: термофильные культуры погибают или испытывают тепловой шок, а казеин сжимается с отделением кислой сыворотки.',
+    experiment: 'Сквасьте две баночки тёплого молока с ложкой живого йогурта: одну из обычного пастеризованного молока, вторую из молока, которое вы предварительно прогрели до 85°C на 10 минут и остудили до 42°C. Вторая будет в полтора раза гуще (денатурированный сывороточный лактоглобулин встроится в каркас казеина).',
+    related: ['a2', 'd4', 'f4'],
+    summary: 'Для хрустящей лактоферментации овощей нужны 2% соли по весу и полное погружение под рассол без кислорода; для густого йогурта — предварительный нагрев молока до 85°C и сквашивание при 42°C.',
+    sources: 'Sandor Katz «The Art of Fermentation»; McGee «On Food and Cooking».',
+    quiz: { q: 'Какую роль играет 2%-ная концентрация соли на старте квашения капусты или огурцов?', opts: ['Подавляет гнилостные бактерии и вытягивает клеточный сок, давая фору солеустойчивым молочнокислым бактериям', 'Убивает абсолютно все микроорганизмы в банке', 'Повышает pH рассола до щелочного уровня', 'Превращает клетчатку в белок'], a: 0, exp: 'Молочнокислые бактерии толерантны к 2–3% NaCl, тогда как большинство нежелательных гнилостных микробов при таком осмотическом давлении угнетаются.' }
+  },
+  {
+    id: 'f2', sec: 'F', title: 'Охлаждение, замораживание и физика кристаллов льда',
+    idea: 'Главный враг текстуры при заморозке — не сам холод, а медленное прохождение зоны от 0°C до -5°C, при котором внутри тканей растут крупные кинжалообразные кристаллы льда, разрывающие клеточные мембраны.',
+    what: 'Вода при замерзании расширяется примерно на 9%. Если продукт замерзает медленно (например, большой тёплый кусок мяса или ведро ягод в слабой морозилке), образуется мало центров кристаллизации, но вокруг каждого вырастают огромные острые ледяные иглы.',
+    why: 'Крупные кристаллы прокалывают липидные мембраны клеток животных и клеточные стенки растений. При разморозке клеточный сок вытекает в межклеточное пространство (в мясе это розовая лужа в пакете — «дрип-лосс», а клубника превращается в вялую тряпочку). При быстрой (шоковой) заморозке образуются миллионы микрокристаллов, не рвущих клетки.',
+    factors: 'Температурные колебания в морозилке (режим No Frost с циклами оттайки) вызывают рекристаллизацию (оствальдовское созревание): мелкие кристаллы тают и намерзают на крупные, а с открытой поверхности сублимируется влага («морозный ожог» — белые сухие пятна на мясе).',
+    practice: 'Перед заморозкой охладите продукт в обычном холодильнике до +2°C, нарежьте плоскими порционными кусками толщиной не более 2–3 см, плотно упакуйте без воздушных карманов и разложите в один слой на самой холодной полке морозилки (-18...-24°C). Размораживайте мясо медленно в холодильнике при +4°C.',
+    mistakes: 'Размораживать крупный кусок мяса или рыбы в горячей воде (40–50°C): внешний слой попадает в зону размножения бактерий и теряет сок, пока центр остаётся ледяным.',
+    experiment: 'Заморозьте две горсти ягод (или кусочки тофу/мяса): одну рассыпьте тонким слоем на предварительно промороженном в морозилке металлическом противне (высокая теплопроводность), вторую сложите плотным комом в пластиковый контейнер. Первая замёрзнет в 4 раза быстрее и сохранит больше сока.',
+    related: ['c1', 'f4', 'g3'],
+    summary: 'Замораживайте максимально быстро (плоскими порциями на холодном металле без воздуха), а размораживайте медленно в холодильнике при +4°C.',
+    sources: 'Fellows P.J. «Food Processing Technology: Principles and Practice» (Woodhead Publishing).',
+    quiz: { q: 'Почему быстрая заморозка тонким слоем сохраняет сочность мяса и ягод лучше, чем медленная заморозка крупным куском?', opts: ['Образуются мелкие внутриклеточные кристаллы льда, которые не разрывают клеточные мембраны', 'При быстрой заморозке вода не превращается в лёд', 'Быстрый холод уничтожает коллаген', 'Медленная заморозка испаряет белки'], a: 0, exp: 'Высокая скорость теплоотвода создаёт множество микроскопических ядер кристаллизации вместо разрушительных крупных ледяных игл.' }
+  },
+  {
+    id: 'f3', sec: 'F', title: 'Окисление жиров (прогоркание) и ферментативное потемнение',
+    idea: 'Орехи, цельнозерновая мука и растительные масла портятся не от бактерий, а от свободнорадикального окисления ненасыщенных жирных кислот под действием света, тепла и кислорода.',
+    what: 'Ненасыщенные жиры (особенно полиненасыщенные омега-3 и омега-6 в льняном, ореховом, подсолнечном масле и жирной рыбе) имеют двойные углеродные связи C=C. Фотоны света и тепло выбивают атом водорода у двойной связи, запускается цепная реакция с кислородом воздуха, образуются гидропероксиды, которые распадаются на летучие альдегиды и кетоны (гексаналь) с резким запахом старой масляной краски и картона.',
+    why: 'Второй частый механизм порчи внешнего вида — ферментативное потемнение (яблоки, картофель, авокадо, бананы, грибы). При разрезе ножом разрушаются вакуоли клеток, и фермент полифенолоксидаза (ПФО) в присутствии кислорода окисляет бесцветные фенолы в коричневые меланины.',
+    factors: 'Окисление жиров ускоряют ультрафиолет (прозрачные бутылки на подоконнике), нагрев (плита рядом со шкафом) и ионы металлов (медь, железо). Полифенолоксидаза в яблоках и авокадо блокируется кислотой (pH ниже 4.0), отсутствием кислорода (плёнка вконтакт или вода) или бланшированием при 80°C.',
+    practice: 'Храните орехи, кунжут, мак, цельнозерновую муку и нерафинированные масла в тёмной таре в холодильнике (или морозилке для орехов — они не замерзают в камень из-за минимума воды, но не прогоркают годами).',
+    mistakes: 'Держать бутылку оливкового масла Extra Virgin в прозрачном стекле вплотную к горячей плите: тепло и свет разрушают антиоксиданты (полифенолы) за несколько недель.',
+    experiment: 'Разрежьте яблоко на 4 дольки: первую оставьте на воздухе, вторую смажьте лимонным соком (снижение pH), третью опустите в холодную воду (изоляция от кислорода), четвёртую ошпарьте кипятком на 20 секунд (денатурация фермента ПФО). Сравните потемнение через 30 минут.',
+    related: ['b1', 'e3', 'f4'],
+    summary: 'Берегите масла и орехи от трёх врагов — света, тепла и кислорода; от потемнения нарезанных фруктов защищают лимонный сок, вода или бланширование.',
+    sources: 'Frankel E.N. «Lipid Oxidation» (Oily Press); McGee «On Food and Cooking».',
+    quiz: { q: 'Какой процесс вызывает появление горького прогорклого запаха у старых грецких орехов и растительного масла?', opts: ['Цепное свободнорадикальное автоокисление ненасыщенных жирных кислот кислородом под действием света и тепла', 'Молочнокислое брожение сахаров', 'Реакция Майяра при комнатной температуре', 'Кристаллизация воды'], a: 0, exp: 'Двойные связи ненасыщенных жиров атакуются свободными радикалами и кислородом с распадом до летучих прогорклых альдегидов.' }
+  },
+  {
+    id: 'f4', sec: 'F', title: 'Пищевая безопасность: опасная зона (4–60°C), активность воды и ботулизм',
+    idea: 'Безопасность домашней кулинарии строится на правиле «правило 2–4 часов в зоне +4...+60°C» и понимании того, что споры ботулизма выживают при обычном кипячении (100°C) и прорастают в бескислородной среде с низкой кислотностью (pH выше 4.6).',
+    what: 'В температурном коридоре от +4°C до +60°C («опасная зона») патогенные бактерии (Staphylococcus aureus, Salmonella, Clostridium perfringens, Bacillus cereus в варёном рисе) в благоприятных условиях могут удваивать численность примерно каждые 20–30 минут. При этом некоторые бактерии выделяют термостабильные токсины, которые НЕ разрушаются при повторном кипячении.',
+    why: 'Clostridium botulinum — строгий анаэроб. В банке с маринованными грибами, мясной тушёнкой или в бутылке домашнего чесночного масла без доступа воздуха при pH выше 4.6 и комнатной температуре споры прорастают и вырабатывают ботулотоксин часто без явных признаков порчи (крышка иногда вздувается, но отсутствие вздутия безопасность не подтверждает).',
+    factors: 'Два барьера против патогенов помимо холода: кислотность (pH ниже 4.6 полностью блокирует прорастание спор ботулизма) и низкая активность воды (ниже примерно 0.85 подавляется рост большинства бактерий, а для C. botulinum порог выше, около 0.93–0.94) (вяление с солью, густые джемы с сахаром выше 65%).',
+    practice: 'Охлаждайте кастрюлю с супом или пловом быстро (переложив в широкий мелкий контейнер или поставив кастрюлю в раковину с холодной водой) и убирайте в холодильник не позднее чем через 2 часа после готовки. Домашнее масло с сырым чесноком или травами храните только в холодильнике и расходуйте в течение нескольких суток (рекомендации разных ведомств — до 7 дней); при комнатной температуре не храните совсем.',
+    mistakes: 'Оставлять сваренный рис, макароны или бульон остывать на выключенной плите на всю ночь (8–10 часов при 25–35°C): споры Bacillus cereus в рисе выживают при варке, прорастают за ночь и выделяют рвотный токсин цереулид, устойчивый к разогреву.',
+    experiment: 'Измерьте термометром скорость остывания 2 литров горячей воды в глубокой закрытой кастрюле на столе и в широком открытом лотке, поставленном в миску с холодной водой: в кастрюле остывание обычно занимает заметно дольше (часы). Осторожно: 2 л кипятка — риск ожога.',
+    related: ['c5', 'f1', 'f2'],
+    summary: 'Не держите готовую еду при комнатной температуре дольше 2 часов; никогда не храните домашнее масло с сырым чесноком или травами при комнатной температуре; домашнее «подкисление» без контроля pH надёжным барьером считать нельзя.',
+    sources: 'FDA «Food Code»; USDA FSIS «Danger Zone (40°F - 140°F)»; CDC Botulism Prevention Guidelines.',
+    quiz: { q: 'Почему домашнее оливковое масло с зубчиками свежего чеснока опасно хранить при комнатной температуре недели и месяцы?', opts: ['В бескислородной среде масла вокруг влажного некислого чеснока (pH ~5.8) могут прорасти споры Clostridium botulinum', 'Чеснок превращает масло в трансжиры за 24 часа', 'В масле активно размножаются пекарские дрожжи', 'Чеснок растворяет стеклянную бутылку'], a: 0, exp: 'Сырой чеснок имеет низкую кислотность (pH 5.3–6.0) и содержит влагу, а слой масла перекрывает доступ кислорода — идеальные условия для ботулизма при комнатной температуре.' }
+  },
+
+  // --- РАЗДЕЛ Ж: ФИЗИКА КУХНИ ---
+  {
+    id: 'g1', sec: 'G', title: 'Теплопроводность, конвекция и излучение на кухне',
+    idea: 'На кухне тепло передаётся тремя физическими путями: прямым контактом молекул (теплопроводность сковороды), движением потоков среды (конвекция воды и воздуха) и инфракрасными электромагнитными волнами (угли мангала и гриль-ТЭН духовки).',
+    what: 'Когда стейк лежит на сковороде, тепло от металла к нижней грани мяса идёт через теплопроводность, а от нижней грани к центру куска — тоже через медленную теплопроводность самой ткани мяса (которая на 75% состоит из воды и проводит тепло в 80 раз хуже алюминия).',
+    why: 'Воздух — отличный теплоизолятор: его теплопроводность и плотность ничтожны по сравнению с водой. Поэтому вы можете без ожога засунуть руку в духовку при 200°C на 5 секунд, но мгновенно обожжётесь в воде при 80°C (плотность воды в ~800 раз выше воздуха, и число соударений молекул с кожей огромно). Вентилятор конвекции в духовке сдувает пограничный прохладный слой воздуха вокруг продукта, ускоряя теплообмен на 25–30%.',
+    factors: 'При включении верхнего гриля в духовке или жарке шашлыка над углями до 70% тепла передаётся инфракрасным излучением (мощность пропорциональна четвёртой степени температуры источника по закону Стефана — Больцмана и убывает обратно пропорционально квадрату расстояния).',
+    practice: 'При включении вентилятора конвекции в духовке уменьшайте температуру рецепта на 15–20°C (например, 180°C с конвекцией вместо 200°C в статике), чтобы края выпечки не сгорели раньше, чем прогреется центр.',
+    mistakes: 'Плотно заставлять противень в духовке вплотную к стенкам или ставить два глухих противня друг над другом в режиме статики: вы перекрываете конвекционные потоки горячего воздуха.',
+    experiment: 'Запеките две порции картофеля дольками при 200°C: одну в статическом режиме, вторую с включённым вентилятором конвекции. Вторая покроется хрустящей корочкой на 10–12 минут раньше.',
+    related: ['g2', 'g3', 'g4'],
+    summary: 'Металл и вода передают тепло мгновенно, а воздух — медленно; конвекция сдувает изолирующий воздушный кокон, а гриль и угли жарят инфракрасными лучами.',
+    sources: 'Myhrvold N. «Modernist Cuisine» (Vol. 2: Techniques and Equipment).',
+    quiz: { q: 'Почему вода при 90°C обжигает руку мгновенно, а сухой воздух в духовке при 180°C можно терпеть несколько секунд?', opts: ['Плотность и теплопроводность воды в сотни раз выше воздуха, поэтому она передаёт коже огромный поток тепловой энергии в секунду', 'Воздух в духовке всегда имеет температуру 30°C', 'Вода нагревается инфракрасными лучами изнутри руки', 'Кожа отражает молекулы азота'], a: 0, exp: 'Тепловой поток определяется теплопроводностью и теплоёмкостью среды: плотная вода передаёт энергию в десятки раз быстрее разреженного воздуха.' }
+  },
+  {
+    id: 'g2', sec: 'G', title: 'Испарение воды и скрытая теплота парообразования (2260 Дж/г)',
+    idea: 'Испарение воды — самый мощный холодильник на кухне: чтобы превратить 1 грамм воды при 100°C в пар при 100°C, требуется в 5.4 раза больше энергии, чем чтобы нагреть этот же грамм воды от 0°C до кипения.',
+    what: 'Удельная теплоёмкость жидкой воды — 4.18 Дж/(г·°C) (то есть от 0°C до 100°C нужно 418 Дж на грамм). Но удельная теплота парообразования воды равна 2260 Дж/г! Пока на поверхности грибов, мяса или картофеля остаётся жидкая вода, вся мощность вашей конфорки тратится на разрыв водородных связей воды, и температура поверхности жёстко заморожена на отметке 100°C.',
+    why: 'Реакция Майяра требует минимум 130–140°C. Следовательно, перегруженная продуктами сковорода, куда выделился сок, физически не может поджарить еду — она будет варить её при 100°C, пока не выкипит последняя капля жидкости (а к этому моменту продукт внутри уже безнадёжно переготовится).',
+    factors: 'Площадь испарения и высота бортиков: в широкой сковороде с низкими наклонными бортами пар быстро уходит вверх, а в узком сотейнике с высокими отвесными стенками пар конденсируется и стекает обратно.',
+    practice: 'Жарьте грибы, мясо и овощи небольшими партиями в один разреженный слой, оставляя между кусочками минимум 1–1.5 см свободного дна сковороды для мгновенного уноса пара.',
+    mistakes: 'Накрывать крышкой сковороду при жарке картофеля или стейка, если вы хотите получить хрустящую корочку: конденсат с крышки вернёт температуру поверхности к 100°C и размягчит крахмальную корку.',
+    experiment: 'Высыпьте на сковороду 400 г нарезанных шампиньонов горой и 100 г шампиньонов в один свободный слой. Малая порция подрумянится за 4 минуты, а большая сначала даст полстакана воды и будет тушиться 12 минут.',
+    related: ['b1', 'c2', 'g1'],
+    summary: 'На испарение 1 г воды уходит 2260 Дж энергии — пока на сковороде есть лужица сока, температура не поднимется выше 100°C и румяной корочки не будет.',
+    sources: 'Harold McGee «On Food and Cooking»; Modernist Cuisine (Vol. 1: Physics of Water).',
+    quiz: { q: 'Почему на переполненной сковороде мясо и грибы тушатся и остаются серыми вместо образования румяной корочки?', opts: ['Выделившаяся влага требует огромной энергии на испарение (2260 Дж/г) и удерживает температуру поверхности на уровне 100°C — ниже порога реакции Майяра', 'В тесноте кусочки экранируют друг друга от гравитации', 'Белки грибов поглощают углекислый газ', 'Масло испаряется быстрее воды'], a: 0, exp: 'Скрытая теплота парообразования воды в 5.4 раза выше энергии нагрева от 0 до 100°C. Пока вода не выкипит, поверхность не преодолеет барьер в 100°C.' }
+  },
+  {
+    id: 'g3', sec: 'G', title: 'Материаловедение посуды: чугун, сталь, алюминий и покрытия',
+    idea: 'Идеальной сковороды из одного металла не существует, потому что в физике разделены два свойства: теплопроводность (равномерность нагрева без пятен) и объёмная теплоёмкость (запас тепла, не падающий при выкладывании холодного стейка).',
+    what: 'Алюминий (теплопроводность ~205 Вт/(м·К)) и медь (~390 Вт/(м·К)) проводят тепло великолепно — дно прогревается равномерно от центра к краям. Чугун (~50 Вт/(м·К)) и особенно нержавеющая сталь (~15 Вт/(м·К)) проводят тепло плохо и при быстром нагреве дают горячие пятна ровно над конфоркой.',
+    why: 'Зато у толстого чугуна огромная объёмная теплоёмкость (масса × удельная теплоёмкость): если предварительно греть чугунную сковороду 7–10 минут, она накопит столько джоулей, что холодный стейк из холодильника не просадит её температуру ниже 150°C. А современная многослойная посуда (Clad / Tri-ply) объединяет лучшее: внутри зажат толстый диск алюминия или меди (для равномерности), а снаружи — инертная и прочная нержавеющая сталь.',
+    factors: 'Антипригарное покрытие (PTFE / тефлон) нельзя греть впустую выше 250–260°C (начинается термодеструкция полимера) — оно создано для яичницы, рыбы и блинов при 140–180°C, а для стейков при 220°C нужны чугун, углеродистая или многослойная нержавеющая сталь.',
+    practice: 'На сковороде из нержавеющей стали без покрытия белки не прилипнут, если соблюсти правило эффекта Лейденфроста: разогрейте сухую сталь так, чтобы капля воды не шипела и не испарялась, а каталась упругим ртутным шариком (около 190°C), затем влейте масло и через 10 секунд кладите продукт.',
+    mistakes: 'Класть стейк на чугунную сковороду через 1 минуту после включения плиты: из-за низкой теплопроводности центр уже горячий, а края ещё холодные.',
+    experiment: 'Насыпьте тонкий слой муки (или положите ломтики хлеба) на тонкую стальную сковороду и на сковороду с толстым многослойным алюминиевым дном на 2 минуты: мука покажет точную тепловую карту вашей конфорки.',
+    related: ['c2', 'g1', 'g2'],
+    summary: 'Чугун — чемпион по тепловой инерции (долго греть, мощно жарить); многослойная нержавейка с алюминием — чемпион по равномерности и соусам деглассе; антипригар — только для нежного нагрева до 200°C.',
+    sources: 'Wolke R.L. «What Einstein Told His Cook»; Modernist Cuisine (Vol. 2).',
+    quiz: { q: 'В чём главное физическое преимущество тяжёлой чугунной сковороды перед тонкой алюминиевой при жарке стейка?', opts: ['Высокая теплоёмкость (тепловая инерция) за счёт большой массы металла, не дающая температуре резко упасть при контакте с холодным мясом', 'Чугун проводит тепло в 10 раз быстрее меди и алюминия', 'К чугуну не прилипает вода при 0°C', 'Чугун нагревается только по краям'], a: 0, exp: 'По теплопроводности чугун уступает алюминию в 4 раза, но за счёт толстых стенок и плотности запасает огромный объём тепловой энергии.' }
+  },
+  {
+    id: 'g4', sec: 'G', title: 'Толщина продукта, закон Фурье и остаточное тепло (Carryover Cooking)',
+    idea: 'Время приготовления куска мяса или овоща растёт пропорционально КВАДРАТУ его толщины: если стейк стал в 2 раза толще, внутри он будет прогреваться в 4 раза дольше.',
+    what: 'Согласно уравнению теплопроводности Фурье, характерное время диффузии тепла внутрь тела определяется формулой t ~ L² / alpha, где L — расстояние от поверхности до центра (половина толщины), а alpha — температуропроводность продукта (~1.3×10⁻⁷ м²/с для мяса и овощей).',
+    why: 'Из этого же закона вытекает феномен остаточного тепла (Carryover Cooking): когда вы снимаете жаркое с огня, его внешний слой разогрет до 140–180°C, а центр — до 55°C. Тепло всегда течёт от горячего к холодному! Даже на тарелке внешний горячий слой продолжает отдавать энергию внутрь к прохладному центру, повышая его температуру ещё на 3–8°C в течение 5–15 минут после выключения плиты.',
+    factors: 'Чем выше была температура жарки/духовки и чем массивнее кусок (сферический или цилиндрический ростбиф, целая птица), тем сильнее выражен инерционный догрев центра.',
+    practice: 'Нарезайте овощи для одного рагу с учётом их плотности и геометрии (морковь — мельче картофеля и кабачка). Крупный ростбиф или целую курицу вынимайте из духовки, когда термометр в центре показывает на 4–5°C ниже вашей целевой температуры готовности.',
+    mistakes: 'Увеличить время запекания в 2 раза при увеличении толщины куска мяса в 2 раза: при той же температуре духовки края пересохнут, а центр останется сырым (нужно снизить температуру духовки и увеличить время в ~3–3.5 раза).',
+    experiment: 'Сварите два кубика картофеля: со стороной 1 см и со стороной 2 см. Кубик 1 см сварится за ~5 минут, а кубик 2 см — не за 10, а за 18–20 минут (квадратичная зависимость).',
+    related: ['c1', 'c5', 'g1'],
+    summary: 'Удвоение толщины куска учетверяет время прогрева его центра, а после снятия с огня горячие края догревают середину ещё на 3–7°C.',
+    sources: 'Fourier J. «The Analytical Theory of Heat»; Douglas Baldwin «Sous Vide Mathematical Modeling».',
+    quiz: { q: 'Во сколько раз примерно увеличится время прогрева центра стейка или клубня картофеля, если его толщину увеличить в 2 раза?', opts: ['Примерно в 4 раза (квадратичная зависимость по закону теплопроводности Фурье)', 'Ровно в 2 раза', 'Время не изменится, если накрыть крышкой', 'Уменьшится в 2 раза за счёт площади'], a: 0, exp: 'Время диффузии тепла пропорционально квадрату характерного размера (L²): увеличение толщины в 2 раза увеличивает время прогрева центра в 2² = 4 раза.' }
+  },
+
+  // --- РАЗДЕЛ З: КУЛИНАРНАЯ ЛАБОРАТОРИЯ (5 ПРАКТИЧЕСКИХ ЭКСПЕРИМЕНТОВ) ---
+  {
+    id: 'h1', sec: 'H', title: 'Лаборатория №1: Ускорение реакции Майяра через pH (Опыт с луком и содой)',
+    idea: 'Практический эксперимент, доказывающий, что повышение pH среды с помощью щепотки пищевой соды ускоряет реакцию Майяра в 3–4 раза, но одновременно разрушает пектин клеточных стенок.',
+    what: 'Мы берём 200 г репчатого лука, нарезанного перьями, делим на две равные порции по 100 г и обжариваем на двух одинаковых сковородах (или последовательно) при средней температуре с 10 г масла. В образец Б добавляем ровно 1/8 ч. л. (0.6 г) пищевой соды.',
+    why: 'Первый шаг реакции Майяра — нуклеофильная атака неподелённой пары электронов азота аминогруппы (-NH2) на карбонильный углерод сахара. В кислой или нейтральной среде аминогруппа протонирована (-NH3+) и неактивна. Щелочная сода (NaHCO3) отбирает протон, возвращая группе -NH2 высокую реакционную способность. Одновременно щелочная среда запускает бета-элиминацию пектина в клеточных стенках лука.',
+    factors: 'Дозировка соды критична: более 0.2% от массы лука даст мыльный привкус и мгновенно превратит лук в пюре.',
+    practice: 'Используйте микрощепотку соды (на кончике ножа на 300 г лука), когда вам нужна быстрая тёмно-янтарная луковая база для французского лукового супа, гуляша или индийского карри за 12 минут вместо 45 минут.',
+    mistakes: 'Добавлять соду при жарке лука, если в блюде нужна упругая хрустящая текстура лепестков.',
+    experiment: 'Зафиксируйте секундомером момент появления золотисто-коричневого цвета: образец Б с содой станет янтарным уже на 5–6-й минуте и приобретёт кремовую текстуру, тогда как контрольный образец А будет ещё полупрозрачным.',
+    related: ['a5', 'b1', 'e2'],
+    summary: 'Эксперимент наглядно подтверждает: pH > 7.5 работает как химический турбонаддув для реакции Майяра и размягчения растительного пектина.',
+    sources: 'J. Kenji López-Alt «The Food Lab»; Lersch M. «Khymos: Accelerating the Maillard reaction».',
+    quiz: { q: 'Какой побочный текстурный эффект возникает при добавлении пищевой соды к жарящемуся луку помимо быстрого потемнения?', opts: ['Щелочная среда разрушает пектин клеточных стенок, быстро превращая лук в мягкое пюре', 'Лук становится твёрдым и стеклянным', 'Лук перестаёт выделять влагу и остаётся сырым', 'Окраска лука становится ярко-синей'], a: 0, exp: 'При повышенном pH пектин подвергается деполимеризации (бета-элиминации), и растительная ткань теряет структурную жёсткость.' }
+  },
+  {
+    id: 'h2', sec: 'H', title: 'Лаборатория №2: Сухой посол против кислотного маринада на курином филе',
+    idea: 'Контролируемое сравнение трёх образцов куриного филе наглядно показывает, как соль удерживает влагу при нагреве, а уксусно-лимонный маринад, вопреки мифам, высушивает мышечное волокно.',
+    what: 'Три одинаковых медальона из куриной грудки по 100 г: Образец №1 — без всего (контроль); Образец №2 — сухой посол (1.2 г соли за 2 часа до готовки); Образец №3 — кислый маринад (20 мл лимонного сока + масло без соли на 2 часа). Все три запекаются одновременно до внутренней температуры 66°C.',
+    why: 'Точное взвешивание до и после термообработки показывает: контрольный образец №1 теряет около 16–18% массы; образец №2 с предварительным сухим посолом теряет всего 8–10% массы и остаётся нежным; образец №3 из кислого маринада белеет снаружи ещё в сыром виде и после духовки теряет до 22–25% влаги, становясь рыхлым и меловым.',
+    factors: 'При pH ниже 5.0 (лимонный сок и уксус) мышечные белки приближаются к своей изоэлектрической точке (pH ~5.2): суммарный заряд белковых нитей обнуляется, они перестают отталкиваться, сжимаются и выдавливают воду ещё до нагрева.',
+    practice: 'Если хотите добавить цитрусовую или винную кислинку к мясу и птице, добавляйте сок лимона или цедру за 10–15 минут до жарки или прямо в готовый соус на тарелке.',
+    mistakes: 'Держать нежное филе птицы или рыбы в лимонном соке часами (если только вы не готовите перуанское севиче, где кислота заменяет огонь).',
+    experiment: 'Проведите взвешивание трёх кусочков на кухонных весах с точностью до 1 грамма до и после запекания и запишите процент потери влаги в «Журнал экспериментов» этого приложения.',
+    related: ['c1', 'c4', 'c5'],
+    summary: 'Взвешивание доказывает: ионы соли раздвигают белковые нити и снижают потерю сока вдвое, а долгое кислотное маринование сжимает белки и сушит мясо.',
+    sources: 'Offer G., Knight P. «The structural basis of water-holding in meat».',
+    quiz: { q: 'Почему длительное вымачивание мяса в кислом маринаде (pH ~5.0) фактически снижает его сочность при жарке?', opts: ['Вблизи изоэлектрической точки (pH 5.2) белки теряют заряд, сближаются и вытесняют внутриклеточную воду', 'Кислота испаряет жир при +4°C', 'Лимонный сок блокирует теплопроводность духовки', 'Кислота превращает миозин в крахмал'], a: 0, exp: 'При pH ~5.2 положительные и отрицательные заряды на миофибриллах компенсируют друг друга, электростатическое отталкивание исчезает, и волокна сжимаются.' }
+  },
+  {
+    id: 'h3', sec: 'H', title: 'Лаборатория №3: Температурная карта куриного яйца (63°C, 70°C и 100°C)',
+    idea: 'Яичный белок и желток — это не два однородных вещества, а ансамбль из десятка разных протеинов, каждый из которых сворачивается при своей строго определённой температуре.',
+    what: 'В белке овотрансферрин (кональбумин, 12% белков) сворачивается уже при 61–62°C, образуя нежный молочный гель, а главный белок овальбумин (54%) требует для плотного схватывания 80–84°C! Желток же полностью загустевает в кремовую помадку в узком коридоре 65–70°C.',
+    why: 'Отсюда парадокс японского яйца «онсэн-тамаго» (выдержка при 63–64°C в течение 45 минут): желток и нежный белок получают одинаково бархатистую кремовую консистенцию, потому что овальбумин при 64°C остаётся жидким! А при кипячении при 100°C дольше 10 минут серосодержащие аминокислоты белка выделяют сероводород (H2S), который мигрирует к богатому железом желтку и образует на границе зелёно-серый сульфид железа (FeS). Важно: при 63–64°C сальмонелла в яйце гарантированно не уничтожается — детям, беременным, пожилым и людям с ослабленным иммунитетом такие яйца лучше не есть (берите пастеризованные или варите до плотного белка и желтка).',
+    factors: 'Старость яйца и pH: в свежем яйце много растворённого CO2 (pH белка ~7.6), поэтому белок плотно сцеплен с мембраной скорлупы, и сваренное яйцо плохо чистится. Через 7–10 дней хранения CO2 выходит через поры скорлупы, pH белка растёт до 9.0, и скорлупа снимается легко.',
+    practice: 'Чтобы яйца всегда легко чистились и не имели серого ободка вокруг желтка, опускайте их ложкой сразу в кипящую воду (многие повара отмечают, что так яйца чистятся легче; строгих доказательств немного), убавляйте огонь до тихого кипения на 6 минут (всмятку) или 9 минут (вкрутую) и сразу перекладывайте в ледяную воду.',
+    mistakes: 'Класть яйца для варки в холодную воду: время нагрева на разных плитах и в разных кастрюлях отличается на 3–5 минут, что делает результат непредсказуемым.',
+    experiment: 'Сварите два яйца: одно заложите в холодную воду и кипятите 12 минут с остыванием на столе; второе опустите сразу в кипяток на 8.5 минут и переложите в воду со льдом. Разрежьте пополам и сравните цвет желтка и лёгкость очистки.',
+    related: ['b4', 'b5', 'c1'],
+    summary: 'Овотрансферрин белка схватывается при 62°C, желток — при 65–70°C, плотный овальбумин — при 80°C+; закладка сразу в кипяток и ледяная баня дают точность и лёгкую чистку.',
+    sources: 'Vega C., Mercadé-Prieto R. (2011) «Culinary Biophysics: On the Nature of the 6X°C Egg», Food Biophysics.',
+    quiz: { q: 'Откуда берётся серо-зелёный налёт вокруг желтка у переваренного куриного яйца?', opts: ['Сероводород из перегретых белков реагирует с железом желтка, образуя сульфид железа (FeS)', 'В желтке прорастает хлорофилл на свету', 'Кальций из скорлупы проникает в центр яйца', 'Окисляется холестерин от холодной воды'], a: 0, exp: 'При перегреве белка выше 85°C от цистеина отщепляется H2S, который движется к более холодному центру и реагирует с ионами железа желтка.' }
+  },
+  {
+    id: 'h4', sec: 'H', title: 'Лаборатория №4: Предел прочности эмульсии и инверсия фаз',
+    idea: 'Экспериментальное определение точки, в которой эмульсия «масло в воде» разрушается из-за нехватки водной прослойки, и демонстрация мгновенного восстановления расслоившегося соуса.',
+    what: 'В чашу помещается 1 яичный желток (около 18 г, из которых 9 г — вода и 1.5 г — лецитин) БЕЗ добавления воды, уксуса или лимонного сока. При постоянном взбивании порциями по 10 мл вливается растительное масло.',
+    why: 'Капли масла упаковываются в водной фазе желтка. Как только объём масла превышает ~75–80% от общего объёма смеси (около 35–40 мл масла на чистый желток без дополнительной воды), тончайшие водные стенки между каплями рвутся: микрокапли масла сливаются в сплошную масляную лужу, а белки желтка сворачиваются комочками.',
+    factors: 'Добавление всего 1 чайной ложки (5 мл) воды или лимонного сока отодвигает порог разрушения с 40 мл до 180–200 мл масла на тот же самый один желток!',
+    practice: 'Если домашний майонез стал слишком густым и начал блестеть маслянистыми каплями (предвестник расслоения), немедленно вмешайте 1 ч. л. тёплой воды — эмульсия мгновенно посветлеет и станет стабильной.',
+    mistakes: 'Думая, что соус «слишком жидкий из-за масла», прекращать взбивание вместо добавления эмульгатора или тонкого введения расслоившейся смеси в новый желток.',
+    experiment: 'Доведите тестовую микропорцию (1 ч. л. желтка + масло) до намеренного расслоения, а затем спасите её в соседней пиале, добавив 1/2 ч. л. воды и каплями вводя расслоившуюся массу при взбивании вилкой.',
+    related: ['b4', 'd1', 'd4'],
+    summary: 'Причиной расслоения густого майонеза чаще всего служит не нехватка лецитина (один желток способен стабилизировать литры), а банальная нехватка воды для разделения капель масла.',
+    sources: 'This H. «Kitchen Mysteries: Revealing the Science of Cooking» (Columbia University Press).',
+    quiz: { q: 'Что чаще всего является истинной физической причиной расслоения домашнего майонеза при добавлении большой порции масла?', opts: ['Нехватка водной фазы (воды/лимонного сока), из-за чего объёмная доля масла превышает критические ~80% и капли сливаются', 'Полное исчезновение лецитина из желтка', 'Слишком низкая калорийность растительного масла', 'Избыток воды в растительном масле'], a: 0, exp: 'Лецитина в одном желтке хватило бы на несколько литров масла, но чтобы капли масла не соприкасались вплотную, между ними необходима минимум 20%-ная водная прослойка.' }
+  },
+  {
+    id: 'h5', sec: 'H', title: 'Лаборатория №5: Влияние аутолиза и соли на реологию пшеничного теста',
+    idea: 'Наглядное сравнение трёх образцов теста показывает, как 30 минут покоя (аутолиз) заменяют 10 минут физического вымешивания, и как соль превращает рвущуюся массу в упругую плёнку.',
+    what: 'Три образца по 100 г пшеничной муки и 68 г воды (гидратация 68%): Образец 1 — проверяем на растяжение сразу после 1 минуты перемешивания ложкой; Образец 2 — оставляем под плёнкой на 30 минут без замеса; Образец 3 — как Образец 2 + 2 г соли и 4 складывания конвертом.',
+    why: 'В образце 1 молекулы глиадина и глютенина смочены лишь снаружи комков и рвутся при растяжении на 2–3 см. За 30 минут аутолиза в образце 2 вода самопроизвольно проникает внутрь белковых клубков за счёт капиллярных сил и осмоса, а собственные ферменты протеазы подрезают слишком жёсткие связи — тесто само вытягивается в гладкое полотно. В образце 3 ионы соли нейтрализуют отталкивающиеся положительные заряды на цепочках белков, позволяя им сблизиться и образовать плотную сеть.',
+    factors: 'Температура воды для аутолиза (24–26°C) и защита от заветривания плёнкой или крышкой.',
+    practice: 'Вместо изнурительного 15-минутного ручного замеса хлебного теста на столе используйте метод «аутолиз 30 минут + 3 серии складываний (Stretch & Fold) с интервалом 30 минут».',
+    mistakes: 'Добавлять сдобное количество сливочного масла (более 10–15%) до того, как в тесте сформировался глютеновый каркас: липиды покроют белки водоотталкивающей плёнкой.',
+    experiment: 'Выполните этот тройной тест и сфотографируйте максимальную длину растяжения кусочка теста до разрыва для каждого из трёх образцов.',
+    related: ['a1', 'a2', 'a4'],
+    summary: 'Время и вода выполняют 80% работы по выстраиванию клейковины без физического труда, а 2% соли придают сети финальную прочность.',
+    sources: 'Calvel R. «The Taste of Bread»; Chad Robertson «Tartine Bread».',
+    quiz: { q: 'Каким образом поваренная соль (NaCl) физически укрепляет клейковину пшеничного теста?', opts: ['Ионы соли экранируют одноимённые заряды на белковых цепочках глютена, уменьшая их отталкивание и сближая нити', 'Соль склеивает крахмал за счёт карамелизации', 'Соль высушивает муку до 0% влажности', 'Натрий превращает глиадин в жирные кислоты'], a: 0, exp: 'При pH теста (~5.5–6.0) белки глютена несут положительный заряд и отталкиваются. Ионы Cl- экранируют эти заряды, уплотняя глютеновую сетку.' }
+  }
+];
+
+// ==================== 2. КАТАЛОГ РАЗБОРА КУЛИНАРНЫХ ОШИБОК (9 СИТУАЦИЙ) ====================
+const TROUBLESHOOTING = [
+  {
+    id: 't1', title: 'Дрожжевое тесто не поднялось',
+    causes: ['Температура жидкости превысила 50–55°C (термическая гибель дрожжей) или была ниже 15°C (анабиоз).', 'Просроченные сухие дрожжи или контакт чистых дрожжей с сухой солью (осмотический шок).', 'Избыток сахара (>15%) и жира при использовании обычных (неосмотолерантных) дрожжей.'],
+    diag: 'Понюхайте тесто и проверьте его температуру: если нет спиртово-хлебного аромата и тесто холодное — дрожжи спят; если тесто заварили кипятком — клетки погибли.',
+    fix: 'Если тесто просто холодное — переставьте миску в выключенную духовку со стаканом кипятка (28–30°C). Если дрожжи погибли или были просрочены — разведите новую порцию быстродействующих дрожжей в 30 мл тёплой воды (35°C) с щепоткой сахара, дождитесь пенной шапки за 10 минут и вмешайте в тесто.',
+    rel: 'a2'
+  },
+  {
+    id: 't2', title: 'Хлеб получился плотным, тяжёлым и с мелкой пористостью',
+    causes: ['Слабое развитие клейковины (мука с низким белком <10% или недостаточный замес/отсутствие складываний).', 'Недостаточная гидратация (слишком крутое тесто, забитое лишней мукой при подпыле стола).', 'Недоброд (выпечка начата до того, как тесто накопило объём газа) или ранняя жёсткая корка в сухой печи без пара.'],
+    diag: 'Если корка треснула сбоку у дна, а мякиш резиновый — не хватило расстойки и пара. Если мякиш крошливый и тяжёлый — тесто забили мукой или не развили глютен.',
+    fix: 'Используйте весы вместо стаканов (гидратация 65–72%), берите хлебопекарную муку с белком 12–13%, применяйте 30-минутный аутолиз и выпекайте первые 15–20 минут под крышкой/колпаком для удержания пара.',
+    rel: 'a1'
+  },
+  {
+    id: 't3', title: 'Бисквит поднялся в духовке, но резко осел в центре',
+    causes: ['Вынимание из духовки до полной коагуляции белков и клейстеризации крахмала в центре (температура центра не достигла 92–95°C).', 'Резкое открывание дверцы духовки в первые 20 минут (холодный воздух сжимает пузырьки водяного пара и воздуха по закону Шарля, пока стенки ещё жидкие).', 'Избыток химического разрыхлителя (пузырьки вырастают слишком крупными, сливаются и лопаются).'],
+    diag: 'Разрежьте остывший бисквит: если на дне плотная влажная полоска («закал») — бисквит недопекли или осадили ударом/сквозняком до укрепления каркаса.',
+    fix: 'Не открывайте духовку первые 25 минут, проверяйте центр сухой шпажкой или термометром (94–96°C), а классический бисквит «Женуаз» или «Шифон» после выпечки сразу переворачивайте вверх дном на решётку до полного остывания, чтобы сила тяжести растягивала, а не сжимала остывающий каркас.',
+    rel: 'a3'
+  },
+  {
+    id: 't4', title: 'Мясо или куриная грудка получились сухими и жёсткими',
+    causes: ['Внутренняя температура постного куска превысила 70–75°C (полная денатурация и сжатие актина с выдавливанием клеточной влаги).', 'Неправильный выбор технологии для отруба: быстрая жарка жилистой лопатки/голяшки (коллаген не успел стать желатином) или долгое тушение постной корейки/грудки.', 'Отсутствие отдыха мяса перед нарезкой.'],
+    diag: 'Если волокна легко распадаются на сухие нити (как в переварённой грудке или тушёной вырезке) — мясо перегрето выше 75°C. Если кусок резиновый и не жуётся — не расплавился коллаген.',
+    fix: 'Уже пересушенное постное мясо нарежьте поперёк волокон тонкими слайсами (2–3 мм) и прогрейте при 60°C в бульоне со сливочным маслом или подайте с эмульсионным соусом (жир компенсирует потерю влаги на языке). В следующий раз используйте сухой посол за 1–2 часа и термометр (птица — 74°C в самой толстой части; целые куски говядины — по рекомендациям USDA от 63°C с 3-минутным отдыхом, более «розовые» температуры — осознанный выбор здоровых взрослых; фарш — 71°C).',
+    rel: 'c1'
+  },
+  {
+    id: 't5', title: 'Соус расслоился (отделилось масло или свернулись хлопья)',
+    causes: ['В холодных эмульсиях (майонез) — слишком быстрый ввод масла на старте или критическая нехватка водной фазы (>80% масла).', 'В тёплых масляных соусах (голландский, беарнский, бёр-блан) — перегрев выше 68–70°C (коагуляция желтка или молочных белков и плавление эмульсии).', 'В сметанных и сливочных соусах — кипячение нежирного молочного продукта (<20%) в кислой среде.'],
+    diag: 'Если сверху прозрачный слой жидкого жёлтого жира, а снизу густые крошки — произошёл разрыв эмульсии.',
+    fix: 'Спасение за 2 минуты: возьмите чистую миску, налейте 1 столовую ложку тёплой воды (для майонеза/голландеза можно добавить половинку свежего желтка) и, непрерывно взбивая венчиком или погружным блендером, по каплям вводите расслоившийся соус в эту водную базу.',
+    rel: 'd1'
+  },
+  {
+    id: 't6', title: 'Сливки не взбиваются в плотную пену или превратились в масло',
+    causes: ['Жирность сливок ниже 30% (для стабильного каркаса необходимо 33–35% молочного жира).', 'Тёплые сливки или тёплая миска (выше +10°C молочный жир становится жидким и не может построить кристаллическую решётку вокруг пузырьков).', 'Перевзбивание (инверсия фаз: шарики жира полностью сбросили оболочки и слились в комки сливочного масла с отделением жидкой пахты).'],
+    diag: 'Если масса жидкая с мелкими пузырями — сливки тёплые или нежирные. Если масса стала жёлтой, зернистой и на дне появилась мутная водичка — вы перебили сливки в масло.',
+    fix: 'Если сливки просто тёплые — поставьте миску с венчиком в морозилку на 12 минут (до +3°C) и взбейте снова. Если сливки уже начали становиться зернистыми (первая стадия перевзбивания) — остановите миксер и аккуратно вручную лопаткой вмешайте 2–3 ст. л. жидких холодных сливок.',
+    rel: 'b4'
+  },
+  {
+    id: 't7', title: 'Шоколад не темперируется (долго застывает, матовый и в белых разводах)',
+    causes: ['Нарушен температурный режим: шоколад не охладили до 27–28°C или перегрели рабочую массу выше 33.5°C, расплавив все кристаллы формы V.', 'Недостаточное перемешивание (без сдвигового усилия кристаллы растут медленно и неравномерно).', 'Попадание капли воды или конденсата (поверхность становится тусклой, а масса густеет).'],
+    diag: 'Сделайте тест на кончике ножа или полоске пергамента: правильно темперированный тёмный шоколад при 20°C схватывается в матово-глянцевую твёрдую плёнку за 3–4 минуты без разводов.',
+    fix: 'Шоколад с жировым поседением абсолютно съедобен — просто перетопите его заново до 45–48°C, снимите с нагрева, добавьте 20–25% мелко нарубленного глянцевого шоколада из пачки и вымешивайте лопаткой до 31–32°C.',
+    rel: 'b3'
+  },
+  {
+    id: 't8', title: 'Крем или мусс не застыл (остался жидким)',
+    causes: ['Кипячение массы с уже введённым желатином (при 95–100°C происходит термический гидролиз белковых спиралей желатина).', 'Использование свежего пюре киви, ананаса, папайи, манго или инжира без предварительного кипячения (ферменты протеазы разрезали желатин).', 'Для агар-агара или пектина — наоборот, отсутствие обязательного кипячения (1–2 минуты при 95–100°C) для активации полисахаридов.'],
+    diag: 'Вспомните тип желирующего агента и температуру: желатин работает только после охлаждения в холодильнике (+4°C в течение 4–6 часов), а агар застывает уже на столе при 35°C.',
+    fix: 'Если крем на желатине со свежим тропическим пюре не застыл — прогрейте всю массу до 82–85°C на 2 минуты (чтобы разрушить фермент бромелайн/актинидин), остудите до 50°C и введите новую порцию набухшего желатина.',
+    rel: 'b5'
+  },
+  {
+    id: 't9', title: 'Карамель кристаллизовалась (превратилась в белую сахарную корку)',
+    causes: ['Перемешивание кипящего сахарного сиропа ложкой до момента начала карамелизации.', 'Нерастворённые кристаллы сахара на стенках сотейника упали обратно в пересыщенный сироп и запустили цепную кристаллизацию.', 'Слишком быстрое выкипание воды на максимальном огне при избытке сахара.'],
+    diag: 'Сироп в сотейнике внезапно мутнеет, покрывается сухой белой коркой и комкуется вокруг ложки.',
+    fix: 'Не выбрасывайте сахар! Влейте в сотейник 50–70 мл кипятка и добавьте 1/2 ч. л. лимонного сока, убавьте огонь до малого, накройте крышкой на 3 минуты, чтобы пар растворил все кристаллы до прозрачности, затем снимите крышку и доварите до янтарного цвета без единого прикосновения ложкой (только покачивая сотейник за ручку).',
+    rel: 'b2'
+  }
+];
+
+// ==================== 3. СРАВНЕНИЕ ТЕХНИК (6 НАУЧНЫХ ТАБЛИЦ) ====================
+const COMPARISONS = [
+  {
+    id: 'cmp1', title: 'Жарка на сковороде против Запекания в духовке',
+    headers: ['Параметр', 'Жарка (Сковорода / Гриль)', 'Запекание (Духовка)'],
+    rows: [
+      ['Основной механизм теплопередачи', 'Прямая теплопроводность от металла (200–240°C) к продукту', 'Конвекция горячего воздуха (160–220°C) + ИК-излучение от стенок'],
+      ['Скорость теплового потока', 'Очень высокая (металл в тысячи раз плотнее воздуха)', 'Умеренная (воздух — слабый проводник тепла)'],
+      ['Образование корочки (Майяр)', 'За 1–3 минуты на пятне контакта', 'За 15–40 минут по всей поверхности одновременно'],
+      ['Температурный градиент внутри', 'Резкий (легко пережарить края при сыром центре толстого куска)', 'Плавный и равномерный со всех сторон'],
+      ['Оптимальное применение', 'Тонкие стейки (до 2.5 см), филе рыбы, отбивные, быстрая стир-фрай обжарка', 'Крупные отрубы (ростбиф, буженина, целая птица), доведение толстых стейков']
+    ]
+  },
+  {
+    id: 'cmp2', title: 'Тушение (Braising) против Варки (Boiling / Simmering)',
+    headers: ['Параметр', 'Тушение / Томление (Braising)', 'Варка в объёме жидкости'],
+    rows: [
+      ['Уровень жидкости', 'Продукт погружён на 1/3–1/2 в концентрированный бульон под крышкой', 'Продукт полностью покрыт водой или бульоном'],
+      ['Предварительная обжарка', 'Обязательна (создаёт базу меланоидинов реакции Майяра)', 'Обычно отсутствует (кроме запечённых костей на бульон)'],
+      ['Рабочая температура среды', '82–90°C внутри жидкости, пар сверху + ИК-тепло от крышки в духовке', '85–95°C (томительное кипение) или 100°C (бурное кипение)'],
+      ['Концентрация вкуса', 'Экстрактивные вещества остаются в малом объёме густого соуса', 'Растворимые вкусовые вещества переходят в большой объём бульона'],
+      ['Лучшие продукты', 'Говяжьи щёчки, голяшка (оссобуко), рёбра, жёсткая лопатка', 'Бульонные части, пельмени, корнеплоды, бобовые, паста']
+    ]
+  },
+  {
+    id: 'cmp3', title: 'Пищевая сода против Пекарского разрыхлителя',
+    headers: ['Параметр', 'Пищевая сода (NaHCO3)', 'Разрыхлитель (Пекарский порошок)'],
+    rows: [
+      ['Химический состав', '100% чистый гидрокарбонат натрия (щелочь)', 'Сода (~30%) + сухие кислоты (~40% пирофосфат/тартрат) + крахмал (~30%)'],
+      ['Условие выделения газа CO2', 'Требует внешней кислоты в рецепте (кефир, сметана, мёд, лимон, какао)', 'Самодостаточен: реагирует просто при контакте с водой и нагревом'],
+      ['Момент срабатывания', 'Мгновенно при замесе (выпекать нужно сразу)', 'Двухфазный: часть газа при замесе, основной объём при 60°C+ в духовке'],
+      ['Влияние на цвет и вкус', 'Повышает pH -> резко усиливает румянец (Майяр), избыток даёт мыльный вкус', 'Нейтральный pH -> даёт светлый нежный мякиш без постороннего привкуса'],
+      ['Пропорция замены', '1 ч. л. соды = по силе 3–4 ч. л. разрыхлителя (при наличии кислоты)', 'Заменяет соду в нейтральном тесте (на молоке/сливках/яйцах)']
+    ]
+  },
+  {
+    id: 'cmp4', title: 'Желатин против Агар-агара и Пектина',
+    headers: ['Параметр', 'Желатин (животный белок)', 'Агар-агар (водоросли) / Пектин (фрукты)'],
+    rows: [
+      ['Химическая природа', 'Пептидные цепи гидролизованного коллагена', 'Полисахариды (галактоза у агара, галактуроновая кислота у пектина)'],
+      ['Температура активации (растворения)', '50–60°C (кипячение выше 95°C ослабляет гель)', '95–100°C (требуют обязательного кипячения 1–2 минуты)'],
+      ['Температура застывания', '+4...+15°C (медленно, 3–6 часов в холодильнике)', 'Агар: 35–40°C (за 20 минут на столе); Пектин: по мере остывания'],
+      ['Температура плавления геля', '30–35°C (тает во рту при температуре тела!)', 'Агар: 85°C (не тает во рту и на летней витрине)'],
+      ['Текстура во рту', 'Упругая, эластичная, сливочно-тающая (муссы, панна-котта)', 'Агар: плотная, ломкая, «стеклянная»; Пектин NH/HM: нежная мармеладная']
+    ]
+  },
+  {
+    id: 'cmp5', title: 'Хлебопекарные дрожжи против Закваски и Хим. разрыхлителя',
+    headers: ['Параметр', 'Культурные дрожжи (S. cerevisiae)', 'Дикая закваска (Дрожжи + Лактобактерии)'],
+    rows: [
+      ['Микробиологический состав', 'Один чистый штамм быстрорастущих дрожжей', 'Симбиоз кислотоустойчивых дрожжей и бактерий Lactobacillus (в пропорции 1:100)'],
+      ['Время подъёма теста', '45–90 минут при 26–28°C', '3–6 часов при 26°C (плюс 12–16 ч в холоде)'],
+      ['Побочные продукты метаболизма', 'CO2 и этанол (простой пшенично-дрожжевой профиль)', 'CO2, этанол, молочная и уксусная кислоты, сложные эфиры'],
+      ['Хранение и черствение хлеба', 'Быстрее черствеет и плесневеет (pH мякиша ~5.5)', 'Долго не черствеет и не плесневеет за счёт кислотности (pH 4.0–4.4)'],
+      ['Влияние на клейковину и минералы', 'Минимальный гидролиз белка и фитиновой кислоты', 'Активирует фермент фитазу (повышает биодоступность железа, цинка и магния)']
+    ]
+  },
+  {
+    id: 'cmp6', title: 'Карамелизация против Реакции Майяра',
+    headers: ['Параметр', 'Карамелизация', 'Реакция Майяра'],
+    rows: [
+      ['Участники реакции', 'Только углеводы (сахара) в чистом виде', 'Аминокислоты (белки) + редуцирующие сахара'],
+      ['Температурный старт', 'Фруктоза 110°C, глюкоза 160°C, сахароза 160–180°C', 'Активно с 130–140°C (медленно от 90°C при длительном томлении)'],
+      ['Химический механизм', 'Пиролиз (термическая дегидратация и изомеризация сахаров)', 'Конденсация карбонильной и аминогруппы -> перегруппировка Амадори -> меланоидины'],
+      ['Вкусоароматический профиль', 'Карамельный, жжёно-сахарный, сливочно-ирисочный с горчинкой', 'Мясной, хлебный, ореховый, кофейный, шоколадный, умами'],
+      ['Кулинарные примеры', 'Сухая карамель для крем-брюле, леденцы, пралине', 'Корочка стейка, румяная корка хлеба, обжарка кофе и какао, топлёное молоко']
+    ]
+  }
+];
+
+// ==================== 4. ЛОКАЛЬНОЕ ХРАНИЛИЩЕ И СОСТОЯНИЕ ПРИЛОЖЕНИЯ ====================
+const STORAGE_KEY = 'kuhnya_science_v1';
+let state = {
+  tab: 'home',
+  subTab: 'calc', // calc | trouble | compare
+  labTab: 'quiz', // quiz | journal
+  secFilter: 'ALL',
+  searchQuery: '',
+  currentArticleId: null,
+  theme: 'light',
+  fontScale: 1,
+  readIds: [],
+  favIds: [],
+  quizScores: {},
+  journal: [
+    {
+      id: 1700000001,
+      date: 'Образец записи',
+      dish: 'Подовый пшеничный хлеб (гидратация 72%)',
+      ing: 'Мука в/с (12.5% белка) — 500 г (100%), Вода — 360 г (72%), Закваска — 100 г (20%), Соль — 10 г (2%)',
+      temp: 'Аутолиз 40 мин, брожение 4 ч при 26°C, ретардация 14 ч при +4°C, выпечка 240°C под колпаком 20 мин + 210°C без крышки 18 мин',
+      result: 'Отличный печной подъём, тонкая хрустящая корка с блистерами, открытый кружевной мякиш.',
+      next: 'В следующий раз заменить 15% муки на цельнозерновую и увеличить гидратацию до 75%.'
+    }
+  ],
+  // Калькулятор рецептов
+  calcMode: 'portions', // portions | baker
+  basePortions: 4,
+  targetPortions: 6,
+  recipeItems: [
+    { name: 'Мука пшеничная', amount: 400, unit: 'г' },
+    { name: 'Молоко 3.2%', amount: 250, unit: 'мл' },
+    { name: 'Масло сливочное', amount: 80, unit: 'г' },
+    { name: 'Сахар', amount: 60, unit: 'г' },
+    { name: 'Соль', amount: 8, unit: 'г' }
+  ],
+  bakerFlour: 500,
+  jDraft: { dish:'', ing:'', temp:'', res:'', next:'' }, jEditId: null, recentIds: [],
+  bakerItems: [
+    { name: 'Вода (гидратация)', pct: 70 },
+    { name: 'Закваска / Опара', pct: 20 },
+    { name: 'Соль', pct: 2.0 },
+    { name: 'Солод / Масло', pct: 3.0 }
+  ]
+};
+
+function applyThemeAndFont() {
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.documentElement.style.setProperty('--font-scale', state.fontScale);
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', state.theme === 'dark' ? '#181716' : '#FBF8F3');
+}
+
+function toggleTheme() {
+  state.theme = state.theme === 'light' ? 'dark' : 'light';
+  applyThemeAndFont();
+  saveState();
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ==================== 5. НАВИГАЦИЯ И РЕНДЕРИНГ ЭКРАНОВ ====================
+function render() {
+  const el = document.getElementById('app-Main');
+  if (state.tab === 'home') el.innerHTML = renderHome();
+  else if (state.tab === 'catalog') el.innerHTML = renderCatalog();
+  else if (state.tab === 'article') el.innerHTML = renderArticle();
+  else if (state.tab === 'tools') el.innerHTML = renderTools();
+  else if (state.tab === 'lab') el.innerHTML = renderLab();
+  else if (state.tab === 'favorites') el.innerHTML = renderFavorites();
+  else if (state.tab === 'settings') el.innerHTML = renderSettings();
+  el.innerHTML = stripEmoji(el.innerHTML);
+  enhanceA11y(el);
+}
+
+// --- ЭКРАН 1: ГЛАВНАЯ ---
+function quickSearchFromHome(val) {
+  state.searchQuery = val;
+  state.secFilter = 'ALL';
+  navigate('catalog');
+  setTimeout(() => {
+    const inp = document.getElementById('catSearchInput');
+    if (inp) { inp.focus(); inp.setSelectionRange(val.length, val.length); }
+  }, 10);
+}
+
+// --- ЭКРАН 2: КАТАЛОГ И ПОИСК ---
+function renderCatalog() {
+  const q = normQ(state.searchQuery);
+  const filtered = ARTICLES.filter(a => {
+    if (!secMatch(a)) return false;
+    if (state.secFilter === 'UNREAD' && state.readIds.includes(a.id)) return false;
+    if (!q) return true;
+    const hay = searchHay(a);
+    return hay.includes(q);
+  });
+
+  return `
+    <h1 class="screen-title">Библиотека</h1><p class="sub">Знания, которые делают вкуснее</p>
+    <input type="search" id="catSearchInput" class="search-box"
+      placeholder="🔍 Поиск по 36 статьям, терминам и процессам..."
+      value="${escapeHtml(state.searchQuery)}"
+      oninput="state.searchQuery=this.value;renderCatalogListOnly()">
+
+    <div class="pill-bar">
+      <button class="pill ${state.secFilter==='ALL'?'active':''}" onclick="state.secFilter='ALL';render()">Все (${ARTICLES.length})</button>
+      <button class="pill ${state.secFilter==='UNREAD'?'active':''}" onclick="state.secFilter='UNREAD';render()">Непрочитанные</button>
+      ${SECTIONS.map(s => `
+        <button class="pill ${state.secFilter===s.id?'active':''}" onclick="state.secFilter='${s.id}';render()">
+          ${s.letter}. ${escapeHtml(s.title)}
+        </button>
+      `).join('')}
+    </div>
+
+    <div id="catalogListContainer">
+      ${renderCatalogCards(filtered)}
+    </div>
+  `;
+}
+
+function renderCatalogListOnly() {
+  const q = normQ(state.searchQuery);
+  const filtered = ARTICLES.filter(a => {
+    if (!secMatch(a)) return false;
+    if (state.secFilter === 'UNREAD' && state.readIds.includes(a.id)) return false;
+    if (!q) return true;
+    const hay = searchHay(a);
+    return hay.includes(q);
+  });
+  const box = document.getElementById('catalogListContainer');
+  if (box) box.innerHTML = renderCatalogCards(filtered);
+}
+
+// --- ЭКРАН 3: СТРАНИЦА СТАТЬИ ---
+function renderArticle() {
+  const a = ARTICLES.find(x => x.id === state.currentArticleId) || ARTICLES[0];
+  const sec = SECTIONS.find(s => s.id === a.sec);
+  const isRead = state.readIds.includes(a.id);
+  const isFav = state.favIds.includes(a.id);
+  const relArts = (a.related || []).map(rid => ARTICLES.find(x => x.id === rid)).filter(Boolean);
+  const qAns = state.quizScores[a.id];
+
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <button class="btn outline" style="padding:8px 12px;" onclick="navigate('catalog', '${a.sec}')">${ic('back',20)}<span>${escapeHtml(sec.title.split(' ')[0])}</span></button>
+      <div style="display:flex;gap:6px;">
+        <button class="btn ${isFav?'':'outline'}" style="padding:8px 12px;" onclick="toggleFav('${a.id}')">
+          ${ic('star',20)}<span class="sr">${isFav ? 'Убрать из избранного' : 'В избранное'}</span>
+        </button>
+        <button class="btn ${isRead?'secondary':'outline'}" style="padding:8px 12px;" onclick="toggleRead('${a.id}')">
+          ${ic('check',20)}<span class="sr">${isRead ? 'Прочитано, снять отметку' : 'Отметить прочитанным'}</span>
+        </button>
+      </div>
+    </div>
+
+    ${renderArticleHead(a, sec)}
+
+    <div class="art-block">
+      <h4>1. Что происходит</h4>
+      <div>${escapeHtml(a.what)}</div>
+    </div>
+
+    <div class="art-block">
+      <h4>2. Почему это происходит (Научный механизм)</h4>
+      <div>${escapeHtml(a.why)}</div>
+    </div>
+
+    <div class="art-block olive">
+      <h4>3. Что влияет на результат</h4>
+      <div>${escapeHtml(a.factors)}</div>
+    </div>
+
+    <div class="art-block olive">
+      <h4>4. Как применить на практике</h4>
+      <div>${escapeHtml(a.practice)}</div>
+    </div>
+
+    <div class="art-block warn">
+      <h4>5. Типичные ошибки и как их избежать</h4>
+      <div>${escapeHtml(a.mistakes)}</div>
+    </div>
+
+    <div class="art-block">
+      <h4>6. Небольшой домашний эксперимент</h4>
+      <div>🧪 ${escapeHtml(a.experiment)}</div>
+    </div>
+
+    <div class="art-block Summary">
+      <h4>7. Краткий вывод (Запомнить)</h4>
+      <div style="font-weight:700;">📌 ${escapeHtml(a.summary)}</div>
+      <div style="margin-top:8px;font-size:0.76rem;color:var(--text-muted);">
+        📚 Источники: ${escapeHtml(a.sources)}
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin:0 0 8px 0;color:var(--primary);">🧠 Проверьте понимание статьи</h4>
+      <div style="font-weight:700;margin-bottom:10px;">${escapeHtml(a.quiz.q)}</div>
+      ${qOrder(a).map(idx => { const opt = a.quiz.opts[idx];
+        let cls = 'quiz-opt';
+        if (qAns !== undefined) {
+          if (idx === a.quiz.a) cls += ' correct';
+          else if (idx === qAns) cls += ' wrong';
+        }
+        return `<button class="${cls}" onclick="answerArticleQuiz('${a.id}', ${idx})">${escapeHtml(opt)}</button>`;
+      }).join('')}
+      ${qAns !== undefined ? `
+        <div style="margin-top:8px;padding:10px;border-radius:10px;background:var(--surface-alt);font-size:0.86rem;">
+          <strong>Разбор:</strong> ${escapeHtml(a.quiz.exp)}
+          <div style="margin-top:8px"><button class="btn outline" style="padding:6px 12px" onclick="retryQuiz('${a.id}')">Ответить заново</button></div>
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="card">
+      <h4 style="margin:0 0 8px 0;">🔗 Связанные темы</h4>
+      ${relArts.map(ra => `
+        <div style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;color:var(--primary);font-weight:600;"
+             onclick="navigate('article', '${ra.id}')">
+          → ${escapeHtml(ra.title)}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function toggleFav(id) {
+  const idx = state.favIds.indexOf(id);
+  if (idx >= 0) state.favIds.splice(idx, 1);
+  else state.favIds.push(id);
+  saveState();
+  render();
+}
+
+function toggleRead(id) {
+  const idx = state.readIds.indexOf(id);
+  if (idx >= 0) state.readIds.splice(idx, 1);
+  else state.readIds.push(id);
+  saveState();
+  render();
+}
+
+// --- ЭКРАН 4: ИНСТРУМЕНТЫ (КАЛЬКУЛЯТОР, ОШИБКИ, СРАВНЕНИЯ) ---
+function renderTools() {
+  return `
+    ${labBar()}
+    ${state.subTab === 'calc' ? renderCalculator() : state.subTab === 'trouble' ? renderTroubleshooting() : renderComparisons()}
+  `;
+}
+
+function renderTroubleshooting() {
+  return TROUBLESHOOTING.map(t => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <h3 style="margin:0 0 8px 0;font-size:1.05rem;color:var(--danger);">⚠️ ${escapeHtml(t.title)}</h3>
+      </div>
+      <div style="font-size:0.88rem;margin-bottom:8px;">
+        <strong>Вероятные причины:</strong>
+        <ul style="margin:4px 0;padding-left:18px;">
+          ${t.causes.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+        </ul>
+      </div>
+      <div style="font-size:0.88rem;margin-bottom:8px;padding:8px 10px;border-radius:10px;background:var(--surface-alt);">
+        <strong>🔍 Диагностика:</strong> ${escapeHtml(t.diag)}
+      </div>
+      <div style="font-size:0.88rem;padding:8px 10px;border-radius:10px;background:var(--secondary-soft);">
+        <strong>✅ Решение:</strong> ${escapeHtml(t.fix)}
+      </div>
+      <button class="btn outline" style="margin-top:10px;padding:7px 12px;font-size:0.8rem;" onclick="navigate('article','${t.rel}')">
+        Открыть научную статью по теме →
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderComparisons() {
+  return COMPARISONS.map(c => `
+    <div class="card" style="overflow-x:auto;">
+      <h3 style="margin:0 0 8px 0;font-size:1.02rem;color:var(--primary);">⚡ ${escapeHtml(c.title)}</h3>
+      <table class="comp-table">
+        <thead>
+          <tr>${c.headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${c.rows.map(r => `<tr>${r.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `).join('');
+}
+
+// --- ЭКРАН 5: ПРАКТИКА (ТЕСТЫ И ЖУРНАЛ ЭКСПЕРИМЕНТОВ) ---
+function renderLab() {
+  const solvedCount = Object.keys(state.quizScores).length;
+  const correctCount = Object.entries(state.quizScores).filter(([aid, ans]) => {
+    const art = ARTICLES.find(x => x.id === aid);
+    return art && art.quiz.a === ans;
+  }).length;
+
+  return `
+    ${labBar()}
+
+    ${state.labTab === 'quiz' ? `
+      <div class="card" style="background:var(--secondary-soft);">
+        <strong>Ваш результат: ${correctCount} верных из ${solvedCount} пройденных (всего ${ARTICLES.length} вопросов)</strong>
+        <div style="font-size:0.84rem;margin-top:4px;">Отвечайте на вопросы ниже, чтобы закрепить химию и физику процессов.</div>
+      </div>
+      ${ARTICLES.map((a, idx) => {
+        const userAns = state.quizScores[a.id];
+        return `
+          <div class="card">
+            <span class="tag terra">Вопрос №${idx + 1} • ${escapeHtml(a.title)}</span>
+            <div style="font-weight:700;margin:6px 0 10px 0;">${escapeHtml(a.quiz.q)}</div>
+            ${qOrder(a).map(oIdx => { const opt = a.quiz.opts[oIdx];
+              let cls = 'quiz-opt';
+              if (userAns !== undefined) {
+                if (oIdx === a.quiz.a) cls += ' correct';
+                else if (oIdx === userAns) cls += ' wrong';
+              }
+              return `<button class="${cls}" onclick="answerArticleQuiz('${a.id}', ${oIdx})">${escapeHtml(opt)}</button>`;
+            }).join('')}
+            ${userAns !== undefined ? `
+              <div style="font-size:0.84rem;padding:8px 10px;background:var(--surface-alt);border-radius:10px;">
+                <strong>Объяснение:</strong> ${escapeHtml(a.quiz.exp)}
+                <div style="margin-top:8px"><button class="btn outline" style="padding:6px 12px" onclick="retryQuiz('${a.id}')">Ответить заново</button></div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('')}
+    ` : renderJournal()}
+  `;
+}
+
+// --- ЭКРАН 6: ИЗБРАННОЕ И НАСТРОЙКИ ---
+function renderFavorites() {
+  const favArts = ARTICLES.filter(a => state.favIds.includes(a.id));
+  return `
+    <h1 class="screen-title">Сохранённое</h1><p class="sub">Избранные статьи: ${favArts.length}</p>
+    ${favArts.length ? renderCatalogCards(favArts) : `
+      <div class="card" style="text-align:center;padding:24px;">
+        <div style="font-size:1.8rem;">☆</div>
+        <p>В избранном пока нет статей. Откройте любую статью и нажмите «В избранное».</p>
+        <button class="btn" onclick="navigate('catalog','ALL')">Перейти к статьям</button>
+      </div>
+    `}
+  `;
+}
+
+function renderSettings() {
+  const favArts = ARTICLES.filter(a => state.favIds.includes(a.id));
+  return `
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;">★ Избранные статьи (${favArts.length})</h3>
+      ${favArts.length ? favArts.map(a => `
+        <div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:600;cursor:pointer;" onclick="navigate('article','${a.id}')">${escapeHtml(a.title)}</span>
+          <button class="icon-btn" onclick="toggleFav('${a.id}')">✕</button>
+        </div>
+      `).join('') : '<div style="font-size:0.88rem;color:var(--text-muted)">Вы пока не добавили статьи в избранное.</div>'}
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;">🎨 Оформление и читаемость</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span>Цветовая тема</span>
+        <div class="seg"><button class="${state.theme==='light'?'on':''}" onclick="setTheme('light')">Светлая</button><button class="${state.theme==='dark'?'on':''}" onclick="setTheme('dark')">Тёмная</button></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Размер шрифта</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn ${state.fontScale===0.95?'':'outline'}" onclick="state.fontScale=0.95;applyThemeAndFont();saveState();render()">А-</button>
+          <button class="btn ${state.fontScale===1?'':'outline'}" onclick="state.fontScale=1;applyThemeAndFont();saveState();render()">100%</button>
+          <button class="btn ${state.fontScale===1.12?'':'outline'}" onclick="state.fontScale=1.12;applyThemeAndFont();saveState();render()">А+</button>
+          <button class="btn ${state.fontScale===1.25?'':'outline'}" onclick="state.fontScale=1.25;applyThemeAndFont();saveState();render()">А++</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;">💾 Локальные данные (100% Офлайн)</h3>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0;">
+        Все ваши заметки в журнале, прочитанные статьи и избранное хранятся исключительно в памяти вашего смартфона.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn outline" onclick="exportBackup()">Копировать JSON</button>
+        <button class="btn outline" onclick="downloadBackup()">Скачать файл</button>
+        <button class="btn outline" onclick="importBackup()">Импорт из поля</button>
+        <button class="btn outline" onclick="resetProgress()">Сбросить прогресс чтения</button>
+      </div>
+      <textarea id="backupArea" class="field" rows="3" style="margin-top:10px;" maxlength="1000000" aria-label="Резервная копия JSON" placeholder="Здесь появится резервная копия. Для импорта вставьте сюда JSON и нажмите «Импорт из поля»"></textarea>
+    </div>
+  `;
+}
+
+function resetProgress() {
+  if (confirm('Сбросить отметки о прочитанных статьях и тестах? Записи журнала и избранное сохранятся.')) {
+    state.readIds = [];
+    state.quizScores = {};
+    saveState();
+    render();
+  }
+}
+
+// ==================== 6. НАДЁЖНОСТЬ, РАСЧЁТЫ, ЖУРНАЛ, ИМПОРТ (v2) ====================
+const SCHEMA = 2;
+let storageOk = true, toastTimer = null, pendingMsg = '';
+const MAXV = 1e6;
+function toast(msg) {
+  const t = document.getElementById('toast'); if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+function normQ(s) { return String(s || '').trim().toLowerCase().replace(/ё/g, 'е'); }
+function searchHay(a) {
+  return normQ([a.title, a.idea, a.what, a.why, a.factors, a.practice, a.mistakes, a.experiment, a.summary, a.quiz.q].join(' '));
+}
+function qOrder(a) {
+  let h = 0; for (const c of a.id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const p = a.quiz.opts.map((_, i) => i);
+  for (let i = p.length - 1; i > 0; i--) { h = (h * 1664525 + 1013904223) >>> 0; const j = h % (i + 1); [p[i], p[j]] = [p[j], p[i]]; }
+  if (p.length > 1 && p[0] === a.quiz.a) [p[0], p[p.length - 1]] = [p[p.length - 1], p[0]];
+  return p;
+}
+function enhanceA11y(root) {
+  if (!root) return;
+  root.querySelectorAll('[onclick]').forEach(e => { if (e.tagName !== 'BUTTON' && e.tagName !== 'A') { e.setAttribute('role', 'button'); e.tabIndex = 0; } });
+  root.querySelectorAll('input,select,textarea').forEach(e => { if (!e.getAttribute('aria-label')) e.setAttribute('aria-label', e.placeholder || e.title || 'Поле ввода'); });
+}
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if ((e.key === 'Enter' || e.key === ' ') && t && t.getAttribute && t.getAttribute('role') === 'button' && t.tagName !== 'BUTTON') { e.preventDefault(); t.click(); }
+});
+
+// --- хранилище: проверка, миграция, сохранение ---
+function sanitizeSaved(s) {
+  if (!s || typeof s !== 'object' || Array.isArray(s)) return null;
+  const ids = new Set(ARTICLES.map(a => a.id)), o = {}, isA = Array.isArray;
+  const ns = v => { const n = parseFloat(String(v).replace(',', '.')); return Number.isFinite(n) ? String(n) : ''; };
+  const st = (v, n) => String(v == null ? '' : v).slice(0, n);
+  const obj = x => x && typeof x === 'object' && !isA(x);
+  if (s.theme === 'dark' || s.theme === 'light') o.theme = s.theme;
+  const fs = parseFloat(s.fontScale); if (Number.isFinite(fs)) o.fontScale = Math.min(1.4, Math.max(0.85, fs));
+  if (isA(s.readIds)) o.readIds = [...new Set(s.readIds.filter(x => ids.has(x)))];
+  if (isA(s.favIds)) o.favIds = [...new Set(s.favIds.filter(x => ids.has(x)))];
+  if (obj(s.quizScores)) { o.quizScores = {}; for (const a of ARTICLES) { const v = s.quizScores[a.id]; if (Number.isInteger(v) && v >= 0 && v < a.quiz.opts.length) o.quizScores[a.id] = v; } }
+  if (isA(s.journal)) {
+    const seen = new Set();
+    o.journal = s.journal.slice(0, 500).filter(obj).map((x, i) => {
+      let id = Number.isFinite(+x.id) ? +x.id : Date.now() + i; while (seen.has(id)) id++; seen.add(id);
+      return { id, date: st(x.date, 40), dish: st(x.dish, 200), ing: st(x.ing, 2000), temp: st(x.temp, 2000), result: st(x.result, 2000), next: st(x.next, 2000) };
+    });
+  }
+  if (isA(s.recipeItems)) o.recipeItems = s.recipeItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), amount: ns(x.amount), unit: ['г', 'мл', 'шт'].includes(x.unit) ? x.unit : 'г' }));
+  if (isA(s.bakerItems)) o.bakerItems = s.bakerItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), pct: ns(x.pct) }));
+  if (isA(s.recentIds)) o.recentIds = [...new Set(s.recentIds.filter(x => ids.has(x)))].slice(0, 6);
+  ['bakerFlour', 'basePortions', 'targetPortions'].forEach(k => { if (s[k] !== undefined) o[k] = ns(s[k]); });
+  return o;
+}
+function snapshot() {
+  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds };
+}
+function loadState() {
+  let raw = null;
+  try { raw = localStorage.getItem(STORAGE_KEY); localStorage.setItem(STORAGE_KEY + '_t', '1'); localStorage.removeItem(STORAGE_KEY + '_t'); }
+  catch (e) { storageOk = false; pendingMsg = 'Хранилище недоступно: данные не сохранятся после закрытия. Используйте экспорт.'; }
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.schema > SCHEMA) throw new Error('newer');
+      const clean = sanitizeSaved(parsed); if (!clean) throw new Error('shape');
+      Object.assign(state, clean);
+    } catch (e) {
+      try { localStorage.setItem(STORAGE_KEY + '_corrupt', raw); } catch (_) {}
+      pendingMsg = 'Сохранённые данные не удалось прочитать. Копия отложена отдельно, приложение запущено с чистого листа.';
+    }
+  } else if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) state.theme = 'dark';
+  applyThemeAndFont();
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); storageOk = true; return true; }
+  catch (e) { if (storageOk) { storageOk = false; toast('Не удалось сохранить: хранилище недоступно. Сделайте экспорт.'); } return false; }
+}
+
+// --- навигация с историей (кнопка «Назад») ---
+function navigate(tab, param = null, fromPop = false) {
+  state.tab = tab;
+  if (tab === 'catalog' && param) state.secFilter = param;
+  if (tab === 'article' && param) { state.currentArticleId = param; state.recentIds = [param, ...(state.recentIds || []).filter(x => x !== param)].slice(0, 6); saveState(); }
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    const t = btn.getAttribute('data-tab');
+    const on = t === ({ article: 'catalog', lab: 'tools' }[tab] || tab);
+    btn.classList.toggle('active', on); btn.setAttribute('aria-current', on ? 'page' : 'false');
+  });
+  if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, art: state.currentArticleId, sub: state.subTab }, ''); } catch (e) {} }
+  window.scrollTo(0, 0);
+  render();
+}
+window.addEventListener('popstate', e => {
+  const s = e.state || { tab: 'home' };
+  state.secFilter = s.sec || 'ALL'; state.currentArticleId = s.art || null; state.subTab = s.sub || 'calc';
+  navigate(s.tab || 'home', null, true);
+});
+
+// --- квизы ---
+function answerArticleQuiz(id, i) {
+  if (state.quizScores[id] !== undefined) return;
+  state.quizScores[id] = i;
+  if (!state.readIds.includes(id)) state.readIds.push(id);
+  saveState(); render();
+}
+function retryQuiz(id) { delete state.quizScores[id]; saveState(); render(); }
+
+// --- калькулятор: ввод не перерисовывает экран, фокус не теряется ---
+function num(v) { const n = parseFloat(String(v).replace(',', '.')); return Number.isFinite(n) ? n : NaN; }
+function fmt(n, d = 1) { return Number.isFinite(n) ? n.toLocaleString('ru-RU', { maximumFractionDigits: d }) : '—'; }
+function calcRatio() { const b = num(state.basePortions), t = num(state.targetPortions); return (b > 0 && t > 0 && b <= MAXV && t <= MAXV) ? t / b : NaN; }
+function okAmt(a) { return a >= 0 && a <= MAXV; }
+function refreshCalc() {
+  const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+  if (state.calcMode === 'portions') {
+    const r = calcRatio();
+    set('calcRatio', Number.isFinite(r) ? '×' + fmt(r, 2) : '×—');
+    state.recipeItems.forEach((it, i) => { const a = num(it.amount); set('pr' + i, okAmt(a) && Number.isFinite(r) ? fmt(a * r) + ' ' + it.unit : '—'); });
+    set('calcMsg', Number.isFinite(r) ? '' : 'Введите число порций больше 0 (не более 1 000 000).');
+  } else {
+    const f = num(state.bakerFlour), ok = f > 0 && f <= MAXV; let tot = 100;
+    state.bakerItems.forEach((it, i) => { const p = num(it.pct), pv = p >= 0 && p <= 1000; set('bg' + i, ok && pv ? fmt(f * p / 100) + ' г' : '—'); if (pv) tot += p; });
+    set('bTotal', ok ? fmt(f * tot / 100) + ' г (' + fmt(tot) + '% от муки)' : '—');
+    set('calcMsg', ok ? '' : 'Введите массу муки больше 0 г (не более 1 000 000).');
+  }
+}
+function calcEdit(kind, i, field, val) {
+  if (kind === 'p') state[field] = val;
+  else if (kind === 'r') state.recipeItems[i][field] = val;
+  else if (kind === 'bf') state.bakerFlour = val;
+  else state.bakerItems[i][field] = val;
+  saveState(); refreshCalc();
+}
+function calcAdd(kind) {
+  if (kind === 'r') { if (state.recipeItems.length >= 60) return toast('Не больше 60 строк'); state.recipeItems.push({ name: 'Новый ингредиент', amount: '100', unit: 'г' }); }
+  else { if (state.bakerItems.length >= 60) return toast('Не больше 60 строк'); state.bakerItems.push({ name: 'Добавка', pct: '5' }); }
+  saveState(); render();
+}
+function calcDel(kind, i) {
+  (kind === 'r' ? state.recipeItems : state.bakerItems).splice(i, 1);
+  saveState(); render();
+}
+function renderCalculator() {
+  const numIn = (call, v, lbl) => `<input type="number" inputmode="decimal" step="any" min="0" class="field" aria-label="${lbl}" value="${escapeHtml(v)}" oninput="${call}">`;
+  const modeBtn = (m, t) => `<button class="btn ${state.calcMode === m ? '' : 'outline'} full" onclick="state.calcMode='${m}';render()">${t}</button>`;
+  let body;
+  if (state.calcMode === 'portions') {
+    body = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
+        <div><label style="font-size:0.78rem;color:var(--text-muted)">Исходных порций</label>${numIn("calcEdit('p',0,'basePortions',this.value)", state.basePortions, 'Исходных порций')}</div>
+        <div><label style="font-size:0.78rem;color:var(--text-muted)">Нужно порций (<span id="calcRatio">×</span>)</label>${numIn("calcEdit('p',0,'targetPortions',this.value)", state.targetPortions, 'Нужно порций')}</div>
+      </div>
+      <div class="err" id="calcMsg" role="alert"></div>
+      <h4 style="margin:0 0 8px 0;">Ингредиенты (исходное → пересчёт)</h4>
+      ${state.recipeItems.map((it, i) => `
+        <div class="input-row">
+          <input class="field" maxlength="80" aria-label="Название ингредиента" value="${escapeHtml(it.name)}" oninput="calcEdit('r',${i},'name',this.value)">
+          ${numIn(`calcEdit('r',${i},'amount',this.value)`, it.amount, 'Количество')}
+          <select class="field" aria-label="Единица" onchange="calcEdit('r',${i},'unit',this.value)">
+            ${['г', 'мл', 'шт'].map(u => `<option value="${u}" ${it.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+          <button class="icon-btn" aria-label="Удалить ингредиент" onclick="calcDel('r',${i})">✕</button>
+        </div>
+        <div class="calc-out" style="font-size:0.82rem;color:var(--secondary);font-weight:700;margin:-4px 0 10px 4px;">→ <strong id="pr${i}"></strong></div>`).join('')}
+      <button class="btn outline full" onclick="calcAdd('r')">+ Добавить ингредиент</button>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0;">Пересчёт линейный. Соль, разрыхлитель, специи, размер формы и время выпечки при сильном изменении масштаба меняются не строго пропорционально: время зависит скорее от толщины, чем от массы. Корректируйте по вкусу и готовности.</p>`;
+  } else {
+    body = `
+      <div class="art-block olive" style="margin-bottom:12px;"><h4>Формула пекаря</h4>
+        <div style="font-size:0.85rem;">Масса всей муки принимается за <strong>100%</strong>, остальное — в процентах от неё. Закваска и опара считаются отдельной строкой: мука и вода внутри них в общую гидратацию здесь не пересчитываются.</div></div>
+      <div style="margin-bottom:6px;"><label style="font-size:0.82rem;font-weight:700;">Масса муки (100%), г:</label>${numIn("calcEdit('bf',0,'',this.value)", state.bakerFlour, 'Масса муки в граммах')}</div>
+      <div class="err" id="calcMsg" role="alert"></div>
+      ${state.bakerItems.map((it, i) => `
+        <div class="input-row">
+          <input class="field" maxlength="80" aria-label="Название компонента" value="${escapeHtml(it.name)}" oninput="calcEdit('b',${i},'name',this.value)">
+          ${numIn(`calcEdit('b',${i},'pct',this.value)`, it.pct, 'Процент от муки')}
+          <div class="calc-out" style="font-weight:800;color:var(--primary);text-align:right;" id="bg${i}"></div>
+          <button class="icon-btn" aria-label="Удалить компонент" onclick="calcDel('b',${i})">✕</button>
+        </div>`).join('')}
+      <button class="btn outline full" style="margin-bottom:10px;" onclick="calcAdd('b')">+ Добавить компонент (%)</button>
+      <div class="calc-out" style="padding:12px;border-radius:12px;background:var(--secondary-soft);font-weight:700;">Итоговая масса теста: <span id="bTotal"></span></div>`;
+  }
+  setTimeout(refreshCalc, 0);
+  return `<div class="card"><div style="display:flex;gap:8px;margin-bottom:14px;">${modeBtn('portions', 'Пересчёт порций')}${modeBtn('baker', 'Проценты пекаря')}</div>${body}</div>`;
+}
+
+// --- журнал: черновик не теряется, есть редактирование и подтверждение удаления ---
+function renderJournal() {
+  const d = state.jDraft, ed = state.jEditId !== null;
+  const fld = (k, ph, ml, rows) => rows
+    ? `<textarea class="field" rows="${rows}" maxlength="${ml}" aria-label="${ph}" placeholder="${ph}" oninput="state.jDraft.${k}=this.value">${escapeHtml(d[k])}</textarea>`
+    : `<input id="jDish" class="field" maxlength="${ml}" aria-label="${ph}" placeholder="${ph}" value="${escapeHtml(d[k])}" oninput="state.jDraft.${k}=this.value">`;
+  return `
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;font-size:1.05rem;">${ed ? '✏️ Редактирование записи' : '➕ Новая запись в журнал экспериментов'}</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${fld('dish', 'Что готовили (например: Стейк рибай / Хлеб на закваске)', 200, 0)}
+        ${fld('ing', 'Ингредиенты и точные пропорции (граммы, % соли, гидратация)', 2000, 2)}
+        ${fld('temp', 'Температура и время (внутри куска, духовка, расстойка)', 2000, 2)}
+        ${fld('res', 'Что получилось (текстура, корочка, сочность, ошибки)', 2000, 2)}
+        ${fld('next', 'Что изменить в следующий раз (гипотеза)', 2000, 2)}
+        <button class="btn full" onclick="addJournalEntry()">${ed ? 'Сохранить изменения' : 'Сохранить эксперимент на устройстве'}</button>
+        ${ed ? '<button class="btn outline full" onclick="cancelJournalEdit()">Отмена</button>' : ''}
+      </div>
+    </div>
+    ${state.journal.length ? '' : '<div class="card" style="text-align:center;color:var(--text-muted)">Записей пока нет. Добавьте первый эксперимент выше.</div>'}
+    ${state.journal.map(item => `
+      <div class="card note">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:6px;">
+          <span class="tag olive">📅 ${escapeHtml(item.date)}</span>
+          <span><button class="icon-btn" aria-label="Редактировать запись" onclick="editJournalEntry(${item.id})">✏️</button>
+          <button class="icon-btn" aria-label="Удалить запись" onclick="deleteJournalEntry(${item.id})">🗑️</button></span>
+        </div>
+        <h4 style="margin:0 0 6px 0;font-size:1.02rem;overflow-wrap:anywhere;">${escapeHtml(item.dish)}</h4>
+        <div style="font-size:0.86rem;margin-bottom:4px;overflow-wrap:anywhere;"><strong>⚖️ Пропорции:</strong> ${escapeHtml(item.ing)}</div>
+        <div style="font-size:0.86rem;margin-bottom:4px;overflow-wrap:anywhere;"><strong>🌡️ Режим:</strong> ${escapeHtml(item.temp)}</div>
+        <div style="font-size:0.86rem;margin-bottom:4px;overflow-wrap:anywhere;"><strong>🔬 Результат:</strong> ${escapeHtml(item.result)}</div>
+        <div style="font-size:0.86rem;padding:8px;border-radius:8px;background:var(--primary-soft);overflow-wrap:anywhere;"><strong>🚀 На следующий раз:</strong> ${escapeHtml(item.next)}</div>
+      </div>`).join('')}`;
+}
+function addJournalEntry() {
+  const d = state.jDraft, dish = d.dish.trim();
+  if (!dish) { toast('Укажите название блюда или эксперимента'); const e = document.getElementById('jDish'); if (e) e.focus(); return; }
+  const v = k => d[k].trim() || '—', fields = { dish, ing: v('ing'), temp: v('temp'), result: v('res'), next: v('next') };
+  const editing = state.jEditId !== null;
+  if (editing) { const it = state.journal.find(x => x.id === state.jEditId); if (it) Object.assign(it, fields); }
+  else state.journal.unshift({ id: Date.now(), date: new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }), ...fields });
+  state.jDraft = { dish: '', ing: '', temp: '', res: '', next: '' }; state.jEditId = null;
+  toast(saveState() ? (editing ? 'Запись обновлена' : 'Запись сохранена') : 'Запись добавлена, но не сохранена на устройстве');
+  render();
+}
+function editJournalEntry(id) {
+  const it = state.journal.find(x => x.id === id); if (!it) return;
+  const c = x => x === '—' ? '' : x;
+  state.jDraft = { dish: it.dish, ing: c(it.ing), temp: c(it.temp), res: c(it.result), next: c(it.next) }; state.jEditId = id;
+  render(); window.scrollTo(0, 0);
+}
+function cancelJournalEdit() { state.jDraft = { dish: '', ing: '', temp: '', res: '', next: '' }; state.jEditId = null; render(); }
+function deleteJournalEntry(id) {
+  if (!confirm('Удалить эту запись журнала? Действие нельзя отменить.')) return;
+  state.journal = state.journal.filter(x => x.id !== id);
+  if (state.jEditId === id) { state.jEditId = null; state.jDraft = { dish: '', ing: '', temp: '', res: '', next: '' }; }
+  toast(saveState() ? 'Запись удалена' : 'Удалено, но не сохранено на устройстве'); render();
+}
+
+// --- резервная копия: экспорт / импорт с проверкой ---
+function backupText() { return JSON.stringify({ app: 'kuhnya-nauka-vkusa', exportedAt: new Date().toISOString(), data: snapshot() }, null, 2); }
+function exportBackup() {
+  const a = document.getElementById('backupArea'); a.value = backupText(); a.focus(); a.select();
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(a.value).then(() => toast('Копия скопирована в буфер обмена'), () => toast('Текст выделен в поле: скопируйте вручную'));
+    else toast(document.execCommand('copy') ? 'Копия скопирована' : 'Скопируйте текст из поля вручную');
+  } catch (e) { toast('Скопируйте текст из поля вручную'); }
+}
+function downloadBackup() {
+  try {
+    const u = URL.createObjectURL(new Blob([backupText()], { type: 'application/json' })), l = document.createElement('a');
+    l.href = u; l.download = 'kuhnya-backup.json'; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000);
+    toast('Файл сформирован (проверьте папку «Загрузки»)');
+  } catch (e) { toast('Скачивание недоступно: используйте «Копировать JSON»'); }
+}
+function importBackup() {
+  const txt = document.getElementById('backupArea').value.trim();
+  if (!txt) return toast('Вставьте JSON резервной копии в поле');
+  let obj; try { obj = JSON.parse(txt); } catch (e) { return toast('Это не JSON: текст повреждён или вставлен не полностью'); }
+  const data = obj && obj.data && typeof obj.data === 'object' ? obj.data : obj;
+  if (data && data.schema > SCHEMA) return toast('Копия создана более новой версией приложения');
+  const clean = sanitizeSaved(data);
+  if (!clean || !Object.keys(clean).length) return toast('В тексте не найдено данных приложения');
+  if (!confirm('Импорт заменит текущие данные (журнал, избранное, прогресс, расчёты). Если они нужны — сначала сделайте экспорт. Продолжить?')) return;
+  Object.assign(state, clean); applyThemeAndFont();
+  toast(saveState() ? 'Данные импортированы' : 'Импортировано, но не сохранено на устройстве'); render();
+}
+function initApp() {
+  try { history.replaceState({ tab: 'home', sec: 'ALL', art: null, sub: 'calc' }, ''); } catch (e) {}
+  enhanceA11y(document.querySelector('header'));
+  if (pendingMsg) toast(pendingMsg);
+}
+// ==================== 7. РЕДИЗАЙН: иконки, главная, библиотека, лаборатория ====================
+const ICONS = {
+  home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>',
+  book:'<path d="M5 4h13v16H7a2 2 0 01-2-2zM5 18a2 2 0 012-2h11"/>',
+  flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3M7.5 15h9"/>',
+  bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',
+  sliders:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>', back:'<path d="M15 6l-6 6 6 6"/>',
+  atom:'<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>',
+  therm:'<path d="M10 14V5a2 2 0 014 0v9a4 4 0 11-4 0z"/>',
+  hat:'<path d="M7 17h10v3H7zM7 17a4 4 0 01-1-7.7 4 4 0 017.5-2 4 4 0 015.5 3.7A4 4 0 0117 17"/>',
+  warn:'<path d="M12 4l9 16H3zM12 10v4M12 17v.5"/>', check:'<path d="M5 12l4 4 10-10"/>',
+  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', pencil:'<path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/>', trash:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>'
+};
+function ic(n, s) { return `<svg class="ic" ${s ? `style="width:${s}px;height:${s}px"` : ''} aria-hidden="true"><use href="#i-${n}"/></svg>`; }
+function stripEmoji(h) { return h.replace(/[\u2600\u2696\u26A0\u270F\uFE0F\u{1F300}-\u{1FAFF}]\s?/gu, ''); }
+function readMin(a) { const w = [a.what, a.why, a.factors, a.practice, a.mistakes, a.experiment, a.summary].join(' ').split(/\s+/).length; return Math.max(1, Math.round(w / 170)); }
+function secMatch(a) { const f = state.secFilter; return f === 'ALL' || f === 'UNREAD' || (f === 'TECH' ? 'ABCDF'.includes(a.sec) : a.sec === f); }
+function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState(); render(); }
+function goSearch() { navigate('catalog'); const i = document.getElementById('catSearchInput'); if (i) i.focus(); }
+function labGo(k) { if (k === 'journal' || k === 'quiz') { state.labTab = k; navigate('lab'); } else { state.subTab = k; navigate('tools'); } }
+function labBar() {
+  const cur = state.tab === 'lab' ? state.labTab : state.subTab;
+  const items = [['calc', 'Калькулятор'], ['trouble', 'Ошибки'], ['compare', 'Сравнение'], ['journal', 'Журнал'], ['quiz', 'Тесты']];
+  return `<h1 class="screen-title">Лаборатория</h1><p class="sub">Расчёты, диагностика и записи экспериментов</p>
+    <div class="pill-bar">${items.map(([k, t]) => `<button class="pill ${cur === k ? 'active' : ''}" onclick="labGo('${k}')">${t}</button>`).join('')}</div>`;
+}
+function tileOf(sec) { return sec === 'E' ? 't-chem' : sec === 'G' ? 't-phys' : sec === 'H' ? 't-exp' : 't-tech'; }
+function renderCatalogCards(list) {
+  if (!list.length) return `<div class="card" style="text-align:center;padding:28px;"><strong>Ничего не найдено</strong>
+    <p style="color:var(--text-muted);font-size:0.88rem;">Измените запрос или сбросьте фильтры.</p>
+    <button class="btn outline" onclick="state.searchQuery='';state.secFilter='ALL';render()">Сбросить фильтры</button></div>`;
+  return list.map(a => {
+    const sec = SECTIONS.find(s => s.id === a.sec), isRead = state.readIds.includes(a.id), isFav = state.favIds.includes(a.id);
+    const g = a.sec === 'E' ? 'atom' : a.sec === 'G' ? 'therm' : a.sec === 'H' ? 'flask' : 'hat';
+    return `<div class="card card-ed card-clickable" onclick="navigate('article', '${a.id}')">
+      <div class="tile ${tileOf(a.sec)}">${ic(g, 22)}</div>
+      <div style="min-width:0"><div class="ed-t">${escapeHtml(a.title)}</div><div class="ed-d">${escapeHtml(a.idea)}</div>
+      <div class="ed-m">${readMin(a)} мин · ${escapeHtml(sec.title)}${isRead ? ' · ✓ изучено' : ''}${isFav ? ' · ★' : ''}</div></div></div>`;
+  }).join('');
+}
+function renderHome() {
+  const total = ARTICLES.length, readCount = state.readIds.length, pct = Math.round(readCount / total * 100);
+  const nextArt = ARTICLES.find(a => !state.readIds.includes(a.id)) || ARTICLES[0], cover = ARTICLES.find(a => a.id === 'a1') || ARTICLES[0];
+  const rec = (state.recentIds || []).map(id => ARTICLES.find(a => a.id === id)).filter(Boolean).slice(0, 3);
+  const dir = (k, t, d, i, c) => `<button class="dir ${c}" onclick="navigate('catalog','${k}')">${ic(i)}<b>${t}</b><span>${d}</span></button>`;
+  const row = (i, t, d, call) => `<button class="row" onclick="${call}">${ic(i, 22)}<span><b>${t}</b><small>${d}</small></span><span class="go">${ic('chev', 18)}</span></button>`;
+  const crumb = [[70,150,34,22],[150,120,26,18],[235,160,38,24],[310,125,22,15],[120,195,20,13],[200,205,30,17],[290,200,24,16],[355,170,18,12],[60,100,16,11],[180,85,22,14]].map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#1E1710" opacity=".55"/><ellipse cx="${x}" cy="${y}" rx="${rx + 4}" ry="${ry + 4}" fill="none" stroke="#C9965F" stroke-width="2" opacity=".5"/>`).join('');
+  return `
+    <section class="cover" aria-label="Обложка исследования">
+      <svg class="crumb" viewBox="0 0 400 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="340" fill="#6B4A2B"/><rect y="250" width="400" height="90" fill="#4A321C"/>${crumb}</svg>
+      <div class="cover-body"><span class="mark">ИССЛЕДОВАНИЕ № 01</span>
+        <h2>Почему хлеб становится воздушным?</h2>
+        <p>Дрожжи, газовые пузырьки и структура клейковины — от химии теста до хрустящей корочки.</p>
+        <div class="cover-foot"><span>${ic('clock', 16)} ${readMin(cover)} мин</span><button class="btn" onclick="navigate('article','${cover.id}')">Читать ${ic('chev', 16)}</button></div></div>
+    </section>
+    <button class="searchbar" onclick="goSearch()">${ic('search', 20)}<span>Поиск по материалам</span></button>
+    <div class="eyebrow"><h3>Направления</h3><button class="link" onclick="navigate('catalog','ALL')">Все темы</button></div>
+    <div class="dirs">
+      ${dir('E', 'Химия вкуса', 'Рецепторы, аромат, баланс', 'atom', 't-chem')}${dir('G', 'Физика приготовления', 'Тепло, влага, посуда', 'therm', 't-phys')}
+      ${dir('TECH', 'Кулинарные техники', 'Тесто, десерты, мясо, соусы', 'hat', 't-tech')}${dir('H', 'Эксперименты', 'Проверь теорию сам', 'flask', 't-exp')}
+    </div>
+    <div class="eyebrow"><h3>Твоя лаборатория</h3></div>
+    <div class="list">
+      ${row('flask', 'Калькуляторы', 'Порции и проценты пекаря', "state.subTab='calc';navigate('tools')")}
+      ${row('warn', 'Диагностика ошибок', 'Что пошло не так?', "state.subTab='trouble';navigate('tools')")}
+      ${row('book', 'Журнал экспериментов', 'Результаты и наблюдения', "state.labTab='journal';navigate('lab')")}
+    </div>
+    <div class="eyebrow"><h3>Продолжить обучение</h3><span class="mono-s">${readCount} из ${total}</span></div>
+    <div class="card"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="ed-t" style="margin-top:8px">${escapeHtml(nextArt.title)}</div>
+      <button class="btn outline" style="margin-top:10px" onclick="navigate('article','${nextArt.id}')">Открыть статью</button></div>
+    ${rec.length ? `<div class="eyebrow"><h3>Недавно открытые</h3></div>${renderCatalogCards(rec)}` : ''}`;
+}
+function renderArticleHead(a, sec) {
+  return `<header class="art-head"><div class="kicker">${escapeHtml(sec.title)} · ${readMin(a)} мин</div>
+    <h2>${escapeHtml(a.title)}</h2><div class="lead"><span class="lbl">Краткий ответ</span>${escapeHtml(a.idea)}</div></header>`;
+}
+
+loadState();
+render();
+initApp();
+</script>
+</body>
+</html>
