@@ -1,0 +1,78 @@
+<script>
+  import { ARTICLES, SECTIONS } from '../data/index.js';
+  import { state, saveState } from '../store.svelte.js';
+  import { navigate } from '../router.js';
+  import { readMin } from '../utils.js';
+  import Icon from '../components/Icon.svelte';
+  import QuizCard from '../components/QuizCard.svelte';
+
+  const a = $derived(ARTICLES.find(x => x.id === state.currentArticleId) || ARTICLES[0]);
+  const sec = $derived(SECTIONS.find(s => s.id === a.sec));
+  const isRead = $derived(state.readIds.includes(a.id));
+  const isFav = $derived(state.favIds.includes(a.id));
+  const relArts = $derived((a.related || []).map(rid => ARTICLES.find(x => x.id === rid)).filter(Boolean));
+
+  function toggle(list, id) {
+    const idx = list.indexOf(id);
+    if (idx >= 0) list.splice(idx, 1); else list.push(id);
+    saveState();
+  }
+  function relKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
+
+  const BLOCKS = [
+    ['', '1. Что происходит', 'what'],
+    ['', '2. Почему это происходит (Научный механизм)', 'why'],
+    ['olive', '3. Что влияет на результат', 'factors'],
+    ['olive', '4. Как применить на практике', 'practice'],
+    ['warn', '5. Типичные ошибки и как их избежать', 'mistakes'],
+    ['', '6. Небольшой домашний эксперимент', 'experiment'],
+  ];
+</script>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+  <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0]}</span></button>
+  <div style="display:flex;gap:6px;">
+    <button class="btn {isFav ? '' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(state.favIds, a.id)}>
+      <Icon name="star" size={20} /><span class="sr">{isFav ? 'Убрать из избранного' : 'В избранное'}</span>
+    </button>
+    <button class="btn {isRead ? 'secondary' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(state.readIds, a.id)}>
+      <Icon name="check" size={20} /><span class="sr">{isRead ? 'Прочитано, снять отметку' : 'Отметить прочитанным'}</span>
+    </button>
+  </div>
+</div>
+
+<header class="art-head"><div class="kicker">{sec.title} · {readMin(a)} мин</div>
+  <h2>{a.title}</h2><div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
+
+{#each BLOCKS as [cls, title, key]}
+  <div class="art-block {cls}">
+    <h4>{title}</h4>
+    <div>{a[key]}</div>
+  </div>
+{/each}
+
+<div class="art-block Summary">
+  <h4>7. Краткий вывод (Запомнить)</h4>
+  <div style="font-weight:700;">{a.summary}</div>
+  <div style="margin-top:8px;font-size:0.76rem;color:var(--text-muted);">
+    Источники: {a.sources}
+  </div>
+</div>
+
+<div class="card">
+  <h4 style="margin:0 0 8px 0;color:var(--primary);">Проверьте понимание статьи</h4>
+  <div style="font-weight:700;margin-bottom:10px;">{a.quiz.q}</div>
+  {#key a.id}
+    <QuizCard article={a} label="Разбор:" boxStyle="margin-top:8px;padding:10px;border-radius:10px;background:var(--surface-alt);font-size:0.86rem;" />
+  {/key}
+</div>
+
+<div class="card">
+  <h4 style="margin:0 0 8px 0;">Связанные темы</h4>
+  {#each relArts as ra (ra.id)}
+    <div style="padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;color:var(--primary);font-weight:600;"
+         role="button" tabindex="0" onclick={() => navigate('article', ra.id)} onkeydown={e => relKey(e, ra.id)}>
+      → {ra.title}
+    </div>
+  {/each}
+</div>

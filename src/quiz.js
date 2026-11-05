@@ -1,5 +1,4 @@
-import { state, saveState } from './store.js';
-import { render } from './router.js';
+import { state, saveState } from './store.svelte.js';
 
 // Порядок вариантов (детерминированный по id) и ответы на вопросы
 export function qOrder(a) {
@@ -9,12 +8,10 @@ export function qOrder(a) {
   if (p.length > 1 && p[0] === a.quiz.a) [p[0], p[p.length - 1]] = [p[p.length - 1], p[0]];
   return p;
 }
-
-// --- квизы ---
 export function answerArticleQuiz(id, i) {
   if (state.quizScores[id] !== undefined) return;
   state.quizScores[id] = i;
   if (!state.readIds.includes(id)) state.readIds.push(id);
-  saveState(); render();
+  saveState();
 }
-export function retryQuiz(id) { delete state.quizScores[id]; saveState(); render(); }
+export function retryQuiz(id) { delete state.quizScores[id]; saveState(); }
