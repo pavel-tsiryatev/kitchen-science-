@@ -30,6 +30,11 @@ describe('parseArticle', () => {
     expect(a.sources).toEqual([{ text: 'Книга без идентификатора' }]);
   });
 
+  it('блюдо с подгруппой', () => {
+    expect(parse(meta().replace('section: A', 'section: I\ngroup: soup') + body).group).toBe('soup');
+    expect('group' in parse(meta() + body)).toBe(false);
+  });
+
   it('абзацы разделяются пустой строкой, переносы внутри абзаца склеиваются', () => {
     const a = parse(meta() + body.replace('Текст раздела «Что происходит».', 'Первая строка\nпродолжение.\n\nВторой абзац.'));
     expect(a.what).toBe('Первая строка продолжение.\n\nВторой абзац.');
@@ -57,6 +62,9 @@ describe('parseArticle', () => {
     ['неизвестный раздел', meta() + body + '\n## Лирическое отступление\n\nТекст', /неизвестный раздел «## Лирическое отступление»/],
     ['повтор раздела', meta() + body + '\n## Коротко\n\nЕщё раз', /встречается дважды/],
     ['неизвестная секция', meta().replace('section: A', 'section: Q') + body, /неизвестный раздел «Q»/],
+    ['блюдо без подгруппы', meta().replace('section: A', 'section: I') + body, /укажите «group»/],
+    ['неизвестная подгруппа', meta().replace('section: A', 'section: I\ngroup: desserts') + body, /укажите «group»/],
+    ['подгруппа не у блюда', meta().replace('section: A', 'section: A\ngroup: soup') + body, /только у статей раздела I/],
     ['неверный ответ', meta().replace('answer: 0', 'answer: 5') + body, /quiz.answer/],
     ['нет источников', meta().replace(/sources:\n.*\n/, 'sources: []\n') + body, /хотя бы один источник/],
     ['имя файла', meta() + body, /имя файла должно совпадать с id: z1.md/, 'другое.md'],

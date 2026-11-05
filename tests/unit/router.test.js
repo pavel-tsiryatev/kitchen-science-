@@ -50,4 +50,14 @@ describe('«Назад»', () => {
     expect(store.state.tab).toBe('home');
     expect(router.handleBack()).toBe(false);
   });
+
+  it('возвращает в список блюд с той же подгруппой, что была выбрана', async () => {
+    router.navigate('catalog', 'I');
+    store.state.dishGroup = 'soup'; // нажали «Супы»
+    router.navigate('article', 'i9');
+    const p = popped(); router.handleBack(); await p;
+    expect(store.state.tab).toBe('catalog');
+    expect(store.state.secFilter).toBe('I');
+    expect(store.state.dishGroup).toBe('soup');
+  });
 });

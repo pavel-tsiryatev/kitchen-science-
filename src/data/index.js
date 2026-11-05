@@ -5,8 +5,9 @@ import ARTICLES from 'virtual:articles';
 import GLOSSARY from 'virtual:glossary';
 import TROUBLESHOOTING from './troubleshooting.json';
 import COMPARISONS from './comparisons.json';
+import DISH_GROUPS from './dish-groups.json';
 
-export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, GLOSSARY };
+export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, GLOSSARY, DISH_GROUPS };
 
 /** Подписи уровней доказательности (совпадают с scripts/content.mjs) */
 export const EVIDENCE_LABEL = {

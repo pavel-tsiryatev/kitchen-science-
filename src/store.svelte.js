@@ -9,6 +9,7 @@ export const state = $state({
   subTab: 'calc', // calc | trouble | compare
   labTab: 'quiz', // quiz | journal
   secFilter: 'ALL',
+  dishGroup: 'ALL', // подгруппа в разделе «Популярные блюда»
   searchQuery: '',
   currentArticleId: null,
   glossTerm: null, // термин, к которому прокрутить экран глоссария

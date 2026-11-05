@@ -1,5 +1,5 @@
 <script>
-  import { ARTICLES, SECTIONS, GLOSSARY } from '../data/index.js';
+  import { ARTICLES, SECTIONS, GLOSSARY, DISH_GROUPS } from '../data/index.js';
   import { navigate } from '../router.js';
   import { searchGlossary } from '../glossary.js';
   import TermSheet from '../components/TermSheet.svelte';
@@ -18,11 +18,15 @@
   // Термины глоссария, подходящие под запрос (по названию и синонимам)
   const terms = $derived(found ? searchGlossary(GLOSSARY, stems).slice(0, 3) : []);
   let openTerm = $state(null);
+  // Подгруппы «Популярных блюд» с количеством статей
+  const DISHES = ARTICLES.filter(a => a.sec === 'I');
+  const groupCount = id => DISHES.filter(a => a.group === id).length;
   const filtered = $derived.by(() => {
-    const f = app.secFilter;
+    const f = app.secFilter, g = f === 'I' ? app.dishGroup : 'ALL';
     return (found ? found.map(r => r.article) : ARTICLES).filter(a =>
-      secMatch(a, f) && !(f === 'UNREAD' && app.readIds.includes(a.id)));
+      secMatch(a, f) && !(f === 'UNREAD' && app.readIds.includes(a.id)) && (g === 'ALL' || a.group === g));
   });
+  function setSec(id) { app.secFilter = id; app.dishGroup = 'ALL'; }
 </script>
 
 <h1 class="screen-title">Библиотека</h1><p class="sub">Знания, которые делают вкуснее</p>
@@ -32,14 +36,23 @@
   bind:value={app.searchQuery}>
 
 <div class="pill-bar">
-  <button class="pill" class:active={app.secFilter === 'ALL'} onclick={() => app.secFilter = 'ALL'}>Все ({ARTICLES.length})</button>
-  <button class="pill" class:active={app.secFilter === 'UNREAD'} onclick={() => app.secFilter = 'UNREAD'}>Непрочитанные</button>
+  <button class="pill" class:active={app.secFilter === 'ALL'} onclick={() => setSec('ALL')}>Все ({ARTICLES.length})</button>
+  <button class="pill" class:active={app.secFilter === 'UNREAD'} onclick={() => setSec('UNREAD')}>Непрочитанные</button>
   {#each SECTIONS as s (s.id)}
-    <button class="pill" class:active={app.secFilter === s.id} onclick={() => app.secFilter = s.id}>
+    <button class="pill" class:active={app.secFilter === s.id} onclick={() => setSec(s.id)}>
       {s.letter}. {s.title}
     </button>
   {/each}
 </div>
+
+{#if app.secFilter === 'I'}
+  <div class="pill-bar sub-pills" role="group" aria-label="Виды блюд">
+    <button class="pill" class:active={app.dishGroup === 'ALL'} onclick={() => app.dishGroup = 'ALL'}>Все блюда ({DISHES.length})</button>
+    {#each DISH_GROUPS as g (g.id)}
+      <button class="pill" class:active={app.dishGroup === g.id} onclick={() => app.dishGroup = g.id}>{g.title} ({groupCount(g.id)})</button>
+    {/each}
+  </div>
+{/if}
 
 {#if terms.length}
   <div class="card search-terms">
