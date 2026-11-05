@@ -23,6 +23,21 @@ run("npx capacitor-assets generate --android --iconBackgroundColor '#F7F3EB' --i
 const gradlePath = 'android/app/build.gradle';
 let gradle = readFileSync(gradlePath, 'utf8');
 gradle = gradle.replace(/versionCode \d+/, `versionCode ${versionCode}`).replace(/versionName "[^"]*"/, `versionName "${versionName}"`);
+// Debug-сборки подписываются ключом debug.keystore из корня репозитория, а не случайным
+// ключом машины сборки: иначе каждая новая тестовая сборка не ставится поверх предыдущей
+// («подпись пакета и установленного приложения не совпадают»).
+if (!gradle.includes('kuhnya-debug-signing')) {
+  gradle = gradle.replace(/android\s*\{/, `android {
+    // kuhnya-debug-signing
+    signingConfigs {
+        debug {
+            storeFile rootProject.file('../debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }`);
+}
 writeFileSync(gradlePath, gradle);
 console.log(`Версия: ${versionName} (code ${versionCode})`);
 
