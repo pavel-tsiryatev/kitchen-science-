@@ -76,10 +76,17 @@ jobs:
           git push -f origin dev
           NOTES="Автоматическая debug-сборка последнего коммита в main: версия ${VERSION_NAME}, коммит ${GITHUB_SHA}.
           Для публикации в магазины используйте релизы с тегами v*."
-          if gh release view dev >/dev/null 2>&1; then
-            gh release edit dev --title "Тестовая сборка (main)" --notes "$NOTES" --prerelease --latest=false
+          # Пока нет релизов v*, тестовая сборка помечается как Latest и видна в блоке Releases
+          # на главной странице репозитория. После первого v* «последним» остаётся он.
+          if gh release list --limit 100 --json tagName -q '.[].tagName' | grep -q '^v'; then
+            FLAGS="--prerelease --latest=false"
           else
-            gh release create dev --title "Тестовая сборка (main)" --notes "$NOTES" --prerelease --latest=false --verify-tag
+            FLAGS="--prerelease=false --latest"
+          fi
+          if gh release view dev >/dev/null 2>&1; then
+            gh release edit dev --title "Тестовая сборка (main)" --notes "$NOTES" $FLAGS
+          else
+            gh release create dev --title "Тестовая сборка (main)" --notes "$NOTES" $FLAGS --verify-tag
           fi
           gh release upload dev kuhnya-dev.apk --clobber
 

@@ -64,7 +64,7 @@
 <header class="art-head"><div class="kicker">{sec.title} · {readMin(a)} мин</div>
   <h2>{a.title}</h2>
   {#if a.evidence !== 'unverified'}
-    <div class="evidence ev-{a.evidence}" title={EVIDENCE_LABEL[a.evidence]}><Icon name="check" size={14} />Источники проверены · доказательность: {EVIDENCE_LABEL[a.evidence].split(':')[0].toLowerCase()}</div>
+    <div class="evidence ev-{a.evidence}" title={EVIDENCE_LABEL[a.evidence]}><Icon name="check" size={14} />Источники проверены · уровень доказательности: {EVIDENCE_LABEL[a.evidence].split(':')[0].toLowerCase()}</div>
   {/if}
   <div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
 
