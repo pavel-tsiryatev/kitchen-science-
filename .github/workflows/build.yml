@@ -67,7 +67,7 @@ jobs:
           path: kuhnya-dev.apk
 
       # Публикация через gh CLI: action softprops падал с «Error updating policy»
-      - name: Обновить пререлиз «dev»
+      - name: Опубликовать тестовую сборку «dev»
         if: env.IS_RELEASE != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -83,12 +83,11 @@ jobs:
           else
             FLAGS="--prerelease=false --latest"
           fi
-          if gh release view dev >/dev/null 2>&1; then
-            gh release edit dev --title "Тестовая сборка (main)" --notes "$NOTES" $FLAGS
-          else
-            gh release create dev --title "Тестовая сборка (main)" --notes "$NOTES" $FLAGS --verify-tag
-          fi
-          gh release upload dev kuhnya-dev.apk --clobber
+          # Релиз пересоздаётся при каждой сборке: GitHub показывает дату публикации релиза,
+          # и при простом обновлении в блоке Releases висела бы дата первой публикации.
+          # Тег dev при удалении релиза сохраняется.
+          gh release delete dev --yes 2>/dev/null || true
+          gh release create dev kuhnya-dev.apk --title "Тестовая сборка ${VERSION_NAME}" --notes "$NOTES" $FLAGS --verify-tag
 
       # ---------- Релиз ----------
       - name: Сборка подписанных APK и AAB
