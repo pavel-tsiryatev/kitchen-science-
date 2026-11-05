@@ -55,12 +55,13 @@ async function checkDoi(s) {
   const norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
   const ourFirst = norm(s.authors.split(',')[0].split(/\s+/).filter(w => !/^(\p{Lu}\.)+$/u.test(w)).join(''));
   const theirs = (m.author || []).map(x => norm(x.family || x.name));
-  if (ourFirst && theirs.length && theirs[0] !== ourFirst) problems.push(`первый автор «${s.authors.split(',')[0]}», в Crossref: ${(m.author || []).slice(0, 3).map(x => x.family).join(', ')}`);
+  // Некоторые издатели пишут инициалы в поле фамилии («P. D. Sanz») или всех авторов одной строкой
+  if (ourFirst && theirs.length && !theirs[0].endsWith(ourFirst) && !(theirs.length === 1 && theirs[0].includes(ourFirst))) problems.push(`первый автор «${s.authors.split(',')[0]}», в Crossref: ${(m.author || []).slice(0, 3).map(x => x.family).join(', ')}`);
   // Том и первая страница из поля published («Food Chemistry, 212, 789–797»): ловят соседние статьи
   // с почти одинаковыми названиями (например, «Part I» и «Part II»)
   const pages = /(\d+)\s*[–-]\s*\d+\s*$/.exec(s.published || '');
   const crPage = String(m.page || '').split('-')[0];
-  if (pages && crPage && pages[1] !== crPage) problems.push(`страницы ${pages[0]}, в Crossref ${m.page}`);
+  if (pages && crPage && Number(pages[1]) !== Number(crPage)) problems.push(`страницы ${pages[0]}, в Crossref ${m.page}`);
   const vol = /,\s*(\d+)\s*(?:\(|,)/.exec(s.published || '');
   if (vol && m.volume && vol[1] !== String(m.volume)) problems.push(`том ${vol[1]}, в Crossref ${m.volume}`);
   return { ok: !problems.length, msg: problems.join('; ') || `${(m['container-title'] || [''])[0]} ${year}` };
