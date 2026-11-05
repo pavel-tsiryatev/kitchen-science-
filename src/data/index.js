@@ -2,10 +2,11 @@
 // разделы, ошибки и сравнения — JSON рядом с этим файлом.
 import SECTIONS from './sections.json';
 import ARTICLES from 'virtual:articles';
+import GLOSSARY from 'virtual:glossary';
 import TROUBLESHOOTING from './troubleshooting.json';
 import COMPARISONS from './comparisons.json';
 
-export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS };
+export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, GLOSSARY };
 
 /** Подписи уровней доказательности (совпадают с scripts/content.mjs) */
 export const EVIDENCE_LABEL = {

@@ -234,3 +234,27 @@ input.field,select.field,textarea.field{background:var(--surface);border:1.5px s
 mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1px;font-weight:700}
 .ed-s{margin-top:6px;font-size:.8rem;color:var(--text-muted);font-style:italic;overflow-wrap:anywhere}
 .search-count{margin:-4px 0 10px;font-size:.8rem;color:var(--text-muted)}
+
+/* Глоссарий: термины в статьях, нижняя карточка, экран */
+.term{all:unset;cursor:pointer;color:inherit;text-decoration:underline dotted var(--primary);text-decoration-thickness:2px;text-underline-offset:3px}
+.term:focus-visible{outline:2px solid var(--primary);border-radius:3px}
+.sheet-backdrop{all:unset;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:60}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;max-width:640px;margin:0 auto;background:var(--surface);border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.2);max-height:70vh;overflow:auto}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sheet-head h3{margin:0;font-size:1.15rem}
+.sheet-def{margin:8px 0 12px;line-height:1.5}
+.sheet-more{font-size:.84rem;color:var(--text-muted);margin-bottom:12px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.sheet .link,.gl-links .link{text-align:left}
+.gl-letter{margin:14px 4px 6px;font-weight:800;color:var(--primary);font-size:.9rem}
+.gl-term h3{margin:0 0 6px;font-size:1rem}
+.gl-alias{font-weight:400;color:var(--text-muted);font-size:.85rem}
+.gl-term p{margin:0 0 8px;line-height:1.5;font-size:.92rem}
+.gl-links{display:flex;flex-direction:column;align-items:flex-start;gap:4px;font-size:.84rem}
+.gl-term.flash{outline:2px solid var(--primary)}
+.gl-entry{font-size:.84rem;margin:-4px 0 12px}
+
+.search-terms{padding:12px 14px}
+.search-terms-h{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--primary);margin-bottom:6px}
+.term-hit{all:unset;display:block;cursor:pointer;font-size:.86rem;line-height:1.45;padding:6px 0;border-top:1px solid var(--border);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.term-hit:first-of-type{border-top:0}
+.term-hit:focus-visible{outline:2px solid var(--primary);border-radius:4px}

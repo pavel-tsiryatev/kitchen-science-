@@ -146,21 +146,61 @@ export function loadArticles(dir) {
   return list.sort((x, y) => { const [a1, b1, c1] = key(x), [a2, b2, c2] = key(y); return a1 - a2 || b1.localeCompare(b2) || c1 - c2; });
 }
 
-/** Vite-плагин: `import ARTICLES from 'virtual:articles'` */
-export function articlesPlugin(dir) {
-  const ID = 'virtual:articles', RESOLVED = '\0' + ID;
+/** Глоссарий (content/glossary.yaml): проверка полей, уникальности и ссылок на статьи */
+export function parseGlossary(text, articleIds, file = 'glossary.yaml') {
+  let list;
+  try { list = parseYaml(text); } catch (e) {
+    const hint = /mapping/i.test(e.message) ? '. Подсказка: если в значении есть «: », возьмите его в кавычки' : '';
+    fail(file, `ошибка YAML: ${e.message.split('\n')[0]}${hint}`);
+  }
+  if (!Array.isArray(list) || !list.length) fail(file, 'глоссарий должен быть списком терминов');
+  const ids = new Set(), names = new Map();
+  return list.map((t, i) => {
+    const at = `термин №${i + 1}${t && t.term ? ` «${t.term}»` : ''}`;
+    if (!t || typeof t !== 'object') fail(file, `${at}: неверный формат`);
+    const e = {
+      id: str(t.id, file, `${at}.id`),
+      term: str(t.term, file, `${at}.term`),
+      aliases: (t.aliases ?? []).map(a => String(a).trim()).filter(Boolean),
+      definition: str(t.definition, file, `${at}.definition`),
+      articles: (t.articles ?? []).map(String),
+    };
+    if (!/^[a-z0-9-]+$/.test(e.id)) fail(file, `${at}: id только латиницей, цифрами и дефисом`);
+    if (ids.has(e.id)) fail(file, `${at}: повторяющийся id «${e.id}»`);
+    ids.add(e.id);
+    for (const n of [e.term, ...e.aliases]) {
+      const k = n.toLowerCase().replace(/ё/g, 'е');
+      if (names.has(k)) fail(file, `${at}: «${n}» уже есть у термина «${names.get(k)}»`);
+      names.set(k, e.term);
+    }
+    for (const a of e.articles) if (!articleIds.has(a)) fail(file, `${at}: несуществующая статья «${a}»`);
+    return e;
+  }).sort((a, b) => a.term.localeCompare(b.term, 'ru'));
+}
+
+export function loadGlossary(file, articleIds) {
+  return parseGlossary(readFileSync(file, 'utf8'), articleIds, basename(file));
+}
+
+/** Vite-плагин: `import ARTICLES from 'virtual:articles'`, `import GLOSSARY from 'virtual:glossary'` */
+export function articlesPlugin(dir, glossaryFile) {
+  const MODS = { 'virtual:articles': '\0virtual:articles', 'virtual:glossary': '\0virtual:glossary' };
+  const RESOLVED = new Set(Object.values(MODS));
   return {
     name: 'kuhnya-articles',
-    resolveId: id => (id === ID ? RESOLVED : null),
+    resolveId: id => MODS[id] ?? null,
     load(id) {
-      if (id !== RESOLVED) return null;
+      if (!RESOLVED.has(id)) return null;
       for (const f of readdirSync(dir)) this.addWatchFile(join(dir, f));
-      return `export default ${JSON.stringify(loadArticles(dir))};`;
+      const articles = loadArticles(dir);
+      if (id === MODS['virtual:articles']) return `export default ${JSON.stringify(articles)};`;
+      this.addWatchFile(glossaryFile);
+      return `export default ${JSON.stringify(loadGlossary(glossaryFile, new Set(articles.map(a => a.id))))};`;
     },
     handleHotUpdate({ file, server }) {
-      if (!file.startsWith(dir) || !file.endsWith('.md')) return;
-      const mod = server.moduleGraph.getModuleById(RESOLVED);
-      if (mod) { server.moduleGraph.invalidateModule(mod); server.ws.send({ type: 'full-reload' }); }
+      if (!(file.startsWith(dir) && file.endsWith('.md')) && file !== glossaryFile) return;
+      for (const r of RESOLVED) { const mod = server.moduleGraph.getModuleById(r); if (mod) server.moduleGraph.invalidateModule(mod); }
+      server.ws.send({ type: 'full-reload' });
     },
   };
 }
