@@ -1,5 +1,6 @@
 import { state, SCHEMA, saveState, snapshot, sanitizeSaved, applyThemeAndFont } from './store.svelte.js';
 import { toast } from './toast.js';
+import { saveTextFile } from './native.js';
 
 // --- резервная копия: экспорт / импорт с проверкой ---
 function backupText() { return JSON.stringify({ app: 'kuhnya-nauka-vkusa', exportedAt: new Date().toISOString(), data: snapshot() }, null, 2); }
@@ -12,12 +13,27 @@ export function exportBackup(area) {
   } catch (e) { toast('Скопируйте текст из поля вручную'); }
 }
 
-export function downloadBackup() {
+export async function downloadBackup() {
+  const name = 'kuhnya-backup-' + new Date().toISOString().slice(0, 10) + '.json';
   try {
-    const u = URL.createObjectURL(new Blob([backupText()], { type: 'application/json' })), l = document.createElement('a');
-    l.href = u; l.download = 'kuhnya-backup.json'; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000);
-    toast('Файл сформирован (проверьте папку «Загрузки»)');
-  } catch (e) { toast('Скачивание недоступно: используйте «Копировать JSON»'); }
+    const how = await saveTextFile(name, backupText());
+    if (how === 'downloaded') toast('Файл сформирован (проверьте папку «Загрузки»)');
+  } catch (e) {
+    // Пользователь закрыл окно «Поделиться» — это не ошибка
+    if (/cancel/i.test(String(e && e.message))) return;
+    toast('Не удалось сохранить файл: используйте «Копировать JSON»');
+  }
+}
+
+/** Импорт из выбранного файла .json */
+export function importBackupFile(input, area) {
+  const f = input.files && input.files[0]; input.value = '';
+  if (!f) return;
+  if (f.size > 5e6) return toast('Файл слишком большой для резервной копии');
+  const r = new FileReader();
+  r.onload = () => { area.value = String(r.result || ''); importBackup(area); };
+  r.onerror = () => toast('Не удалось прочитать файл');
+  r.readAsText(f);
 }
 
 export function importBackup(area) {

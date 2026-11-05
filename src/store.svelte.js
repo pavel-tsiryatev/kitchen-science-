@@ -1,5 +1,6 @@
 import { ARTICLES } from './data/index.js';
 import { toast } from './toast.js';
+import { isNative, readStored, writeStoredNative } from './native.js';
 
 // Реактивное состояние приложения (Svelte 5 $state), загрузка/сохранение в localStorage, тема и шрифт
 export const STORAGE_KEY = 'kuhnya_science_v1';
@@ -85,10 +86,12 @@ export function sanitizeSaved(s) {
 export function snapshot() {
   return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds };
 }
-export function loadState() {
+export async function loadState() {
   let raw = null;
-  try { raw = localStorage.getItem(STORAGE_KEY); localStorage.setItem(STORAGE_KEY + '_t', '1'); localStorage.removeItem(STORAGE_KEY + '_t'); }
-  catch (e) { storageOk = false; pendingMsg = 'Хранилище недоступно: данные не сохранятся после закрытия. Используйте экспорт.'; }
+  try {
+    if (!isNative) { localStorage.setItem(STORAGE_KEY + '_t', '1'); localStorage.removeItem(STORAGE_KEY + '_t'); }
+    raw = await readStored(STORAGE_KEY);
+  } catch (e) { storageOk = false; pendingMsg = 'Хранилище недоступно: данные не сохранятся после закрытия. Используйте экспорт.'; }
   if (raw) {
     try {
       const parsed = JSON.parse(raw);
@@ -102,9 +105,19 @@ export function loadState() {
   } else if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) state.theme = 'dark';
   applyThemeAndFont();
 }
+function storageFailed() {
+  if (storageOk) { storageOk = false; toast('Не удалось сохранить: хранилище недоступно. Сделайте экспорт.'); }
+}
 export function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); storageOk = true; return true; }
-  catch (e) { if (storageOk) { storageOk = false; toast('Не удалось сохранить: хранилище недоступно. Сделайте экспорт.'); } return false; }
+  const json = JSON.stringify(snapshot());
+  if (isNative) {
+    // Основная копия — Preferences (асинхронно), localStorage — запасное зеркало
+    try { localStorage.setItem(STORAGE_KEY, json); } catch (e) {}
+    writeStoredNative(STORAGE_KEY, json, storageFailed);
+    return storageOk;
+  }
+  try { localStorage.setItem(STORAGE_KEY, json); storageOk = true; return true; }
+  catch (e) { storageFailed(); return false; }
 }
 
 export function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState(); }

@@ -1,3 +1,8 @@
 node_modules/
 android/
 dist/
+# ключи подписи никогда не коммитим
+*.jks
+*.jks.base64
+*.keystore
+!debug.keystore
