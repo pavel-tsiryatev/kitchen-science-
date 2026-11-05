@@ -66,24 +66,22 @@ jobs:
           name: kuhnya-dev-${{ env.VERSION_NAME }}
           path: kuhnya-dev.apk
 
-      - name: Перенести тег dev на этот коммит
+      # Публикация через gh CLI: action softprops падал с «Error updating policy»
+      - name: Обновить пререлиз «dev»
         if: env.IS_RELEASE != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git tag -f dev
           git push -f origin dev
-
-      - uses: softprops/action-gh-release@v2
-        if: env.IS_RELEASE != 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        with:
-          tag_name: dev
-          name: Тестовая сборка (main)
-          body: |
-            Автоматическая debug-сборка последнего коммита в main: версия ${{ env.VERSION_NAME }}, коммит ${{ github.sha }}.
-            Для публикации в магазины используйте релизы с тегами v*.
-          prerelease: true
-          make_latest: false
-          overwrite_files: true
-          files: kuhnya-dev.apk
+          NOTES="Автоматическая debug-сборка последнего коммита в main: версия ${VERSION_NAME}, коммит ${GITHUB_SHA}.
+          Для публикации в магазины используйте релизы с тегами v*."
+          if gh release view dev >/dev/null 2>&1; then
+            gh release edit dev --title "Тестовая сборка (main)" --notes "$NOTES" --prerelease --latest=false
+          else
+            gh release create dev --title "Тестовая сборка (main)" --notes "$NOTES" --prerelease --latest=false --verify-tag
+          fi
+          gh release upload dev kuhnya-dev.apk --clobber
 
       # ---------- Релиз ----------
       - name: Сборка подписанных APK и AAB
@@ -108,11 +106,11 @@ jobs:
           cp app/build/outputs/bundle/release/app-release.aab "$GITHUB_WORKSPACE/kuhnya-$VERSION_NAME.aab"
           rm -f "$RUNNER_TEMP/release.jks"
 
-      - uses: softprops/action-gh-release@v2
+      - name: Опубликовать релиз
         if: env.IS_RELEASE == 'true'
-        with:
-          name: Кухня ${{ env.VERSION_NAME }}
-          generate_release_notes: true
-          files: |
-            kuhnya-${{ env.VERSION_NAME }}.apk
-            kuhnya-${{ env.VERSION_NAME }}.aab
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "kuhnya-$VERSION_NAME.apk" "kuhnya-$VERSION_NAME.aab" \
+            --title "Кухня $VERSION_NAME" --generate-notes --verify-tag

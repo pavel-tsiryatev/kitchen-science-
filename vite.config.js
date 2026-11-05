@@ -9,4 +9,11 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
   },
+  // В тестах Svelte должен резолвиться в браузерную сборку (руны $state в .svelte.js)
+  resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
+  test: {
+    include: ['tests/unit/**/*.test.js'],
+    environment: 'jsdom',
+    restoreMocks: true,
+  },
 });
