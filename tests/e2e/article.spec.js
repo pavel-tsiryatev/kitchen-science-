@@ -3,14 +3,27 @@ import { open, nav, saved } from './helpers.js';
 
 test.beforeEach(async ({ page }) => { await open(page); await page.locator('.cover .btn').click(); });
 
-test('статья показывает все семь блоков и источники', async ({ page }) => {
+test('проверенная статья: блоки, доказательность и источники с DOI', async ({ page }) => {
   await expect(page.locator('.art-head h2')).toHaveText('Формирование клейковины и развитие глютеновой сетки');
+  await expect(page.locator('.evidence')).toContainText('Источники проверены');
   await expect(page.locator('.art-block h4')).toHaveText([
-    '1. Что происходит', '2. Почему это происходит (Научный механизм)', '3. Что влияет на результат',
+    '1. Что происходит', '2. Почему это происходит (научный механизм)', '3. Что влияет на результат',
     '4. Как применить на практике', '5. Типичные ошибки и как их избежать', '6. Небольшой домашний эксперимент',
-    '7. Краткий вывод (Запомнить)',
+    '7. Границы применимости', '8. Краткий вывод (Запомнить)',
   ]);
-  await expect(page.getByText(/^\s*Источники:/)).toContainText('McGee');
+  await expect(page.locator('.art-block').first().locator('.art-p')).toHaveCount(2); // абзацы из Markdown
+  const doi = page.locator('.sources a', { hasText: 'DOI 10.1016/j.jcs.2013.01.011' });
+  await expect(doi).toHaveAttribute('href', 'https://doi.org/10.1016/j.jcs.2013.01.011');
+  await expect(doi).toHaveAttribute('target', '_blank');
+  await expect(page.locator('.src-meta')).toContainText('Источники сверены 05.11.2026');
+});
+
+test('статья с непроверенными источниками честно это показывает', async ({ page }) => {
+  await page.locator('.nav-item[data-tab=catalog]').click();
+  await page.locator('.card-clickable', { hasText: 'Дрожжевое брожение' }).click();
+  await expect(page.locator('.evidence')).toHaveCount(0);
+  await expect(page.locator('.art-block h4').last()).toHaveText('7. Краткий вывод (Запомнить)');
+  await expect(page.locator('.src-meta')).toHaveText('Источники этой статьи ещё не сверены по научным базам.');
 });
 
 test('избранное и «прочитано» видны в карточках, в «Сохранённом» и на главной', async ({ page }) => {

@@ -1,0 +1,21 @@
+name: Источники статей
+
+# Сверка DOI и ISBN статей с Crossref и OpenLibrary, когда меняются статьи
+on:
+  pull_request:
+    paths: ['content/articles/**', 'scripts/verify-sources.mjs', 'scripts/content.mjs']
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Сверка источников
+        run: npm run verify:sources
