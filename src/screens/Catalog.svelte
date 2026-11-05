@@ -1,21 +1,21 @@
 <script>
   import { ARTICLES, SECTIONS } from '../data/index.js';
   import { state } from '../store.svelte.js';
-  import { normQ } from '../utils.js';
+  import { buildIndex, search, queryStems } from '../search.js';
   import ArticleCards from '../components/ArticleCards.svelte';
 
-  // Поисковый индекс считается один раз, а не при каждом нажатии клавиши
-  const HAY = new Map(ARTICLES.map(a => [a.id, normQ([a.title, a.idea, a.what, a.why, a.factors, a.practice, a.mistakes, a.experiment, a.limitations, a.summary, a.quiz.q].join(' '))]));
+  // Поисковый индекс (основы слов по полям) строится один раз
+  const INDEX = buildIndex(ARTICLES);
 
   function secMatch(a, f) { return f === 'ALL' || f === 'UNREAD' || (f === 'TECH' ? 'ABCDF'.includes(a.sec) : a.sec === f); }
 
+  const stems = $derived(queryStems(state.searchQuery));
+  // null — запроса нет; иначе статьи по убыванию релевантности
+  const found = $derived(search(INDEX, state.searchQuery));
   const filtered = $derived.by(() => {
-    const q = normQ(state.searchQuery), f = state.secFilter;
-    return ARTICLES.filter(a => {
-      if (!secMatch(a, f)) return false;
-      if (f === 'UNREAD' && state.readIds.includes(a.id)) return false;
-      return !q || HAY.get(a.id).includes(q);
-    });
+    const f = state.secFilter;
+    return (found ? found.map(r => r.article) : ARTICLES).filter(a =>
+      secMatch(a, f) && !(f === 'UNREAD' && state.readIds.includes(a.id)));
   });
 </script>
 
@@ -34,6 +34,10 @@
   {/each}
 </div>
 
+{#if found && filtered.length}
+  <p class="search-count" aria-live="polite">Найдено: {filtered.length}{filtered.length > 1 ? " — сначала самые подходящие" : ""}</p>
+{/if}
+
 <div id="catalogListContainer">
-  <ArticleCards list={filtered} />
+  <ArticleCards list={filtered} stems={found ? stems : []} />
 </div>
