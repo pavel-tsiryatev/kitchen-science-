@@ -258,3 +258,7 @@ mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1p
 .term-hit{all:unset;display:block;cursor:pointer;font-size:.86rem;line-height:1.45;padding:6px 0;border-top:1px solid var(--border);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .term-hit:first-of-type{border-top:0}
 .term-hit:focus-visible{outline:2px solid var(--primary);border-radius:4px}
+
+/* Раздел «Популярные блюда» */
+.t-dish{background:var(--primary-soft)}
+.dir.wide{grid-column:1/-1}
