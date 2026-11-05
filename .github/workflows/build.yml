@@ -56,9 +56,18 @@ jobs:
       - name: Сборка debug APK
         if: env.IS_RELEASE != 'true'
         run: |
-          mkdir -p ~/.android && cp debug.keystore ~/.android/debug.keystore
           cd android && ./gradlew assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/kuhnya-dev.apk"
+
+      # Все тестовые сборки должны быть подписаны одним ключом (debug.keystore из репозитория),
+      # иначе новая сборка не устанавливается поверх предыдущей
+      - name: Проверка подписи debug APK
+        if: env.IS_RELEASE != 'true'
+        run: |
+          want=$(keytool -list -v -keystore debug.keystore -storepass android | grep -m1 'SHA256:' | awk '{print $2}')
+          got=$(keytool -printcert -jarfile kuhnya-dev.apk | grep -m1 'SHA256:' | awk '{print $2}')
+          echo "ключ репозитория: $want"; echo "подпись APK:      $got"
+          if [ -z "$want" ] || [ "$want" != "$got" ]; then echo "::error::APK подписан не ключом debug.keystore"; exit 1; fi
 
       - uses: actions/upload-artifact@v4
         if: env.IS_RELEASE != 'true'
