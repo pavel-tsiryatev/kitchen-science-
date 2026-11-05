@@ -1,10 +1,9 @@
 import { ARTICLES } from './data/index.js';
 import { toast } from './toast.js';
-import { render } from './router.js';
 
-// Состояние приложения, загрузка/сохранение в localStorage, тема и шрифт
+// Реактивное состояние приложения (Svelte 5 $state), загрузка/сохранение в localStorage, тема и шрифт
 export const STORAGE_KEY = 'kuhnya_science_v1';
-export const state = {
+export const state = $state({
   tab: 'home',
   subTab: 'calc', // calc | trouble | compare
   labTab: 'quiz', // quiz | journal
@@ -46,7 +45,7 @@ export const state = {
     { name: 'Соль', pct: 2.0 },
     { name: 'Солод / Масло', pct: 3.0 }
   ]
-};
+});
 
 export function applyThemeAndFont() {
   document.documentElement.setAttribute('data-theme', state.theme);
@@ -108,4 +107,6 @@ export function saveState() {
   catch (e) { if (storageOk) { storageOk = false; toast('Не удалось сохранить: хранилище недоступно. Сделайте экспорт.'); } return false; }
 }
 
-export function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState(); render(); }
+export function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState(); }
+
+export function setFontScale(v) { state.fontScale = v; applyThemeAndFont(); saveState(); }

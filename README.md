@@ -14,15 +14,20 @@ npm run android   # сборка + синхронизация с Android-про�
 
 ## Структура
 
+Интерфейс написан на [Svelte 5](https://svelte.dev) (руны `$state` / `$derived`), сборка — Vite.
+
 ```
-index.html              разметка-оболочка (шапка, нижнее меню, спрайт иконок)
-src/main.js             точка входа
-src/styles.css          стили
-src/store.js            состояние, сохранение в localStorage, тема
-src/router.js           навигация и история (кнопка «Назад»)
-src/quiz.js, toast.js, a11y.js, utils.js
-src/screens/            экраны: home, catalog, article, tools, lab, favorites, settings
-src/data/*.json         контент: разделы, статьи, ошибки, сравнения
+index.html                  оболочка: SVG-спрайт иконок и контейнер уведомлений
+src/main.js                 точка входа: загрузка данных и монтирование App
+src/App.svelte              шапка, переключение экранов, нижнее меню
+src/screens/*.svelte        экраны: Home, Catalog, Article, Tools, Lab, Favorites, Settings
+src/components/*.svelte     Icon, ArticleCards, QuizCard, LabBar, Calculator, Journal
+src/store.svelte.js         реактивное состояние, сохранение в localStorage, тема
+src/router.js               навигация и история (кнопка «Назад»)
+src/backup.js               экспорт и импорт резервной копии
+src/quiz.js, toast.js, utils.js
+src/styles.css              глобальные стили
+src/data/*.json             контент: разделы, статьи, ошибки, сравнения
 ```
 
 Чтобы добавить или исправить статью, достаточно отредактировать `src/data/articles.json`.
