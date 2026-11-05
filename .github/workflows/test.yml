@@ -27,8 +27,25 @@ jobs:
       - name: Юнит-тесты (Vitest)
         run: npm run test:unit
 
+      # Chromium кэшируется по версии Playwright: установка с нуля иногда занимала больше 10 минут
+      - name: Версия Playwright
+        id: pw
+        run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> "$GITHUB_OUTPUT"
+
+      - name: Кэш браузера
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
       - name: Браузер для сценариев
+        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Системные библиотеки для браузера
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Сценарии пользователя (Playwright)
         run: npm run test:e2e

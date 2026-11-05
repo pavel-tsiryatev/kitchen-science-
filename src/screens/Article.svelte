@@ -2,7 +2,9 @@
   import { ARTICLES, SECTIONS } from '../data/index.js';
   import { state, saveState } from '../store.svelte.js';
   import { navigate } from '../router.js';
-  import { readMin } from '../utils.js';
+  import { readMin, paragraphs } from '../utils.js';
+  import { EVIDENCE_LABEL } from '../data/index.js';
+  import Sources from '../components/Sources.svelte';
   import Icon from '../components/Icon.svelte';
   import QuizCard from '../components/QuizCard.svelte';
 
@@ -19,18 +21,21 @@
   }
   function relKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
 
+  // [стиль блока, заголовок, поле]; «Границы применимости» есть не у всех статей
   const BLOCKS = [
-    ['', '1. Что происходит', 'what'],
-    ['', '2. Почему это происходит (Научный механизм)', 'why'],
-    ['olive', '3. Что влияет на результат', 'factors'],
-    ['olive', '4. Как применить на практике', 'practice'],
-    ['warn', '5. Типичные ошибки и как их избежать', 'mistakes'],
-    ['', '6. Небольшой домашний эксперимент', 'experiment'],
+    ['', 'Что происходит', 'what'],
+    ['', 'Почему это происходит (научный механизм)', 'why'],
+    ['olive', 'Что влияет на результат', 'factors'],
+    ['olive', 'Как применить на практике', 'practice'],
+    ['warn', 'Типичные ошибки и как их избежать', 'mistakes'],
+    ['', 'Небольшой домашний эксперимент', 'experiment'],
+    ['', 'Границы применимости', 'limitations'],
   ];
+  const blocks = $derived(BLOCKS.filter(([, , key]) => a[key]));
 </script>
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-  <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0]}</span></button>
+  <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0].replace(/,$/, '')}</span></button>
   <div style="display:flex;gap:6px;">
     <button class="btn {isFav ? '' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(state.favIds, a.id)}>
       <Icon name="star" size={20} /><span class="sr">{isFav ? 'Убрать из избранного' : 'В избранное'}</span>
@@ -42,22 +47,25 @@
 </div>
 
 <header class="art-head"><div class="kicker">{sec.title} · {readMin(a)} мин</div>
-  <h2>{a.title}</h2><div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
+  <h2>{a.title}</h2>
+  {#if a.evidence !== 'unverified'}
+    <div class="evidence ev-{a.evidence}" title={EVIDENCE_LABEL[a.evidence]}><Icon name="check" size={14} />Источники проверены · доказательность: {EVIDENCE_LABEL[a.evidence].split(':')[0].toLowerCase()}</div>
+  {/if}
+  <div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
 
-{#each BLOCKS as [cls, title, key]}
+{#each blocks as [cls, title, key], i (key)}
   <div class="art-block {cls}">
-    <h4>{title}</h4>
-    <div>{a[key]}</div>
+    <h4>{i + 1}. {title}</h4>
+    {#each paragraphs(a[key]) as p}<p class="art-p">{p}</p>{/each}
   </div>
 {/each}
 
 <div class="art-block Summary">
-  <h4>7. Краткий вывод (Запомнить)</h4>
+  <h4>{blocks.length + 1}. Краткий вывод (Запомнить)</h4>
   <div style="font-weight:700;">{a.summary}</div>
-  <div style="margin-top:8px;font-size:0.76rem;color:var(--text-muted);">
-    Источники: {a.sources}
-  </div>
 </div>
+
+<Sources article={a} />
 
 <div class="card">
   <h4 style="margin:0 0 8px 0;color:var(--primary);">Проверьте понимание статьи</h4>

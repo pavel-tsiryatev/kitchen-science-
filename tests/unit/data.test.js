@@ -1,10 +1,11 @@
 // Целостность контента: ошибки в JSON ловятся до того, как сломают экран
 import { describe, it, expect } from 'vitest';
-import { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS } from '../../src/data/index.js';
+import { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, EVIDENCE_LABEL } from '../../src/data/index.js';
+import { EVIDENCE } from '../../scripts/content.mjs';
 
 const articleIds = new Set(ARTICLES.map(a => a.id));
 const sectionIds = new Set(SECTIONS.map(s => s.id));
-const TEXT_FIELDS = ['title', 'idea', 'what', 'why', 'factors', 'practice', 'mistakes', 'experiment', 'summary', 'sources'];
+const TEXT_FIELDS = ['title', 'idea', 'what', 'why', 'factors', 'practice', 'mistakes', 'experiment', 'summary'];
 
 describe('разделы', () => {
   it('id и буквы уникальны, есть название и описание', () => {
@@ -37,6 +38,27 @@ describe('статьи', () => {
     expect(q.opts.length).toBeGreaterThanOrEqual(2);
     expect(Number.isInteger(q.a) && q.a >= 0 && q.a < q.opts.length).toBe(true);
     expect(new Set(q.opts).size, 'варианты ответа не повторяются').toBe(q.opts.length);
+  });
+});
+
+describe('источники и доказательность', () => {
+  it('у каждой статьи есть источники', () => {
+    for (const a of ARTICLES) expect(a.sources.length, a.id).toBeGreaterThan(0);
+  });
+  it('у проверенных статей каждый источник со ссылкой на DOI, ISBN, URL или издателя и датой сверки', () => {
+    const verified = ARTICLES.filter(a => a.evidence !== 'unverified');
+    expect(verified.length).toBeGreaterThanOrEqual(5);
+    for (const a of verified) {
+      expect(a.reviewed, a.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      for (const s of a.sources) {
+        expect(s.text, `${a.id}: текстовый источник в проверенной статье`).toBeUndefined();
+        expect(s.doi || s.isbn || s.url || s.published, `${a.id}: ${s.title}`).toBeTruthy();
+      }
+      expect(a.sources.some(s => s.doi), `${a.id}: нужен хотя бы один рецензируемый источник с DOI`).toBe(true);
+    }
+  });
+  it('подписи уровней доказательности в приложении совпадают со сборкой', () => {
+    expect(EVIDENCE_LABEL).toEqual(EVIDENCE);
   });
 });
 

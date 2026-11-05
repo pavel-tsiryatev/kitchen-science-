@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { open, btn, toast, saved, KEY } from './helpers.js';
+import { open, btn, toast, saved, KEY, TOTAL } from './helpers.js';
 
 const toSettings = page => page.locator('header .icon-btn').click();
 // Chromium не читает файлы для <input type=file> по путям с кириллицей, а папка
@@ -72,5 +72,5 @@ test('повреждённые сохранённые данные: сообще
   await open(page, '{сломано');
   await expect(toast(page)).toContainText('не удалось прочитать');
   expect(await page.evaluate(k => localStorage.getItem(k + '_corrupt'), KEY)).toBe('{сломано');
-  await expect(page.locator('.mono-s')).toHaveText('0 из 36');
+  await expect(page.locator('.mono-s')).toHaveText(`0 из ${TOTAL}`);
 });

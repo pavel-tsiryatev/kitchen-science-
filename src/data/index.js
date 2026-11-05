@@ -1,7 +1,16 @@
-// Контент приложения. Чтобы добавить или поправить статью — редактируйте JSON, код трогать не нужно.
+// Контент приложения. Статьи — Markdown-файлы в content/articles (см. docs/CONTENT.md),
+// разделы, ошибки и сравнения — JSON рядом с этим файлом.
 import SECTIONS from './sections.json';
-import ARTICLES from './articles.json';
+import ARTICLES from 'virtual:articles';
 import TROUBLESHOOTING from './troubleshooting.json';
 import COMPARISONS from './comparisons.json';
 
 export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS };
+
+/** Подписи уровней доказательности (совпадают с scripts/content.mjs) */
+export const EVIDENCE_LABEL = {
+  high: 'Высокий: механизм подтверждён независимыми рецензируемыми работами',
+  medium: 'Средний: основное подтверждено, часть деталей зависит от условий',
+  low: 'Низкий: практическое правило с ограниченными данными',
+  unverified: 'Источники ещё не сверены',
+};

@@ -5,7 +5,7 @@
   import ArticleCards from '../components/ArticleCards.svelte';
 
   // Поисковый индекс считается один раз, а не при каждом нажатии клавиши
-  const HAY = new Map(ARTICLES.map(a => [a.id, normQ([a.title, a.idea, a.what, a.why, a.factors, a.practice, a.mistakes, a.experiment, a.summary, a.quiz.q].join(' '))]));
+  const HAY = new Map(ARTICLES.map(a => [a.id, normQ([a.title, a.idea, a.what, a.why, a.factors, a.practice, a.mistakes, a.experiment, a.limitations, a.summary, a.quiz.q].join(' '))]));
 
   function secMatch(a, f) { return f === 'ALL' || f === 'UNREAD' || (f === 'TECH' ? 'ABCDF'.includes(a.sec) : a.sec === f); }
 

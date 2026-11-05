@@ -11,7 +11,8 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify:sources": "node scripts/verify-sources.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
@@ -28,6 +29,7 @@
     "jsdom": "^31.0.0",
     "svelte": "^5.57.3",
     "vite": "^8.3.6",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "yaml": "^2.9.1"
   }
 }

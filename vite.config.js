@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { fileURLToPath } from 'node:url';
+import { articlesPlugin } from './scripts/content.mjs';
+
+// Статьи справочника — Markdown-файлы в content/articles (см. docs/CONTENT.md)
+const ARTICLES_DIR = fileURLToPath(new URL('./content/articles', import.meta.url));
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [svelte(), articlesPlugin(ARTICLES_DIR)],
   // Относительные пути: сборка работает и в WebView Capacitor, и при открытии с диска
   base: './',
   build: {
