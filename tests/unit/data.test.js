@@ -81,3 +81,19 @@ describe('сравнения', () => {
     }
   });
 });
+
+describe('справочные таблицы', async () => {
+  const { TABLES, ARTICLES } = await import('../../src/data/index.js');
+  const ids = new Set(ARTICLES.map(a => a.id));
+  it.each(TABLES.map(t => [t.id, t]))('%s: строки по числу колонок, ссылки на существующие статьи', (_, t) => {
+    expect(t.rows.length).toBeGreaterThan(0);
+    for (const r of t.rows) expect(r).toHaveLength(t.headers.length);
+    for (const id of t.articles) expect(ids.has(id), id).toBe(true);
+    for (const s of t.sources) { expect(s.title).toBeTruthy(); expect(s.doi || s.publisher).toBeTruthy(); }
+  });
+  it('температуры совпадают со статьёй о пастеризации', () => {
+    const c5 = ARTICLES.find(a => a.id === 'c5');
+    const text = [c5.practice, c5.why, c5.factors].join(' ');
+    for (const v of ['74 °C', '71 °C', '63 °C']) expect(text).toContain(v);
+  });
+});

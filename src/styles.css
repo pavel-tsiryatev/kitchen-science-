@@ -265,3 +265,17 @@ mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1p
 /* Подгруппы «Популярных блюд»: второй ряд фильтров, чуть компактнее */
 .sub-pills { margin-top: -6px; }
 .sub-pills .pill { padding: 6px 12px; font-size: 0.8rem; }
+/* Справочные таблицы */
+.ref-entries{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin:-4px 0 12px}
+.ref-entries .gl-entry{margin:0}
+.ref-table{scroll-margin-top:72px}
+.ref-table h2{font-size:1.15rem;margin:0 0 6px;color:var(--primary)}
+.ref-intro,.ref-note{font-size:.86rem;color:var(--text-muted);margin:0 0 10px}
+.ref-note{margin:10px 0 6px}
+.ref-scroll{overflow-x:auto;margin:0 -4px}
+.ref-table .comp-table td.ref-key{font-weight:700;white-space:nowrap}
+.ref-more{font-size:.84rem}
+.ref-more .link{font-size:.84rem;padding:0}
+.ref-src{font-size:.8rem;color:var(--text-muted);margin-top:6px}
+.ref-src ul{margin:6px 0 0;padding-left:18px}
+a.pill{text-decoration:none;display:inline-flex;align-items:center}
