@@ -16,6 +16,10 @@ vi.mock('@capacitor/filesystem', () => ({
   Filesystem: { writeFile: async o => { calls.write = o; return { uri: 'file:///cache/' + o.path }; } },
 }));
 vi.mock('@capacitor/share', () => ({ Share: { share: async o => { calls.share = o; } } }));
+const appMock = { listeners: {}, exited: 0 };
+vi.mock('@capacitor/app', () => ({
+  App: { addListener: (ev, fn) => { appMock.listeners[ev] = fn; }, exitApp: () => { appMock.exited++; } },
+}));
 
 const KEY = 'kuhnya_science_v1';
 let store, native;
@@ -75,5 +79,19 @@ describe('резервная копия на Android', () => {
     expect(how).toBe('shared');
     expect(calls.write).toMatchObject({ path: 'kuhnya-backup.json', directory: 'CACHE', data: '{"a":1}' });
     expect(calls.share.files).toEqual(['file:///cache/kuhnya-backup.json']);
+  });
+});
+
+describe('кнопка «Назад» на Android', () => {
+  beforeEach(() => { appMock.listeners = {}; appMock.exited = 0; });
+  it('если есть куда вернуться — приложение не закрывается', () => {
+    native.initBackButton(() => true);
+    appMock.listeners.backButton();
+    expect(appMock.exited).toBe(0);
+  });
+  it('если возвращаться некуда — приложение закрывается', () => {
+    native.initBackButton(() => false);
+    appMock.listeners.backButton();
+    expect(appMock.exited).toBe(1);
   });
 });

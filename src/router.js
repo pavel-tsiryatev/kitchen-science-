@@ -8,18 +8,38 @@ export function navigate(tab, param = null, fromPop = false) {
   if (tab === 'catalog' && param) state.secFilter = param;
   if (tab === 'glossary') state.glossTerm = param;
   if (tab === 'article' && param) { state.currentArticleId = param; state.recentIds = [param, ...(state.recentIds || []).filter(x => x !== param)].slice(0, 6); saveState(); }
-  if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, art: state.currentArticleId, sub: state.subTab, lab: state.labTab }, ''); } catch (e) {} }
+  if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, art: state.currentArticleId, sub: state.subTab, lab: state.labTab, depth: depth + 1 }, ''); depth++; } catch (e) {} }
   window.scrollTo(0, 0);
 }
 
+// Сколько шагов назад есть в истории приложения (0 — стартовый экран)
+let depth = 0;
+
 export function initHistory() {
-  try { history.replaceState({ tab: 'home', sec: 'ALL', art: null, sub: 'calc', lab: state.labTab }, ''); } catch (e) {}
+  try { history.replaceState({ tab: 'home', sec: 'ALL', art: null, sub: 'calc', lab: state.labTab, depth: 0 }, ''); } catch (e) {}
   window.addEventListener('popstate', e => {
     const s = e.state || { tab: 'home' };
+    depth = s.depth || 0;
     state.secFilter = s.sec || 'ALL'; state.currentArticleId = s.art || null; state.subTab = s.sub || 'calc';
     if (s.lab) state.labTab = s.lab;
     navigate(s.tab || 'home', null, true);
   });
+}
+
+// --- системная кнопка/жест «Назад» на Android ---
+// Открытые окна (карточка термина) регистрируют здесь функцию закрытия: «Назад» сначала закрывает их.
+const closers = [];
+export function onBackClose(fn) {
+  closers.push(fn);
+  return () => { const i = closers.lastIndexOf(fn); if (i >= 0) closers.splice(i, 1); };
+}
+
+/** Обрабатывает «Назад». Возвращает false, если идти некуда и приложение можно закрыть. */
+export function handleBack() {
+  if (closers.length) { closers[closers.length - 1](); return true; }
+  if (depth > 0) { history.back(); return true; }
+  if (state.tab !== 'home') { navigate('home', null, true); try { history.replaceState({ tab: 'home', sec: state.secFilter, art: null, sub: state.subTab, lab: state.labTab, depth: 0 }, ''); } catch (e) {} return true; }
+  return false;
 }
 
 export function goSearch() {

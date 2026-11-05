@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import { App } from '@capacitor/app';
 
 export const isNative = Capacitor.isNativePlatform();
 
@@ -48,4 +49,11 @@ export async function saveTextFile(name, text) {
   const u = URL.createObjectURL(new Blob([text], { type: 'application/json' })), l = document.createElement('a');
   l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 2000);
   return 'downloaded';
+}
+
+// --- Кнопка и жест «Назад» ---
+/** На Android «Назад» возвращает на предыдущий экран приложения; выход — только с главной. */
+export function initBackButton(handleBack) {
+  if (!isNative) return;
+  App.addListener('backButton', () => { if (!handleBack()) App.exitApp(); });
 }

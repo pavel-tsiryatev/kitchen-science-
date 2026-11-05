@@ -1,13 +1,15 @@
 <script>
   /** Нижняя карточка с определением термина — открывается по нажатию на термин в статье */
   import { GLOSSARY, ARTICLES } from '../data/index.js';
-  import { navigate } from '../router.js';
+  import { navigate, onBackClose } from '../router.js';
 
   let { id, current = null, onclose } = $props();
   const t = $derived(GLOSSARY.find(x => x.id === id));
   const more = $derived((t?.articles || []).filter(x => x !== current).map(x => ARTICLES.find(a => a.id === x)).filter(Boolean));
 
   function onKey(e) { if (e.key === 'Escape') onclose(); }
+  // Жест/кнопка «Назад» на Android закрывает карточку, а не уходит со страницы
+  $effect(() => onBackClose(() => onclose()));
 </script>
 
 <svelte:window onkeydown={onKey} />
