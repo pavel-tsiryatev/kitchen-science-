@@ -1,4 +1,8 @@
 import { expect } from '@playwright/test';
+import { readdirSync } from 'node:fs';
+
+/** Сколько статей в справочнике (по файлам content/articles) */
+export const TOTAL = readdirSync(new URL('../../content/articles', import.meta.url)).filter(f => f.endsWith('.md')).length;
 
 export const KEY = 'kuhnya_science_v1';
 

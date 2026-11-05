@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { open, nav, saved } from './helpers.js';
+import { open, nav, saved, TOTAL } from './helpers.js';
 
 test.beforeEach(async ({ page }) => { await open(page); await page.locator('.cover .btn').click(); });
 
@@ -37,7 +37,7 @@ test('избранное и «прочитано» видны в карточк�
   await expect(page.locator('.ed-m')).toContainText('✓ изучено · ★');
 
   await page.locator('.brand').click();
-  await expect(page.locator('.mono-s')).toHaveText('1 из 36');
+  await expect(page.locator('.mono-s')).toHaveText(`1 из ${TOTAL}`);
   await expect(page.locator('.eyebrow', { hasText: 'Недавно открытые' })).toBeVisible();
 });
 

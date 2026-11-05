@@ -51,6 +51,11 @@ async function checkDoi(s) {
   const problems = [];
   if (sim < 0.6) problems.push(`название не совпадает (в Crossref: «${title}»)`);
   if (year && Math.abs(year - s.year) > 1) problems.push(`год ${s.year}, в Crossref ${year}`);
+  // Фамилия первого автора: часть до первой запятой без инициалов («van Boekel M. A. J. S.» → vanboekel)
+  const norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+  const ourFirst = norm(s.authors.split(',')[0].split(/\s+/).filter(w => !/^(\p{Lu}\.)+$/u.test(w)).join(''));
+  const theirs = (m.author || []).map(x => norm(x.family || x.name));
+  if (ourFirst && theirs.length && theirs[0] !== ourFirst) problems.push(`первый автор «${s.authors.split(',')[0]}», в Crossref: ${(m.author || []).slice(0, 3).map(x => x.family).join(', ')}`);
   // Том и первая страница из поля published («Food Chemistry, 212, 789–797»): ловят соседние статьи
   // с почти одинаковыми названиями (например, «Part I» и «Part II»)
   const pages = /(\d+)\s*[–-]\s*\d+\s*$/.exec(s.published || '');
