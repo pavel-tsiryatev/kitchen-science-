@@ -51,7 +51,10 @@ export function parseArticle(text, file = 'статья.md') {
   const m = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(text);
   if (!m) fail(file, 'файл должен начинаться с блока «---» с полями статьи');
   let meta;
-  try { meta = parseYaml(m[1]) || {}; } catch (e) { fail(file, `ошибка в блоке полей: ${e.message.split('\n')[0]}`); }
+  try { meta = parseYaml(m[1]) || {}; } catch (e) {
+    const hint = /mapping/i.test(e.message) ? '. Подсказка: если в значении есть «: » (двоеточие с пробелом), возьмите всё значение в кавычки' : '';
+    fail(file, `ошибка в блоке полей: ${e.message.split('\n')[0]}${hint}`);
+  }
 
   const a = {
     id: str(meta.id, file, 'id'),
