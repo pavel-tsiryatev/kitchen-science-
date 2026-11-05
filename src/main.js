@@ -5,8 +5,11 @@ import { loadState, getPendingMsg } from './store.svelte.js';
 import { initHistory } from './router.js';
 import { toast } from './toast.js';
 
-loadState();
-initHistory();
-// Шапка, экран и нижнее меню вставляются перед контейнером уведомлений
-mount(App, { target: document.body, anchor: document.getElementById('toast') });
-if (getPendingMsg()) toast(getPendingMsg());
+async function start() {
+  await loadState(); // на Android данные читаются из Preferences асинхронно
+  initHistory();
+  // Шапка, экран и нижнее меню вставляются перед контейнером уведомлений
+  mount(App, { target: document.body, anchor: document.getElementById('toast') });
+  if (getPendingMsg()) toast(getPendingMsg());
+}
+start();

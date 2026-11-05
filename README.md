@@ -9,8 +9,13 @@ npm install
 npm run dev       # локальный сервер с горячей перезагрузкой
 npm run build     # сборка в dist/
 npm run preview   # просмотр собранной версии
-npm run android   # сборка + синхронизация с Android-проектом (нужен `npx cap add android`)
+npm run android   # сборка + подготовка Android-проекта (иконки, версия, плагины)
 ```
+
+## Android-сборки и релизы
+
+Тестовая сборка появляется после каждого пуша в `main`, релиз — по тегу `v1.2.3`.
+Подробности и настройка подписи — в [docs/RELEASE.md](docs/RELEASE.md).
 
 ## Структура
 
@@ -25,6 +30,9 @@ src/components/*.svelte     Icon, ArticleCards, QuizCard, LabBar, Calculator, Jo
 src/store.svelte.js         реактивное состояние, сохранение в localStorage, тема
 src/router.js               навигация и история (кнопка «Назад»)
 src/backup.js               экспорт и импорт резервной копии
+src/native.js               Android: хранилище Preferences, сохранение файла через «Поделиться»
+assets/                     исходники иконки и заставки (logo.svg → PNG)
+scripts/                    подготовка Android-проекта, создание ключа подписи
 src/quiz.js, toast.js, utils.js
 src/styles.css              глобальные стили
 src/data/*.json             контент: разделы, статьи, ошибки, сравнения

@@ -2,11 +2,12 @@
   import { ARTICLES } from '../data/index.js';
   import { state, saveState, setTheme, setFontScale } from '../store.svelte.js';
   import { navigate } from '../router.js';
-  import { exportBackup, downloadBackup, importBackup, resetProgress } from '../backup.js';
+  import { exportBackup, downloadBackup, importBackup, importBackupFile, resetProgress } from '../backup.js';
+  import { isNative } from '../native.js';
 
   const favArts = $derived(ARTICLES.filter(a => state.favIds.includes(a.id)));
   const SCALES = [[0.95, 'А-'], [1, '100%'], [1.12, 'А+'], [1.25, 'А++']];
-  let area;
+  let area, fileInput;
 
   function unFav(id) { state.favIds.splice(state.favIds.indexOf(id), 1); saveState(); }
   function favKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
@@ -45,9 +46,11 @@
   </p>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button class="btn outline" onclick={() => exportBackup(area)}>Копировать JSON</button>
-    <button class="btn outline" onclick={downloadBackup}>Скачать файл</button>
+    <button class="btn outline" onclick={downloadBackup}>{isNative ? 'Сохранить файл' : 'Скачать файл'}</button>
+    <button class="btn outline" onclick={() => fileInput.click()}>Импорт из файла</button>
     <button class="btn outline" onclick={() => importBackup(area)}>Импорт из поля</button>
     <button class="btn outline" onclick={resetProgress}>Сбросить прогресс чтения</button>
   </div>
+  <input bind:this={fileInput} type="file" accept=".json,application/json,text/plain" hidden onchange={e => importBackupFile(e.currentTarget, area)}>
   <textarea bind:this={area} id="backupArea" class="field" rows="3" style="margin-top:10px;" maxlength="1000000" aria-label="Резервная копия JSON" placeholder="Здесь появится резервная копия. Для импорта вставьте сюда JSON и нажмите «Импорт из поля»"></textarea>
 </div>
