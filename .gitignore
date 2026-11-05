@@ -6,3 +6,5 @@ dist/
 *.jks.base64
 *.keystore
 !debug.keystore
+test-results/
+playwright-report/
