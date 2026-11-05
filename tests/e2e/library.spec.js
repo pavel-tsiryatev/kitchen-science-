@@ -55,3 +55,25 @@ test('фильтр по разделу и «Непрочитанные»', async
   await pill(page, 'Непрочитанные');
   await expect(page.locator('.card-clickable')).toHaveCount(TOTAL - 1);
 });
+
+test('популярные блюда делятся на подгруппы, «Назад» возвращает в ту же подгруппу', async ({ page }) => {
+  await pill(page, 'Популярные блюда');
+  const sub = page.locator('.sub-pills .pill');
+  await expect(sub.first()).toHaveText(/^Все блюда \(\d+\)$/);
+  const soups = page.locator('.sub-pills .pill', { hasText: 'Супы' });
+  const n = Number((await soups.textContent()).match(/\((\d+)\)/)[1]);
+  expect(n).toBeGreaterThan(0);
+  await soups.click();
+  await expect(page.locator('.card-clickable')).toHaveCount(n);
+  await expect(page.locator('.card-clickable', { hasText: 'Борщ' })).toBeVisible();
+
+  await page.locator('.card-clickable', { hasText: 'Борщ' }).click();
+  await expect(page.locator('h2').first()).toContainText('Борщ');
+  await page.goBack();
+  await expect(page.locator('.sub-pills .pill.active')).toContainText('Супы');
+  await expect(page.locator('.card-clickable')).toHaveCount(n);
+
+  // другой раздел — второго ряда нет
+  await pill(page, 'Все (');
+  await expect(page.locator('.sub-pills')).toHaveCount(0);
+});

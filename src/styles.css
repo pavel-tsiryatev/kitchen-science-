@@ -262,3 +262,6 @@ mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1p
 /* Раздел «Популярные блюда» */
 .t-dish{background:var(--primary-soft)}
 .dir.wide{grid-column:1/-1}
+/* Подгруппы «Популярных блюд»: второй ряд фильтров, чуть компактнее */
+.sub-pills { margin-top: -6px; }
+.sub-pills .pill { padding: 6px 12px; font-size: 0.8rem; }

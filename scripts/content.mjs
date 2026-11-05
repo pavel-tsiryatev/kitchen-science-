@@ -2,7 +2,7 @@
 //
 // Формат файла (подробно — docs/CONTENT.md):
 //   ---
-//   id, section, title, idea, related, evidence, reviewed, quiz, sources   ← YAML
+//   id, section, group (только для раздела I), title, idea, related, evidence, reviewed, quiz, sources   ← YAML
 //   ---
 //   ## Что происходит
 //   ...текст, абзацы через пустую строку...
@@ -13,6 +13,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { parse as parseYaml } from 'yaml';
+import DISH_GROUPS from '../src/data/dish-groups.json' with { type: 'json' };
 
 /** Заголовок раздела в Markdown → поле статьи. Порядок = порядок показа в приложении. */
 export const BODY_SECTIONS = [
@@ -35,6 +36,8 @@ export const EVIDENCE = {
 };
 
 export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+/** Подгруппы раздела I «Популярные блюда» (src/data/dish-groups.json) */
+export const DISH_GROUP_IDS = DISH_GROUPS.map(g => g.id);
 const DOI_RE = /^10\.\d{4,9}\/\S+$/;
 const ISBN_RE = /^(97[89])?\d{9}[\dX]$/;
 
@@ -64,9 +67,13 @@ export function parseArticle(text, file = 'статья.md') {
     related: meta.related ?? [],
     evidence: meta.evidence ?? 'unverified',
     reviewed: meta.reviewed ? String(meta.reviewed instanceof Date ? meta.reviewed.toISOString().slice(0, 10) : meta.reviewed) : undefined,
+    group: meta.group,
   };
   if (basename(file) !== `${a.id}.md` && file !== 'статья.md') fail(file, `имя файла должно совпадать с id: ${a.id}.md`);
   if (!SECTION_IDS.includes(a.sec)) fail(file, `неизвестный раздел «${a.sec}» (допустимы ${SECTION_IDS.join(', ')})`);
+  if (a.sec === 'I' && !DISH_GROUP_IDS.includes(a.group)) fail(file, `для блюда укажите «group» — одну из: ${DISH_GROUP_IDS.join(', ')}`);
+  if (a.sec !== 'I' && a.group !== undefined) fail(file, '«group» бывает только у статей раздела I');
+  if (a.group === undefined) delete a.group;
   if (!Array.isArray(a.related)) fail(file, '«related» должен быть списком id');
   a.related = a.related.map(String);
   if (!(a.evidence in EVIDENCE)) fail(file, `«evidence» должен быть одним из: ${Object.keys(EVIDENCE).join(', ')}`);

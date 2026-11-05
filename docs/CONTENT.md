@@ -9,7 +9,8 @@
 ```markdown
 ---
 id: c6                       # = имя файла; буква раздела + номер
-section: C                   # A–H, см. src/data/sections.json
+section: C                   # A–I, см. src/data/sections.json
+# group: soup                 # только для раздела I: подгруппа из src/data/dish-groups.json (soup, sides, meat, eggs, dough, veg)
 title: Название статьи
 idea: Краткий ответ в 1–2 предложения — показывается в карточке и в начале статьи.
 related: [c1, c5]            # id связанных статей (должны существовать)

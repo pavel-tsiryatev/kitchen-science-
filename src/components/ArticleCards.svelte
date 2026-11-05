@@ -12,7 +12,7 @@
   const hasHit = (text) => highlight(text, stems).some(p => p.hit);
   const extract = a => (stems.length && !hasHit(a.title) && !hasHit(a.idea)) ? snippet(a, stems) : null;
 
-  function resetFilters() { state.searchQuery = ''; state.secFilter = 'ALL'; }
+  function resetFilters() { state.searchQuery = ''; state.secFilter = 'ALL'; state.dishGroup = 'ALL'; }
   function onKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
 </script>
 
