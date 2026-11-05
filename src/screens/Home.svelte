@@ -40,6 +40,7 @@
   {#each DIRS as [k, t, d, i, c]}
     <button class="dir {c}" onclick={() => navigate('catalog', k)}><Icon name={i} /><b>{t}</b><span>{d}</span></button>
   {/each}
+  <button class="dir t-dish wide" onclick={() => navigate('catalog', 'I')}><Icon name="pan" /><b>Популярные блюда</b><span>Сырники, картошка, паста — рецепт и почему он работает</span></button>
 </div>
 <div class="eyebrow"><h3>Твоя лаборатория</h3></div>
 <div class="list">

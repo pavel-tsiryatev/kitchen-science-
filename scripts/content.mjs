@@ -34,7 +34,7 @@ export const EVIDENCE = {
   unverified: 'Источники ещё не сверены',
 };
 
-export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 const DOI_RE = /^10\.\d{4,9}\/\S+$/;
 const ISBN_RE = /^(97[89])?\d{9}[\dX]$/;
 
