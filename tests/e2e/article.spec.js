@@ -18,12 +18,12 @@ test('проверенная статья: блоки, доказательно�
   await expect(page.locator('.src-meta')).toContainText('Источники сверены 05.11.2026');
 });
 
-test('статья с непроверенными источниками честно это показывает', async ({ page }) => {
+test('все статьи проверены: бывшая непроверенная статья показывает отметку и источники с DOI', async ({ page }) => {
   await page.locator('.nav-item[data-tab=catalog]').click();
   await page.locator('.card-clickable', { hasText: 'Дрожжевое брожение' }).click();
-  await expect(page.locator('.evidence')).toHaveCount(0);
-  await expect(page.locator('.art-block h4').last()).toHaveText('7. Краткий вывод (Запомнить)');
-  await expect(page.locator('.src-meta')).toHaveText('Источники этой статьи ещё не сверены по научным базам.');
+  await expect(page.locator('.evidence')).toContainText('Источники проверены');
+  await expect(page.locator('.sources a', { hasText: 'DOI 10.1016/j.fm.2013.04.007' })).toBeVisible();
+  await expect(page.locator('.src-meta')).not.toContainText('ещё не сверены');
 });
 
 test('избранное и «прочитано» видны в карточках, в «Сохранённом» и на главной', async ({ page }) => {

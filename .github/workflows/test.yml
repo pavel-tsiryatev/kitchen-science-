@@ -43,12 +43,18 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
 
-      - name: Системные библиотеки для браузера
-        if: steps.pw-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
-
+      # На ubuntu-latest библиотеки для Chromium обычно уже есть; apt-get (install-deps)
+      # иногда висел по 10+ минут. Ставим их, только если без них браузер не запустился.
       - name: Сценарии пользователя (Playwright)
+        id: e2e
+        continue-on-error: true
         run: npm run test:e2e
+
+      - name: Повтор сценариев с системными библиотеками
+        if: steps.e2e.outcome == 'failure'
+        run: |
+          npx playwright install-deps chromium
+          npm run test:e2e
 
       - name: Отчёт Playwright при ошибке
         if: failure()
