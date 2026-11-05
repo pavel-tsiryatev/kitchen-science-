@@ -53,7 +53,7 @@ async function checkDoi(s) {
   if (year && Math.abs(year - s.year) > 1) problems.push(`год ${s.year}, в Crossref ${year}`);
   // Фамилия первого автора: часть до первой запятой без инициалов («van Boekel M. A. J. S.» → vanboekel)
   const norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
-  const ourFirst = norm(s.authors.split(',')[0].split(/\s+/).filter(w => !/^(\p{Lu}\.)+$/u.test(w)).join(''));
+  const ourFirst = norm(s.authors.split(',')[0].split(/\s+/).filter(w => !/^(\p{Lu}\.-?)+$/u.test(w)).join(''));
   const theirs = (m.author || []).map(x => norm(x.family || x.name));
   // Некоторые издатели пишут инициалы в поле фамилии («P. D. Sanz») или всех авторов одной строкой
   if (ourFirst && theirs.length && !theirs[0].endsWith(ourFirst) && !(theirs.length === 1 && theirs[0].includes(ourFirst))) problems.push(`первый автор «${s.authors.split(',')[0]}», в Crossref: ${(m.author || []).slice(0, 3).map(x => x.family).join(', ')}`);
