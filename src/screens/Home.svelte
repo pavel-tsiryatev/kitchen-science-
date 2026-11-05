@@ -1,5 +1,5 @@
 <script>
-  import { ARTICLES } from '../data/index.js';
+  import { ARTICLES, GLOSSARY } from '../data/index.js';
   import { state } from '../store.svelte.js';
   import { navigate, goSearch, labGo } from '../router.js';
   import { readMin } from '../utils.js';
@@ -46,6 +46,7 @@
   {#each ROWS as [i, t, d, k]}
     <button class="row" onclick={() => labGo(k)}><Icon name={i} size={22} /><span><b>{t}</b><small>{d}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   {/each}
+  <button class="row" onclick={() => navigate('glossary')}><Icon name="book" size={22} /><span><b>Глоссарий терминов</b><small>{GLOSSARY.length} понятий простыми словами</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
 </div>
 <div class="eyebrow"><h3>Продолжить обучение</h3><span class="mono-s">{readCount} из {total}</span></div>
 <div class="card"><div class="progress-bar"><div class="progress-fill" style="width:{pct}%"></div></div>

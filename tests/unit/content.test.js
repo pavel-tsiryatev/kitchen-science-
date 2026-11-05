@@ -69,6 +69,10 @@ describe('parseArticle', () => {
     expect(() => parse(text, file)).toThrow(err);
   });
 
+  it('двоеточие в значении без кавычек — подсказка, как исправить', () => {
+    expect(() => parse(meta().replace('idea: Идея', 'idea: Идея: с двоеточием, а дальше: ещё') + body)).toThrow(/возьмите всё значение в кавычки/);
+  });
+
   it('в сообщении об ошибке есть имя файла', () => {
     expect(() => parse(meta().replace('answer: 0', 'answer: 9') + body)).toThrow(/^z1\.md:/);
   });

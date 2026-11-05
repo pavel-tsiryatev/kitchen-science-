@@ -59,6 +59,8 @@ src/quiz.js, toast.js, utils.js
 src/styles.css              глобальные стили
 src/data/*.json             контент: разделы, ошибки, сравнения
 content/articles/*.md       статьи справочника (Markdown + источники)
+content/glossary.yaml       глоссарий терминов (ссылки в статьях, экран «Глоссарий»)
+src/search.js               поиск: русский стемминг Snowball, ранжирование, подсветка
 ```
 
 Чтобы добавить или исправить статью, отредактируйте файл в `content/articles/` —

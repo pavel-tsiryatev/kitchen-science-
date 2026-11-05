@@ -1,17 +1,22 @@
 <script>
   import { ARTICLES, SECTIONS } from '../data/index.js';
-  import { state, saveState } from '../store.svelte.js';
+  import { state as app, saveState } from '../store.svelte.js'; // не «state»: имя конфликтует с руной $state
   import { navigate } from '../router.js';
   import { readMin, paragraphs } from '../utils.js';
   import { EVIDENCE_LABEL } from '../data/index.js';
   import Sources from '../components/Sources.svelte';
   import Icon from '../components/Icon.svelte';
   import QuizCard from '../components/QuizCard.svelte';
+  import TermSheet from '../components/TermSheet.svelte';
+  import { GLOSSARY } from '../data/index.js';
+  import { compileGlossary, linkTerms } from '../glossary.js';
 
-  const a = $derived(ARTICLES.find(x => x.id === state.currentArticleId) || ARTICLES[0]);
+  const PATTERNS = compileGlossary(GLOSSARY);
+
+  const a = $derived(ARTICLES.find(x => x.id === app.currentArticleId) || ARTICLES[0]);
   const sec = $derived(SECTIONS.find(s => s.id === a.sec));
-  const isRead = $derived(state.readIds.includes(a.id));
-  const isFav = $derived(state.favIds.includes(a.id));
+  const isRead = $derived(app.readIds.includes(a.id));
+  const isFav = $derived(app.favIds.includes(a.id));
   const relArts = $derived((a.related || []).map(rid => ARTICLES.find(x => x.id === rid)).filter(Boolean));
 
   function toggle(list, id) {
@@ -32,15 +37,25 @@
     ['', 'Границы применимости', 'limitations'],
   ];
   const blocks = $derived(BLOCKS.filter(([, , key]) => a[key]));
+
+  // Первое упоминание каждого термина глоссария в статье становится ссылкой.
+  // Считаем сразу для всех блоков по порядку, чтобы «первое» было первым во всей статье.
+  const linked = $derived.by(() => {
+    const used = new Set(), out = {};
+    for (const [, , key] of blocks) out[key] = paragraphs(a[key]).map(p => linkTerms(p, PATTERNS, used));
+    return out;
+  });
+  let openTerm = $state(null);
+  $effect(() => { a.id; openTerm = null; }); // при переходе на другую статью карточка закрывается
 </script>
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
   <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0].replace(/,$/, '')}</span></button>
   <div style="display:flex;gap:6px;">
-    <button class="btn {isFav ? '' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(state.favIds, a.id)}>
+    <button class="btn {isFav ? '' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(app.favIds, a.id)}>
       <Icon name="star" size={20} /><span class="sr">{isFav ? 'Убрать из избранного' : 'В избранное'}</span>
     </button>
-    <button class="btn {isRead ? 'secondary' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(state.readIds, a.id)}>
+    <button class="btn {isRead ? 'secondary' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(app.readIds, a.id)}>
       <Icon name="check" size={20} /><span class="sr">{isRead ? 'Прочитано, снять отметку' : 'Отметить прочитанным'}</span>
     </button>
   </div>
@@ -56,7 +71,7 @@
 {#each blocks as [cls, title, key], i (key)}
   <div class="art-block {cls}">
     <h4>{i + 1}. {title}</h4>
-    {#each paragraphs(a[key]) as p}<p class="art-p">{p}</p>{/each}
+    {#each linked[key] as parts}<p class="art-p">{#each parts as part}{#if part.term}<button class="term" onclick={() => openTerm = part.term}>{part.text}</button>{:else}{part.text}{/if}{/each}</p>{/each}
   </div>
 {/each}
 
@@ -84,3 +99,7 @@
     </div>
   {/each}
 </div>
+
+{#if openTerm}
+  <TermSheet id={openTerm} current={a.id} onclose={() => openTerm = null} />
+{/if}

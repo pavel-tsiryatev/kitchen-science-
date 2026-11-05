@@ -5,9 +5,10 @@ import { articlesPlugin } from './scripts/content.mjs';
 
 // Статьи справочника — Markdown-файлы в content/articles (см. docs/CONTENT.md)
 const ARTICLES_DIR = fileURLToPath(new URL('./content/articles', import.meta.url));
+const GLOSSARY_FILE = fileURLToPath(new URL('./content/glossary.yaml', import.meta.url));
 
 export default defineConfig({
-  plugins: [svelte(), articlesPlugin(ARTICLES_DIR)],
+  plugins: [svelte(), articlesPlugin(ARTICLES_DIR, GLOSSARY_FILE)],
   // Относительные пути: сборка работает и в WebView Capacitor, и при открытии с диска
   base: './',
   build: {

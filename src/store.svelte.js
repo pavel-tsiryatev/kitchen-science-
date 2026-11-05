@@ -11,6 +11,7 @@ export const state = $state({
   secFilter: 'ALL',
   searchQuery: '',
   currentArticleId: null,
+  glossTerm: null, // термин, к которому прокрутить экран глоссария
   theme: 'light',
   fontScale: 1,
   readIds: [],

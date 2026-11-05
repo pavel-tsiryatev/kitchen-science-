@@ -6,6 +6,7 @@ import { state, saveState } from './store.svelte.js';
 export function navigate(tab, param = null, fromPop = false) {
   state.tab = tab;
   if (tab === 'catalog' && param) state.secFilter = param;
+  if (tab === 'glossary') state.glossTerm = param;
   if (tab === 'article' && param) { state.currentArticleId = param; state.recentIds = [param, ...(state.recentIds || []).filter(x => x !== param)].slice(0, 6); saveState(); }
   if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, art: state.currentArticleId, sub: state.subTab, lab: state.labTab }, ''); } catch (e) {} }
   window.scrollTo(0, 0);

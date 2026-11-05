@@ -47,7 +47,7 @@ describe('источники и доказательность', () => {
   });
   it('у проверенных статей каждый источник со ссылкой на DOI, ISBN, URL или издателя и датой сверки', () => {
     const verified = ARTICLES.filter(a => a.evidence !== 'unverified');
-    expect(verified.length).toBeGreaterThanOrEqual(5);
+    expect(verified.length, 'все статьи должны быть проверены').toBe(ARTICLES.length);
     for (const a of verified) {
       expect(a.reviewed, a.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       for (const s of a.sources) {
