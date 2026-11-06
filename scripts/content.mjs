@@ -35,7 +35,7 @@ export const EVIDENCE = {
   unverified: 'Источники ещё не сверены',
 };
 
-export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 /** Подгруппы раздела I «Популярные блюда» (src/data/dish-groups.json) */
 export const DISH_GROUP_IDS = DISH_GROUPS.map(g => g.id);
 const DOI_RE = /^10\.\d{4,9}\/\S+$/;

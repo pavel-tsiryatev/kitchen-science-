@@ -279,3 +279,4 @@ mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1p
 .ref-src{font-size:.8rem;color:var(--text-muted);margin-top:6px}
 .ref-src ul{margin:6px 0 0;padding-left:18px}
 a.pill{text-decoration:none;display:inline-flex;align-items:center}
+.t-skill{background:var(--surface-alt)}

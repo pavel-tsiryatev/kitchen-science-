@@ -31,5 +31,7 @@ describe('плитки разделов', () => {
     expect([tileOf('G'), glyphOf('G')]).toEqual(['t-phys', 'therm']);
     expect([tileOf('H'), glyphOf('H')]).toEqual(['t-exp', 'flask']);
     expect([tileOf('A'), glyphOf('A')]).toEqual(['t-tech', 'hat']);
+    expect([tileOf('I'), glyphOf('I')]).toEqual(['t-dish', 'pan']);
+    expect([tileOf('J'), glyphOf('J')]).toEqual(['t-skill', 'therm']);
   });
 });
