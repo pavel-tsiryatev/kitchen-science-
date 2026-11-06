@@ -10,6 +10,7 @@
   import Favorites from './screens/Favorites.svelte';
   import Settings from './screens/Settings.svelte';
   import Glossary from './screens/Glossary.svelte';
+  import Tables from './screens/Tables.svelte';
 
   const NAV = [
     ['home', 'home', 'Главная'],
@@ -18,7 +19,7 @@
     ['favorites', 'bookmark', 'Сохранённое'],
   ];
   // Статья подсвечивает «Библиотеку», журнал и тесты — «Лабораторию»
-  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', lab: 'tools' }[state.tab] || state.tab);
+  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', lab: 'tools' }[state.tab] || state.tab);
 
   function brandKey(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('home'); } }
 </script>
@@ -37,6 +38,7 @@
   {:else if state.tab === 'favorites'}<Favorites />
   {:else if state.tab === 'settings'}<Settings />
   {:else if state.tab === 'glossary'}<Glossary />
+  {:else if state.tab === 'tables'}<Tables />
   {/if}
 </main>
 

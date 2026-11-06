@@ -28,7 +28,7 @@ test('карточка термина закрывается крестиком,
 
 test('глоссарий: поиск по форме слова и по определению, переход в статью', async ({ page }) => {
   await nav(page, 'catalog');
-  await page.locator('.gl-entry').click();
+  await page.locator('.gl-entry', { hasText: 'Глоссарий' }).click();
   await expect(page.locator('.gl-term').first()).toBeVisible();
   await page.fill('input[aria-label="Найти термин"]', 'клейковиной');
   await expect(page.locator('.gl-term h3').first()).toContainText('Клейковина');

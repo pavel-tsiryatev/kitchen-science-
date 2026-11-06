@@ -30,7 +30,10 @@
 </script>
 
 <h1 class="screen-title">Библиотека</h1><p class="sub">Знания, которые делают вкуснее</p>
-<button class="link gl-entry" onclick={() => navigate('glossary')}>Глоссарий: {GLOSSARY.length} терминов простыми словами →</button>
+<div class="ref-entries">
+  <button class="link gl-entry" onclick={() => navigate('glossary')}>Глоссарий: {GLOSSARY.length} терминов простыми словами →</button>
+  <button class="link gl-entry" onclick={() => navigate('tables')}>Таблицы: температуры, сроки, крупы, замены →</button>
+</div>
 <input type="search" id="catSearchInput" class="search-box"
   placeholder="Поиск по {ARTICLES.length} статьям, терминам и процессам..." aria-label="Поиск по {ARTICLES.length} статьям, терминам и процессам..."
   bind:value={app.searchQuery}>
