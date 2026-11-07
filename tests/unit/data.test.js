@@ -97,3 +97,16 @@ describe('справочные таблицы', async () => {
     for (const v of ['74 °C', '71 °C', '63 °C']) expect(text).toContain(v);
   });
 });
+
+describe('подборки', async () => {
+  const { COLLECTIONS, ARTICLES } = await import('../../src/data/index.js');
+  const ids = new Set(ARTICLES.map(a => a.id));
+  it('id уникальны, ссылки на существующие статьи без повторов', () => {
+    expect(new Set(COLLECTIONS.map(c => c.id)).size).toBe(COLLECTIONS.length);
+    for (const c of COLLECTIONS) {
+      expect(c.title && c.desc, c.id).toBeTruthy();
+      expect(new Set(c.ids).size, c.id).toBe(c.ids.length);
+      for (const id of c.ids) expect(ids.has(id), `${c.id}: ${id}`).toBe(true);
+    }
+  });
+});

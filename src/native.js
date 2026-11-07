@@ -4,6 +4,7 @@ import { Preferences } from '@capacitor/preferences';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { App } from '@capacitor/app';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 export const isNative = Capacitor.isNativePlatform();
 
@@ -64,4 +65,29 @@ export async function shareText(title, text) {
 export function initBackButton(handleBack) {
   if (!isNative) return;
   App.addListener('backButton', () => { if (!handleBack()) App.exitApp(); });
+}
+
+// --- Уведомления таймеров ---
+// Уведомление приходит, даже если приложение свёрнуто или экран погас.
+let notifyAllowed = null;
+async function canNotify() {
+  if (notifyAllowed !== null) return notifyAllowed;
+  try {
+    let p = await LocalNotifications.checkPermissions();
+    if (p.display === 'prompt' || p.display === 'prompt-with-rationale') p = await LocalNotifications.requestPermissions();
+    notifyAllowed = p.display === 'granted';
+  } catch (e) { notifyAllowed = false; }
+  return notifyAllowed;
+}
+/** Запланировать уведомление таймера (только Android). Возвращает true, если получилось. */
+export async function scheduleTimerNotification(id, title, body, at) {
+  if (!isNative || !(await canNotify())) return false;
+  try {
+    await LocalNotifications.schedule({ notifications: [{ id, title, body, schedule: { at: new Date(at), allowWhileIdle: true } }] });
+    return true;
+  } catch (e) { return false; }
+}
+export async function cancelTimerNotification(id) {
+  if (!isNative) return;
+  try { await LocalNotifications.cancel({ notifications: [{ id }] }); } catch (e) {}
 }

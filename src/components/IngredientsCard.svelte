@@ -8,14 +8,13 @@
 
   let { article } = $props();
   const ing = $derived(article.ingredients);
-  let servings = $state(0);
   let added = $state(false);
-  // при переходе на другую статью — снова исходное число порций
-  $effect(() => { servings = ing.servings; added = false; });
-  const items = $derived(scaleIngredients(ing, servings || ing.servings));
+  // выбранное число порций хранится в общем состоянии: его видит и режим «Готовлю»
+  const servings = $derived(app.servingsFor[article.id] || ing.servings);
+  const items = $derived(scaleIngredients(ing, servings));
   const changed = $derived(servings !== ing.servings);
 
-  function step(d) { servings = Math.min(50, Math.max(1, servings + d)); added = false; }
+  function step(d) { app.servingsFor[article.id] = Math.min(50, Math.max(1, servings + d)); added = false; }
   function addAll() {
     app.shopping = addToList(app.shopping, items, article.id);
     saveState(); added = true;
@@ -40,6 +39,7 @@
   {#if changed}<p class="ingr-note">Количества в шагах рецепта ниже указаны на {ing.servings} — ориентируйтесь на этот список.</p>{/if}
   <div class="ingr-actions">
     <button class="btn" onclick={addAll}><Icon name="cart" size={18} /><span>В список покупок</span></button>
+    <button class="btn outline" onclick={() => navigate('cook', article.id)}><Icon name="pan" size={18} /><span>Готовлю</span></button>
     {#if added}<button class="link" onclick={() => navigate('shopping')}>Открыть список →</button>{/if}
   </div>
 </section>

@@ -313,3 +313,48 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .update-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border-radius:14px;background:var(--secondary-soft,var(--surface-alt));border:1px solid var(--border);font-size:.88rem}
 .update-bar span{flex:1 1 100%}
 .update-bar .btn{text-decoration:none;padding:7px 12px}
+/* Подборки на главной */
+.cols{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none;scroll-snap-type:x mandatory}
+.cols::-webkit-scrollbar{display:none}
+.col-card{flex:0 0 72%;max-width:260px;scroll-snap-align:start;text-align:left;padding:14px;border-radius:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.col-card b{font-family:var(--serif,inherit);font-size:1.02rem}
+.col-card span{font-size:.84rem;color:var(--text-muted)}
+.col-card small{font-size:.76rem;color:var(--primary);margin-top:auto}
+.fridge-row{margin-bottom:8px}
+/* Что приготовить */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.fr-h{margin:16px 0 8px;font-size:1.02rem}
+.fr-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:left;cursor:pointer;color:var(--text)}
+.fr-ok{color:var(--secondary);font-size:.84rem;font-weight:700}
+.fr-miss{color:var(--text-muted);font-size:.84rem}
+/* Заметки */
+.notes summary{cursor:pointer;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px}
+.notes textarea{margin-top:10px;width:100%;box-sizing:border-box}
+.notes-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);display:inline-block}
+/* Режим «Готовлю» */
+.cook{min-height:70vh;display:flex;flex-direction:column;touch-action:pan-y}
+.cook-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cook-awake{font-size:.78rem;color:var(--secondary)}
+.cook-title{font-size:1.4rem;margin:4px 0 8px}
+.cook-dots{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.cook-dots span{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.cook-dots span.on{background:var(--primary)}
+.cook-page{flex:1}
+.cook-kicker{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);font-weight:700;margin-bottom:8px}
+.cook-text{font-size:calc(1.35rem * var(--font-scale,1));line-height:1.5;margin:0 0 16px}
+.cook-ingr li{font-size:1.05rem;padding:10px 0}
+.cook-timer{margin:0 8px 8px 0;font-size:1rem}
+.cook-nav{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;background:var(--bg)}
+.cook-nav .btn{flex:1;justify-content:center;min-height:52px;font-size:1rem}
+.cook-nav .btn:disabled{opacity:.4}
+.cook-count{font-size:.85rem;color:var(--text-muted);white-space:nowrap}
+/* Таймеры над нижним меню */
+.timer-bar{position:fixed;left:12px;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:40;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.timer{pointer-events:auto;display:flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border-radius:14px;padding:6px 6px 6px 12px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.timer.done{background:var(--primary);color:#fff;animation:pulse 1s infinite alternate}
+@keyframes pulse{to{transform:scale(1.02)}}
+.timer-main{flex:1;display:flex;align-items:baseline;gap:10px;background:none;border:0;color:inherit;text-align:left;padding:6px 0;cursor:pointer;min-width:0}
+.timer-t{font-size:1.2rem;font-weight:700;font-variant-numeric:tabular-nums}
+.timer-n{font-size:.82rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-x{background:rgba(255,255,255,.18);border:0;color:inherit;border-radius:10px;min-width:44px;min-height:40px;font-weight:700;cursor:pointer}
+.fr-links{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px}

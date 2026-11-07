@@ -9,6 +9,7 @@
   import QuizCard from '../components/QuizCard.svelte';
   import TermSheet from '../components/TermSheet.svelte';
   import IngredientsCard from '../components/IngredientsCard.svelte';
+  import NotesCard from '../components/NotesCard.svelte';
   import { GLOSSARY } from '../data/index.js';
   import { compileGlossary, linkTerms } from '../glossary.js';
 
@@ -84,6 +85,8 @@
   <h4>{blocks.length + 1}. Краткий вывод (Запомнить)</h4>
   <div style="font-weight:700;">{a.summary}</div>
 </div>
+
+{#key a.id}<NotesCard id={a.id} />{/key}
 
 <Sources article={a} />
 

@@ -32,6 +32,11 @@ describe('sanitizeSaved', () => {
     expect(o.shopping[0]).toEqual({ key: 'мука|г', name: 'Мука', qty: 500, unit: 'г', done: true, src: ['i52'] });
     expect(o.shopping[1]).toMatchObject({ key: 'картофель|г', done: false, src: [] });
   });
+  it('заметки и продукты для подбора проверяются', () => {
+    const o = store.sanitizeSaved({ notes: { i1: 'меньше соли', zzz: 'x', i2: '   ', i3: 5 }, fridge: ['potato', 'potato', 'Bad Id', 7, 'eggs'] });
+    expect(o.notes).toEqual({ i1: 'меньше соли' });
+    expect(o.fridge).toEqual(['potato', 'eggs']);
+  });
   it('ограничивает размер шрифта и принимает только известные темы', () => {
     expect(store.sanitizeSaved({ fontScale: 9 }).fontScale).toBe(1.4);
     expect(store.sanitizeSaved({ fontScale: 0.1 }).fontScale).toBe(0.85);
