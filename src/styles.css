@@ -398,10 +398,11 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 @keyframes f-skate{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
 
 /* ---------- Анимации интерфейса ---------- */
-.screen-in{animation:screen-in .28s ease-out both}
+/* backwards, а не both: после анимации transform не остаётся, иначе position:fixed внутри экрана (карточка термина) считается от страницы, а не от окна */
+.screen-in{animation:screen-in .28s ease-out backwards}
 @keyframes screen-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.step-next{animation:step-next .25s ease-out both}
-.step-prev{animation:step-prev .25s ease-out both}
+.step-next{animation:step-next .25s ease-out backwards}
+.step-prev{animation:step-prev .25s ease-out backwards}
 @keyframes step-next{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @keyframes step-prev{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
 .btn,.pill,.icon-btn,.card-clickable,.col-card,.row,.dir{transition:transform .12s ease,background-color .2s ease,border-color .2s ease,color .2s ease}

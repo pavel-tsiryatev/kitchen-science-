@@ -26,6 +26,16 @@ test('карточка термина закрывается крестиком,
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
+test('карточка термина видна на экране, даже если термин внизу длинной статьи', async ({ page }) => {
+  await page.locator('.cover .btn').click();
+  const term = page.locator('button.term').last();
+  await term.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(400); // анимация появления экрана закончилась
+  await term.click();
+  await expect(page.getByRole('dialog')).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Закрыть определение' })).toBeInViewport();
+});
+
 test('глоссарий: поиск по форме слова и по определению, переход в статью', async ({ page }) => {
   await nav(page, 'catalog');
   await page.locator('.gl-entry', { hasText: 'Глоссарий' }).click();
