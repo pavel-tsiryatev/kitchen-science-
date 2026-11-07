@@ -4,17 +4,16 @@
   import { searchGlossary } from '../glossary.js';
   import TermSheet from '../components/TermSheet.svelte';
   import { state as app } from '../store.svelte.js'; // не «state»: имя конфликтует с руной $state
-  import { buildIndex, search, queryStems } from '../search.js';
+  import { indexFor, search, queryStems } from '../search.js';
   import ArticleCards from '../components/ArticleCards.svelte';
 
-  // Поисковый индекс (основы слов по полям) строится один раз
-  const INDEX = buildIndex(ARTICLES);
 
   function secMatch(a, f) { return f === 'ALL' || f === 'UNREAD' || (f === 'TECH' ? 'ABCDF'.includes(a.sec) : a.sec === f); }
 
   const stems = $derived(queryStems(app.searchQuery));
   // null — запроса нет; иначе статьи по убыванию релевантности
-  const found = $derived(search(INDEX, app.searchQuery));
+  // поисковый индекс строится при первом запросе и дальше берётся из кэша
+  const found = $derived(queryStems(app.searchQuery).length ? search(indexFor(ARTICLES), app.searchQuery) : null);
   // Термины глоссария, подходящие под запрос (по названию и синонимам)
   const terms = $derived(found ? searchGlossary(GLOSSARY, stems).slice(0, 3) : []);
   let openTerm = $state(null);

@@ -251,7 +251,8 @@ export function articlesPlugin(dir, glossaryFile) {
       if (!RESOLVED.has(id)) return null;
       for (const f of readdirSync(dir)) this.addWatchFile(join(dir, f));
       const articles = loadArticles(dir);
-      if (id === MODS['virtual:articles']) return `export default ${JSON.stringify(articles)};`;
+      // JSON.parse из строки разбирается движком заметно быстрее, чем такой же большой литерал объекта
+      if (id === MODS['virtual:articles']) return `export default JSON.parse(${JSON.stringify(JSON.stringify(articles))});`;
       this.addWatchFile(glossaryFile);
       return `export default ${JSON.stringify(loadGlossary(glossaryFile, new Set(articles.map(a => a.id))))};`;
     },

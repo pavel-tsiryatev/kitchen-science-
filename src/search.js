@@ -117,6 +117,32 @@ function fieldScore(set, q) {
   return 0;
 }
 
+// Индекс строится один раз на список статей и только когда впервые нужен поиск
+const indexCache = new WeakMap(), partial = new WeakMap();
+export function indexFor(articles) {
+  if (!indexCache.has(articles)) {
+    // если фоновая подготовка не успела — достраиваем оставшееся сразу
+    const done = partial.get(articles) || [];
+    indexCache.set(articles, done.concat(buildIndex(articles.slice(done.length))));
+    partial.delete(articles);
+  }
+  return indexCache.get(articles);
+}
+
+/** Подготовка индекса в фоне порциями по 8 статей, чтобы не задерживать нажатия после запуска */
+export function warmIndex(articles, wait = fn => setTimeout(fn, 30)) {
+  if (indexCache.has(articles)) return;
+  partial.set(articles, []);
+  const step = () => {
+    const done = partial.get(articles);
+    if (!done) return; // уже достроен в indexFor
+    done.push(...buildIndex(articles.slice(done.length, done.length + 8)));
+    if (done.length >= articles.length) { indexCache.set(articles, done); partial.delete(articles); }
+    else wait(step);
+  };
+  wait(step);
+}
+
 /** Поиск: каждое значимое слово запроса должно найтись в статье. Результат отсортирован по релевантности. */
 export function search(index, query) {
   const qs = queryStems(query);

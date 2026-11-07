@@ -26,3 +26,10 @@ export const btn = (page, name) => page.getByRole('button', { name, exact: true 
 export const toast = page => page.locator('#toast');
 export const saved = page => page.evaluate(k => JSON.parse(localStorage.getItem(k) || 'null'), KEY);
 export const lab = async (page, tab) => { await nav(page, 'tools'); await pill(page, tab); };
+
+/** Дорисовать весь список карточек (Библиотека рисует их порциями по мере прокрутки) */
+export async function showAllCards(page) {
+  const more = page.locator('.cards-more-btn');
+  // кнопка может исчезнуть сама, если карточки догрузились при прокрутке, — тогда просто проверяем снова
+  while (await more.count()) await more.click({ timeout: 2000 }).catch(() => {});
+}
