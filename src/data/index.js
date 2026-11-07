@@ -9,8 +9,9 @@ import DISH_GROUPS from './dish-groups.json';
 import TABLES from './tables.json';
 import PRODUCTS from './products.json';
 import COLLECTIONS from './collections.json';
+import FIGURES from './figures.json';
 
-export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, GLOSSARY, DISH_GROUPS, TABLES, PRODUCTS, COLLECTIONS };
+export { SECTIONS, ARTICLES, TROUBLESHOOTING, COMPARISONS, GLOSSARY, DISH_GROUPS, TABLES, PRODUCTS, COLLECTIONS, FIGURES };
 
 /** Подписи уровней доказательности (совпадают с scripts/content.mjs) */
 export const EVIDENCE_LABEL = {

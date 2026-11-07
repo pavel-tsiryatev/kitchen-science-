@@ -45,6 +45,11 @@ describe('parseArticle', () => {
     expect(() => parse(meta().replace('quiz:', `ingredients:\n  ${block}\nquiz:`) + body)).toThrow(re);
   });
 
+  it('схемы: только из списка src/data/figures.json', () => {
+    expect(parse(meta().replace('quiz:', 'figures:\n  - boil\nquiz:') + body).figures).toEqual(['boil']);
+    expect(() => parse(meta().replace('quiz:', 'figures:\n  - kettle\nquiz:') + body)).toThrow(/figures/);
+  });
+
   it('блюдо с подгруппой', () => {
     expect(parse(meta().replace('section: A', 'section: I\ngroup: soup') + body).group).toBe('soup');
     expect('group' in parse(meta() + body)).toBe(false);

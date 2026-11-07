@@ -65,3 +65,19 @@ test('кнопка «назад» в статье ведёт в её разде�
   await page.getByRole('button', { name: 'Выпечка' }).click();
   await expect(page.locator('.pill.active')).toContainText('Выпечка и тесто');
 });
+
+test('схемы в статьях: режимы кипения и прожарка стейка', async ({ page }) => {
+  const { open, nav } = await import('./helpers.js');
+  await open(page);
+  await nav(page, 'catalog');
+  await page.fill('#catSearchInput', 'томить кипеть');
+  await page.locator('.card-clickable').first().click();
+  const fig = page.locator('.fig');
+  await expect(fig).toHaveCount(1);
+  await expect(fig.locator('svg')).toHaveAttribute('aria-label', /Режимы кипения/);
+  await expect(fig.locator('.f-bubble')).toHaveCount(17);
+  await page.goBack();
+  await page.fill('#catSearchInput', 'стейк на сковороде');
+  await page.locator('.card-clickable').first().click();
+  await expect(page.locator('.fig figcaption')).toContainText('Степени прожарки');
+});
