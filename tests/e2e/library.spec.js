@@ -1,9 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { open, nav, pill, btn, TOTAL } from './helpers.js';
+import { open, nav, pill, btn, TOTAL, showAllCards } from './helpers.js';
 
 test.beforeEach(async ({ page }) => { await open(page); await nav(page, 'catalog'); });
 
-test('показывает все статьи', async ({ page }) => {
+test('показывает все статьи (порциями по мере прокрутки)', async ({ page }) => {
+  await expect(page.locator('.card-clickable')).toHaveCount(20);
+  await page.locator('.card-clickable').last().scrollIntoViewIfNeeded();
+  await expect.poll(() => page.locator('.card-clickable').count()).toBeGreaterThan(20);
+  await showAllCards(page);
   await expect(page.locator('.card-clickable')).toHaveCount(TOTAL);
   await expect(page.locator('.pill.active')).toHaveText(`Все (${TOTAL})`);
 });
@@ -40,6 +44,7 @@ test('пустой результат и сброс фильтров', async ({ 
   await expect(page.getByText('Ничего не найдено')).toBeVisible();
   await btn(page, 'Сбросить фильтры').click();
   await expect(page.locator('#catSearchInput')).toHaveValue('');
+  await showAllCards(page);
   await expect(page.locator('.card-clickable')).toHaveCount(TOTAL);
 });
 
@@ -53,6 +58,7 @@ test('фильтр по разделу и «Непрочитанные»', async
   await page.locator('button:has(.sr)', { hasText: 'Отметить прочитанным' }).click();
   await nav(page, 'catalog');
   await pill(page, 'Непрочитанные');
+  await showAllCards(page);
   await expect(page.locator('.card-clickable')).toHaveCount(TOTAL - 1);
 });
 

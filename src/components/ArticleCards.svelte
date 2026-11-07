@@ -1,6 +1,6 @@
 <script>
   import { SECTIONS } from '../data/index.js';
-  import { state } from '../store.svelte.js';
+  import { state as app } from '../store.svelte.js'; // не «state»: конфликт с руной $state
   import { navigate } from '../router.js';
   import { readMin, tileOf, glyphOf } from '../utils.js';
   import { highlight, snippet, ingredientHits } from '../search.js';
@@ -8,11 +8,22 @@
   import Icon from './Icon.svelte';
 
   let { list, stems = [] } = $props();
+  // Карточки рисуются порциями: сначала первые 20, следующие — когда пользователь докрутит до конца.
+  // Так Библиотека из 120+ статей открывается сразу, а не после отрисовки всего списка.
+  const STEP = 20;
+  let shown = $state(STEP);
+  $effect(() => { list; shown = STEP; }); // новый фильтр или запрос — снова с начала
+  const visible = $derived(list.slice(0, shown));
+  function more(node) {
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) shown += STEP; }, { rootMargin: '600px' });
+    io.observe(node);
+    return { destroy: () => io.disconnect() };
+  }
   // Фрагмент текста показываем, только если совпадения нет в заголовке и вводной фразе
   const hasHit = (text) => highlight(text, stems).some(p => p.hit);
   const extract = a => (stems.length && !hasHit(a.title) && !hasHit(a.idea)) ? snippet(a, stems) : null;
 
-  function resetFilters() { state.searchQuery = ''; state.secFilter = 'ALL'; state.dishGroup = 'ALL'; }
+  function resetFilters() { app.searchQuery = ''; app.secFilter = 'ALL'; app.dishGroup = 'ALL'; }
   function onKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
 </script>
 
@@ -21,7 +32,7 @@
     <p style="color:var(--text-muted);font-size:0.88rem;">Измените запрос или сбросьте фильтры.</p>
     <button class="btn outline" onclick={resetFilters}>Сбросить фильтры</button></div>
 {:else}
-  {#each list as a (a.id)}
+  {#each visible as a (a.id)}
     {@const sec = SECTIONS.find(s => s.id === a.sec)}
     {@const ex = extract(a)}
     <div class="card card-ed card-clickable" role="button" tabindex="0" onclick={() => navigate('article', a.id)} onkeydown={e => onKey(e, a.id)}>
@@ -29,6 +40,10 @@
       <div style="min-width:0"><div class="ed-t"><Marked text={a.title} {stems} /></div><div class="ed-d"><Marked text={a.idea} {stems} /></div>
       {#if stems.length && ingredientHits(a, stems).length}<div class="ed-s ed-ingr">В составе: <Marked text={ingredientHits(a, stems).join(', ')} {stems} /></div>
       {:else if ex}<div class="ed-s">«<Marked text={ex} {stems} />»</div>{/if}
-      <div class="ed-m">{readMin(a)} мин · {sec.title}{state.readIds.includes(a.id) ? ' · ✓ изучено' : ''}{state.favIds.includes(a.id) ? ' · ★' : ''}</div></div></div>
+      <div class="ed-m">{readMin(a)} мин · {sec.title}{app.readIds.includes(a.id) ? ' · ✓ изучено' : ''}{app.favIds.includes(a.id) ? ' · ★' : ''}</div></div></div>
   {/each}
+  {#if shown < list.length}
+    {#key shown}<div use:more class="cards-more" aria-hidden="true"></div>{/key}
+    <button class="btn outline cards-more-btn" onclick={() => shown += STEP}>Показать ещё ({list.length - shown})</button>
+  {/if}
 {/if}

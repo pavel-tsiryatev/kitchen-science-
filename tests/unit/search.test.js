@@ -97,3 +97,19 @@ describe('поиск по ингредиентам', async () => {
     expect(S.ingredientHits(a, [])).toEqual([]);
   });
 });
+
+describe('индекс в фоне', async () => {
+  const { ARTICLES } = await import('../../src/data/index.js');
+  const S = await import('../../src/search.js');
+  it('порционная подготовка даёт тот же индекс, что и сразу', async () => {
+    const list = ARTICLES.slice(0, 30); // свой массив — свой кэш
+    const queue = [];
+    S.warmIndex(list, fn => queue.push(fn));
+    queue.shift()(); queue.shift()(); // две порции из четырёх
+    const idx = S.indexFor(list); // поиск раньше конца подготовки — достраивается сразу
+    expect(idx).toHaveLength(30);
+    expect(idx.map(e => e.article.id)).toEqual(list.map(a => a.id));
+    while (queue.length) queue.shift()(); // оставшиеся шаги ничего не ломают
+    expect(S.indexFor(list)).toBe(idx);
+  });
+});
