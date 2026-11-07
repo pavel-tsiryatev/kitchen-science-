@@ -31,7 +31,7 @@
 <h1 class="screen-title">Библиотека</h1><p class="sub">Знания, которые делают вкуснее</p>
 <div class="ref-entries">
   <button class="link gl-entry" onclick={() => navigate('glossary')}>Глоссарий: {GLOSSARY.length} терминов простыми словами →</button>
-  <button class="link gl-entry" onclick={() => navigate('tables')}>Таблицы: температуры, сроки, меры и веса, замены →</button>
+  <button class="link gl-entry" onclick={() => navigate('tables')}>Таблицы: температуры, варка, жарка, сроки, меры и веса, замены →</button>
 </div>
 <input type="search" id="catSearchInput" class="search-box"
   placeholder="Поиск по {ARTICLES.length} статьям, продуктам и терминам..." aria-label="Поиск по {ARTICLES.length} статьям, продуктам и терминам..."
