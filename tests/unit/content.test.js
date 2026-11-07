@@ -30,6 +30,21 @@ describe('parseArticle', () => {
     expect(a.sources).toEqual([{ text: 'Книга без идентификатора' }]);
   });
 
+  it('ингредиенты: порции, числа, диапазоны и «по вкусу»', () => {
+    const ing = `ingredients:\n  servings: 2\n  title: Гречка\n  items:\n    - [Гречка, 1, стакан]\n    - [Картофель, [600, 700], г]\n    - [Соль, null, по вкусу]\n`;
+    const a = parse(meta().replace('quiz:', ing + 'quiz:') + body);
+    expect(a.ingredients).toEqual({ servings: 2, title: 'Гречка', items: [{ name: 'Гречка', qty: 1, unit: 'стакан' }, { name: 'Картофель', qty: [600, 700], unit: 'г' }, { name: 'Соль', qty: null, unit: 'по вкусу' }] });
+  });
+  it.each([
+    ['servings: 0\n  items:\n    - [Соль, 1, г]', /servings/],
+    ['servings: 2\n  items: []', /непустой список/],
+    ['servings: 2\n  items:\n    - [Соль, 1, щепотка]', /неизвестная единица/],
+    ['servings: 2\n  items:\n    - [Соль, [5, 2], г]', /количество/],
+    ['servings: 2\n  items:\n    - [Соль, 1]', /название, количество, единица/],
+  ])('ошибка в ингредиентах: %s', (block, re) => {
+    expect(() => parse(meta().replace('quiz:', `ingredients:\n  ${block}\nquiz:`) + body)).toThrow(re);
+  });
+
   it('блюдо с подгруппой', () => {
     expect(parse(meta().replace('section: A', 'section: I\ngroup: soup') + body).group).toBe('soup');
     expect('group' in parse(meta() + body)).toBe(false);

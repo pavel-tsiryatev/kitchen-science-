@@ -2,7 +2,7 @@
 //
 // Формат файла (подробно — docs/CONTENT.md):
 //   ---
-//   id, section, group (только для раздела I), title, idea, related, evidence, reviewed, quiz, sources   ← YAML
+//   id, section, group (только для раздела I), title, idea, related, evidence, reviewed, ingredients, quiz, sources   ← YAML
 //   ---
 //   ## Что происходит
 //   ...текст, абзацы через пустую строку...
@@ -80,6 +80,7 @@ export function parseArticle(text, file = 'статья.md') {
   if (a.evidence !== 'unverified' && !a.reviewed) fail(file, 'для проверенной статьи укажите дату сверки источников «reviewed»');
 
   // Вопрос
+  if (meta.ingredients !== undefined) a.ingredients = parseIngredients(meta.ingredients, file);
   const q = meta.quiz;
   if (!q || typeof q !== 'object') fail(file, 'нет блока «quiz»');
   a.quiz = { q: str(q.question, file, 'quiz.question'), opts: q.options, a: q.answer, exp: str(q.explanation, file, 'quiz.explanation') };
@@ -136,6 +137,35 @@ function parseSource(s, file, i, evidence) {
   if (!src.doi && !src.isbn && !src.url && !src.published) fail(file, `${at}: укажите doi, isbn, url или published (издатель)`);
   for (const k of Object.keys(src)) if (src[k] === undefined) delete src[k];
   return src;
+}
+
+/** Единицы, которые пересчитываются при смене числа порций */
+export const UNITS = ['г', 'кг', 'мл', 'л', 'шт', 'ст. л.', 'ч. л.', 'стакан', 'зубчик', 'пучок', 'банка'];
+
+/** Ингредиенты рецепта: { servings, title?, items: [[название, количество | [от, до] | null, единица]] } */
+function parseIngredients(ing, file) {
+  if (!ing || typeof ing !== 'object' || Array.isArray(ing)) fail(file, '«ingredients» — блок с полями servings и items');
+  const servings = ing.servings;
+  if (!Number.isInteger(servings) || servings < 1 || servings > 50) fail(file, '«ingredients.servings» — число порций от 1 до 50');
+  if (!Array.isArray(ing.items) || !ing.items.length) fail(file, '«ingredients.items» — непустой список');
+  const pos = x => typeof x === 'number' && Number.isFinite(x) && x > 0;
+  const items = ing.items.map((it, i) => {
+    const at = `ingredients.items[${i}]`;
+    if (!Array.isArray(it) || it.length !== 3) fail(file, `${at}: нужен список [название, количество, единица]`);
+    const [name, qty, unit] = it;
+    if (typeof name !== 'string' || !name.trim()) fail(file, `${at}: нет названия`);
+    if (typeof unit !== 'string' || !unit.trim()) fail(file, `${at}: нет единицы`);
+    if (qty === null) { if (unit.length > 24) fail(file, `${at}: слишком длинная пометка «${unit}»`); }
+    else {
+      const ok = pos(qty) || (Array.isArray(qty) && qty.length === 2 && pos(qty[0]) && pos(qty[1]) && qty[0] < qty[1]);
+      if (!ok) fail(file, `${at}: количество — число, диапазон [от, до] или null`);
+      if (!UNITS.includes(unit)) fail(file, `${at}: неизвестная единица «${unit}» (допустимы ${UNITS.join(', ')})`);
+    }
+    return { name: name.trim(), qty, unit };
+  });
+  const out = { servings, items };
+  if (ing.title !== undefined) out.title = str(ing.title, file, 'ingredients.title');
+  return out;
 }
 
 /** Все статьи из папки: проверка уникальности id и ссылок между статьями. */

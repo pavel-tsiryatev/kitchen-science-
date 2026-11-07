@@ -8,6 +8,7 @@
   import Icon from '../components/Icon.svelte';
   import QuizCard from '../components/QuizCard.svelte';
   import TermSheet from '../components/TermSheet.svelte';
+  import IngredientsCard from '../components/IngredientsCard.svelte';
   import { GLOSSARY } from '../data/index.js';
   import { compileGlossary, linkTerms } from '../glossary.js';
 
@@ -67,6 +68,10 @@
     <div class="evidence ev-{a.evidence}" title={EVIDENCE_LABEL[a.evidence]}><Icon name="check" size={14} />Источники проверены · уровень доказательности: {EVIDENCE_LABEL[a.evidence].split(':')[0].toLowerCase()}</div>
   {/if}
   <div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
+
+{#if a.ingredients}
+  {#key a.id}<IngredientsCard article={a} />{/key}
+{/if}
 
 {#each blocks as [cls, title, key], i (key)}
   <div class="art-block {cls}">
