@@ -17,6 +17,7 @@
   import Cook from './screens/Cook.svelte';
   import Fridge from './screens/Fridge.svelte';
   import Collection from './screens/Collection.svelte';
+  import Menu from './screens/Menu.svelte';
 
   const NAV = [
     ['home', 'home', 'Главная'],
@@ -26,7 +27,7 @@
   ];
   // Статья подсвечивает «Библиотеку», журнал и тесты — «Лабораторию»
   const shopLeft = $derived(state.shopping.filter(x => !x.done).length);
-  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', cook: 'catalog', collection: 'home', fridge: 'home', lab: 'tools' }[state.tab] || state.tab);
+  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', cook: 'catalog', collection: 'home', fridge: 'home', menu: 'home', lab: 'tools' }[state.tab] || state.tab);
 
   function brandKey(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('home'); } }
 </script>
@@ -56,6 +57,7 @@
   {:else if state.tab === 'cook'}<Cook />
   {:else if state.tab === 'fridge'}<Fridge />
   {:else if state.tab === 'collection'}<Collection />
+  {:else if state.tab === 'menu'}<Menu />
   {/if}
   </div>
   {/key}

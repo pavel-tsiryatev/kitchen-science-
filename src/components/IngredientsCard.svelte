@@ -5,6 +5,7 @@
   import { navigate } from '../router.js';
   import { toast } from '../toast.js';
   import Icon from './Icon.svelte';
+  import { DAYS, addToMenu } from '../menu.js';
 
   let { article } = $props();
   const ing = $derived(article.ingredients);
@@ -15,6 +16,12 @@
   const changed = $derived(servings !== ing.servings);
 
   function step(d) { app.servingsFor[article.id] = Math.min(50, Math.max(1, servings + d)); added = false; }
+  let pickDay = $state(false), inMenu = $state(false);
+  function toMenu(day, label) {
+    app.menu = addToMenu(app.menu, day, article.id, servings);
+    saveState(); pickDay = false; inMenu = true;
+    toast(`Добавлено в меню: ${label}, ${servings} порц.`);
+  }
   function addAll() {
     app.shopping = addToList(app.shopping, items, article.id);
     saveState(); added = true;
@@ -40,6 +47,13 @@
   <div class="ingr-actions">
     <button class="btn" onclick={addAll}><Icon name="cart" size={18} /><span>В список покупок</span></button>
     <button class="btn outline" onclick={() => navigate('cook', article.id)}><Icon name="pan" size={18} /><span>Готовлю</span></button>
+    <button class="btn outline" onclick={() => pickDay = !pickDay} aria-expanded={pickDay}><Icon name="clock" size={18} /><span>В меню</span></button>
     {#if added}<button class="link" onclick={() => navigate('shopping')}>Открыть список →</button>{/if}
+    {#if inMenu}<button class="link" onclick={() => navigate('menu')}>Открыть меню →</button>{/if}
   </div>
+  {#if pickDay}
+    <div class="menu-days" role="group" aria-label="День недели">
+      {#each DAYS as [d, short, full] (d)}<button class="pill" onclick={() => toMenu(d, full)} aria-label={full}>{short}</button>{/each}
+    </div>
+  {/if}
 </section>

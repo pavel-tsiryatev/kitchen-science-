@@ -91,7 +91,8 @@ export function queryStems(q) {
 }
 
 // Поля статьи и их вес в ранжировании
-const FIELDS = [['title', 10], ['idea', 4], ['summary', 3], ['what', 1], ['why', 1], ['factors', 1], ['practice', 1], ['mistakes', 1], ['experiment', 1], ['limitations', 1], ['quizQ', 1]];
+// ingr — названия ингредиентов рецепта: «кабачки» находит блюда, где они в составе
+const FIELDS = [['title', 10], ['ingr', 5], ['idea', 4], ['summary', 3], ['what', 1], ['why', 1], ['factors', 1], ['practice', 1], ['mistakes', 1], ['experiment', 1], ['limitations', 1], ['quizQ', 1]];
 const BODY = ['what', 'why', 'practice', 'factors', 'mistakes', 'experiment', 'limitations', 'summary'];
 
 /** Индекс считается один раз: для каждого поля — набор основ слов */
@@ -99,7 +100,7 @@ export function buildIndex(articles) {
   return articles.map(a => {
     const fields = {};
     for (const [f] of FIELDS) {
-      const text = f === 'quizQ' ? a.quiz?.q : a[f];
+      const text = f === 'quizQ' ? a.quiz?.q : f === 'ingr' ? (a.ingredients?.items || []).map(it => it.name).join(' ') : a[f];
       fields[f] = new Set((norm(text).match(WORD_RE) || []).map(stem));
     }
     return { article: a, fields, title: norm(a.title) };
@@ -152,6 +153,12 @@ export function highlight(text, stems) {
   }
   if (last < src.length) out.push({ text: src.slice(last), hit: false });
   return out.length ? out : [{ text: src, hit: false }];
+}
+
+/** Ингредиенты рецепта, совпавшие с запросом (для строки «В составе: …» в результатах) */
+export function ingredientHits(article, stems) {
+  if (!stems.length) return [];
+  return (article.ingredients?.items || []).map(it => it.name).filter(n => (norm(n).match(WORD_RE) || []).some(w => stems.some(q => matchStem(stem(w), q))));
 }
 
 /** Фрагмент текста статьи вокруг первого совпадения (если его нет в заголовке и вводной фразе) */

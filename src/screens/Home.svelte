@@ -50,6 +50,7 @@
     <button class="col-card" role="listitem" onclick={() => navigate('collection', c.id)}><b>{c.title}</b><span>{c.desc}</span><small>{c.ids.length} статей</small></button>
   {/each}
 </div>
+<button class="row fridge-row" onclick={() => navigate('menu')}><Icon name="clock" size={22} /><span><b>Меню на неделю</b><small>Блюда по дням и список покупок одной кнопкой</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
 <button class="row fridge-row" onclick={() => navigate('fridge')}><Icon name="search" size={22} /><span><b>Что приготовить из того, что есть</b><small>Отметьте продукты — получите блюда</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
 <div class="eyebrow"><h3>Твоя лаборатория</h3></div>
 <div class="list">

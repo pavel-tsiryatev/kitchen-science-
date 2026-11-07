@@ -37,6 +37,11 @@ describe('sanitizeSaved', () => {
     expect(o.notes).toEqual({ i1: 'меньше соли' });
     expect(o.fridge).toEqual(['potato', 'eggs']);
   });
+  it('меню на неделю проверяется', () => {
+    const o = store.sanitizeSaved({ menu: { mon: [{ id: 'i1', servings: 3 }, { id: 'nope', servings: 1 }] } });
+    expect(o.menu.mon).toEqual([{ id: 'i1', servings: 3 }]);
+    expect(o.menu.sun).toEqual([]);
+  });
   it('ограничивает размер шрифта и принимает только известные темы', () => {
     expect(store.sanitizeSaved({ fontScale: 9 }).fontScale).toBe(1.4);
     expect(store.sanitizeSaved({ fontScale: 0.1 }).fontScale).toBe(0.85);

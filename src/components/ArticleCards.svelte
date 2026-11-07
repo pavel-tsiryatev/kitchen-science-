@@ -3,7 +3,7 @@
   import { state } from '../store.svelte.js';
   import { navigate } from '../router.js';
   import { readMin, tileOf, glyphOf } from '../utils.js';
-  import { highlight, snippet } from '../search.js';
+  import { highlight, snippet, ingredientHits } from '../search.js';
   import Marked from './Marked.svelte';
   import Icon from './Icon.svelte';
 
@@ -27,7 +27,8 @@
     <div class="card card-ed card-clickable" role="button" tabindex="0" onclick={() => navigate('article', a.id)} onkeydown={e => onKey(e, a.id)}>
       <div class="tile {tileOf(a.sec)}"><Icon name={glyphOf(a.sec)} size={22} /></div>
       <div style="min-width:0"><div class="ed-t"><Marked text={a.title} {stems} /></div><div class="ed-d"><Marked text={a.idea} {stems} /></div>
-      {#if ex}<div class="ed-s">«<Marked text={ex} {stems} />»</div>{/if}
+      {#if stems.length && ingredientHits(a, stems).length}<div class="ed-s ed-ingr">В составе: <Marked text={ingredientHits(a, stems).join(', ')} {stems} /></div>
+      {:else if ex}<div class="ed-s">«<Marked text={ex} {stems} />»</div>{/if}
       <div class="ed-m">{readMin(a)} мин · {sec.title}{state.readIds.includes(a.id) ? ' · ✓ изучено' : ''}{state.favIds.includes(a.id) ? ' · ★' : ''}</div></div></div>
   {/each}
 {/if}
