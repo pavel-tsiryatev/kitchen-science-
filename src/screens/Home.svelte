@@ -56,7 +56,7 @@
     <button class="row" onclick={() => labGo(k)}><Icon name={i} size={22} /><span><b>{t}</b><small>{d}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   {/each}
   <button class="row" onclick={() => navigate('shopping')}><Icon name="cart" size={22} /><span><b>Список покупок</b><small>{state.shopping.length ? `${state.shopping.filter(x => !x.done).length} продуктов осталось купить` : 'Ингредиенты из рецептов с галочками'}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
-  <button class="row" onclick={() => navigate('tables')}><Icon name="therm" size={22} /><span><b>Справочные таблицы</b><small>Температуры, сроки хранения, крупы, замены</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
+  <button class="row" onclick={() => navigate('tables')}><Icon name="therm" size={22} /><span><b>Справочные таблицы</b><small>Температуры, сроки хранения, меры и веса, замены</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   <button class="row" onclick={() => navigate('glossary')}><Icon name="book" size={22} /><span><b>Глоссарий терминов</b><small>{GLOSSARY.length} понятий простыми словами</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
 </div>
 <div class="eyebrow"><h3>Продолжить обучение</h3><span class="mono-s">{readCount} из {total}</span></div>

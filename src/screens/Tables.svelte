@@ -6,7 +6,7 @@
   const title = id => ARTICLES.find(a => a.id === id)?.title.split(':')[0];
 </script>
 
-<h1 class="screen-title">Таблицы</h1><p class="sub">Температуры, сроки хранения, крупы и замены — под рукой</p>
+<h1 class="screen-title">Таблицы</h1><p class="sub">Температуры, сроки хранения, меры, крупы и замены — под рукой</p>
 <div class="pill-bar" role="navigation" aria-label="Таблицы">
   {#each TABLES as t (t.id)}<a class="pill" href="#tbl-{t.id}" onclick={e => { e.preventDefault(); document.getElementById('tbl-' + t.id)?.scrollIntoView({ behavior: 'smooth' }); }}>{t.title}</a>{/each}
 </div>
