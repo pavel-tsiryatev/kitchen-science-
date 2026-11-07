@@ -110,3 +110,18 @@ describe('подборки', async () => {
     }
   });
 });
+
+describe('схемы', async () => {
+  const { FIGURES, ARTICLES } = await import('../../src/data/index.js');
+  const { readFileSync } = await import('node:fs');
+  const comp = readFileSync('src/components/Figure.svelte', 'utf8') // тесты запускаются из корня репозитория;
+  it('у каждой схемы есть рисунок, подпись и она используется в статье', () => {
+    for (const f of FIGURES) {
+      expect(comp, f.id).toMatch(new RegExp(`\\b${f.id}: Fig`));
+      expect(f.caption.length, f.id).toBeGreaterThan(20);
+      const users = ARTICLES.filter(a => (a.figures || []).includes(f.id));
+      expect(users.length, f.id).toBeGreaterThan(0);
+      for (const a of users) expect(a[f.after], `${a.id}: раздел ${f.after}`).toBeTruthy();
+    }
+  });
+});

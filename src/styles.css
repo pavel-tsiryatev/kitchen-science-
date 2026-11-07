@@ -415,6 +415,32 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .timer{animation:f-pop .3s ease-out}
 .ingr-list li{animation:f-pop .3s ease-out both}
 
+
+/* Схемы: эмульсия, слоёное тесто, лёд, соль */
+.fig .f-oil{fill:#E9C45A;stroke:#C9A23A;stroke-width:.8}
+.fig .f-emul{stroke:var(--secondary);stroke-width:1.4;stroke-linecap:round}
+.fig .f-drift{animation:f-drift 3s ease-in-out infinite alternate}
+.fig .f-rise-oil{animation:f-rise-oil 2.4s ease-in infinite}
+.fig .f-dough{fill:#EAD7B0}
+.fig .f-dough.baked{fill:#D9A866;stroke:#B07A3E;stroke-width:.6}
+.fig .f-fat{fill:#F6E7A6}
+.fig .f-arrow{stroke:var(--text-muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fig .f-lift{animation:f-lift 2.4s ease-in-out infinite alternate}
+.fig .f-steam{fill:#fff;stroke:#BFD3E6}
+.fig .f-steam-g{animation:f-glow 1.2s ease-in-out infinite alternate}
+.fig .f-cell{fill:#F3D9D3;stroke:#C99A90}
+.fig .f-ice{stroke:#5E8FBF;stroke-linecap:round;animation:f-pop .8s ease-out both}
+.fig .f-ice.big{stroke-width:2.2}
+.fig .f-ice.small{stroke-width:1.2}
+.fig .f-meat{fill:#C9545F}
+.fig .f-meat-edge{fill:none;stroke:#7A2F37;stroke-width:2}
+.fig .f-salt-zone{fill:none;stroke:#EBC1C5;stroke-width:calc(var(--d) * 2);animation:f-salt 2.4s ease-out both}
+.fig .f-crystal{fill:#fff;stroke:#bbb;stroke-width:.4}
+@keyframes f-drift{from{transform:translate(-1.5px,1px)}to{transform:translate(1.5px,-1px)}}
+@keyframes f-rise-oil{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-22px);opacity:0}}
+@keyframes f-lift{from{transform:translateY(calc(var(--i) * -3px))}to{transform:translateY(0)}}
+@keyframes f-salt{from{stroke-width:0}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;animation-delay:0s!important}
 }
