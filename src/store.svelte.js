@@ -11,6 +11,10 @@ export const state = $state({
   secFilter: 'ALL',
   dishGroup: 'ALL', // подгруппа в разделе «Популярные блюда»
   shopping: [], // список покупок: { key, name, qty, unit, done, src }
+  notes: {}, // свои заметки к статьям: { id: текст }
+  fridge: [], // продукты для «Что приготовить» (id из src/data/products.json)
+  servingsFor: {}, // выбранное число порций по статьям (не сохраняется)
+  collectionId: null, // открытая подборка
   searchQuery: '',
   currentArticleId: null,
   glossTerm: null, // термин, к которому прокрутить экран глоссария
@@ -93,11 +97,13 @@ export function sanitizeSaved(s) {
       return { key, name, qty: x.qty ?? null, unit, done: x.done === true, src: isA(x.src) ? x.src.filter(id => ids.has(id)).slice(0, 20) : [] };
     });
   }
+  if (obj(s.notes)) { o.notes = {}; for (const [k, v] of Object.entries(s.notes)) if (ids.has(k) && typeof v === 'string' && v.trim()) o.notes[k] = v.slice(0, 2000); }
+  if (isA(s.fridge)) o.fridge = [...new Set(s.fridge.filter(x => typeof x === 'string' && /^[a-z_-]{1,30}$/.test(x)))].slice(0, 100);
   ['bakerFlour', 'basePortions', 'targetPortions'].forEach(k => { if (s[k] !== undefined) o[k] = ns(s[k]); });
   return o;
 }
 export function snapshot() {
-  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping };
+  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping, notes: state.notes, fridge: state.fridge };
 }
 export async function loadState() {
   let raw = null;

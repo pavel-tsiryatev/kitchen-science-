@@ -13,6 +13,10 @@
   import Tables from './screens/Tables.svelte';
   import Shopping from './screens/Shopping.svelte';
   import UpdateBanner from './components/UpdateBanner.svelte';
+  import TimerBar from './components/TimerBar.svelte';
+  import Cook from './screens/Cook.svelte';
+  import Fridge from './screens/Fridge.svelte';
+  import Collection from './screens/Collection.svelte';
 
   const NAV = [
     ['home', 'home', 'Главная'],
@@ -22,7 +26,7 @@
   ];
   // Статья подсвечивает «Библиотеку», журнал и тесты — «Лабораторию»
   const shopLeft = $derived(state.shopping.filter(x => !x.done).length);
-  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', lab: 'tools' }[state.tab] || state.tab);
+  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', cook: 'catalog', collection: 'home', fridge: 'home', lab: 'tools' }[state.tab] || state.tab);
 
   function brandKey(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('home'); } }
 </script>
@@ -47,8 +51,13 @@
   {:else if state.tab === 'glossary'}<Glossary />
   {:else if state.tab === 'tables'}<Tables />
   {:else if state.tab === 'shopping'}<Shopping />
+  {:else if state.tab === 'cook'}<Cook />
+  {:else if state.tab === 'fridge'}<Fridge />
+  {:else if state.tab === 'collection'}<Collection />
   {/if}
 </main>
+
+<TimerBar />
 
 <nav class="bottom-nav" aria-label="Основная навигация">
   {#each NAV as [tab, icon, label]}

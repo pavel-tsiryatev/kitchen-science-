@@ -1,5 +1,5 @@
 <script>
-  import { ARTICLES, GLOSSARY } from '../data/index.js';
+  import { ARTICLES, GLOSSARY, COLLECTIONS } from '../data/index.js';
   import { state } from '../store.svelte.js';
   import { navigate, goSearch, labGo } from '../router.js';
   import { readMin } from '../utils.js';
@@ -43,6 +43,13 @@
   <button class="dir t-dish wide" onclick={() => navigate('catalog', 'I')}><Icon name="pan" /><b>Популярные блюда</b><span>Сырники, картошка, паста — рецепт и почему он работает</span></button>
   <button class="dir t-skill wide" onclick={() => navigate('catalog', 'J')}><Icon name="therm" /><b>Базовые навыки</b><span>Сковорода, соль, нож, соусы, духовка, термометр</span></button>
 </div>
+<div class="eyebrow"><h3>Подборки</h3></div>
+<div class="cols" role="list">
+  {#each COLLECTIONS as c (c.id)}
+    <button class="col-card" role="listitem" onclick={() => navigate('collection', c.id)}><b>{c.title}</b><span>{c.desc}</span><small>{c.ids.length} статей</small></button>
+  {/each}
+</div>
+<button class="row fridge-row" onclick={() => navigate('fridge')}><Icon name="search" size={22} /><span><b>Что приготовить из того, что есть</b><small>Отметьте продукты — получите блюда</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
 <div class="eyebrow"><h3>Твоя лаборатория</h3></div>
 <div class="list">
   {#each ROWS as [i, t, d, k]}

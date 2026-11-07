@@ -11,8 +11,10 @@ export function navigate(tab, param = null, fromPop = false) {
   }
   if (tab === 'catalog' && param) { state.secFilter = param; state.dishGroup = 'ALL'; }
   if (tab === 'glossary') state.glossTerm = param;
+  if (tab === 'cook' && param) state.currentArticleId = param;
+  if (tab === 'collection' && param) state.collectionId = param;
   if (tab === 'article' && param) { state.currentArticleId = param; state.recentIds = [param, ...(state.recentIds || []).filter(x => x !== param)].slice(0, 6); saveState(); }
-  if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, grp: state.dishGroup, art: state.currentArticleId, sub: state.subTab, lab: state.labTab, depth: depth + 1 }, ''); depth++; } catch (e) {} }
+  if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, grp: state.dishGroup, col: state.collectionId, art: state.currentArticleId, sub: state.subTab, lab: state.labTab, depth: depth + 1 }, ''); depth++; } catch (e) {} }
   window.scrollTo(0, 0);
 }
 
@@ -24,7 +26,7 @@ export function initHistory() {
   window.addEventListener('popstate', e => {
     const s = e.state || { tab: 'home' };
     depth = s.depth || 0;
-    state.secFilter = s.sec || 'ALL'; state.dishGroup = s.grp || 'ALL'; state.currentArticleId = s.art || null; state.subTab = s.sub || 'calc';
+    state.secFilter = s.sec || 'ALL'; state.dishGroup = s.grp || 'ALL'; state.collectionId = s.col || null; state.currentArticleId = s.art || null; state.subTab = s.sub || 'calc';
     if (s.lab) state.labTab = s.lab;
     navigate(s.tab || 'home', null, true);
   });

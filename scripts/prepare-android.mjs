@@ -47,4 +47,15 @@ let wrapper = readFileSync(wrapperPath, 'utf8');
 wrapper = /networkTimeout=/.test(wrapper) ? wrapper.replace(/networkTimeout=\d+/, 'networkTimeout=60000') : wrapper + '\nnetworkTimeout=60000\n';
 writeFileSync(wrapperPath, wrapper);
 
+// Точные будильники для кухонных таймеров: без них Android 12+ может присылать
+// уведомление таймера с опозданием на несколько минут
+const manifestPath = 'android/app/src/main/AndroidManifest.xml';
+let manifest = readFileSync(manifestPath, 'utf8');
+if (!manifest.includes('USE_EXACT_ALARM')) {
+  manifest = manifest.replace('</manifest>', `    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+</manifest>`);
+  writeFileSync(manifestPath, manifest);
+}
+
 run('npx cap sync android');
