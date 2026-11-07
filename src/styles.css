@@ -280,3 +280,36 @@ mark{background:var(--primary-soft);color:inherit;border-radius:3px;padding:0 1p
 .ref-src ul{margin:6px 0 0;padding-left:18px}
 a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .t-skill{background:var(--surface-alt)}
+/* Шапка: корзина с числом некупленных продуктов */
+.bar-actions{display:flex;gap:8px;align-items:center}
+.cart-btn{position:relative}
+.cart-btn .badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;line-height:18px;text-align:center}
+.icon-btn.sm{padding:4px 10px;min-height:36px;min-width:36px;font-size:1.1rem;line-height:1}
+.icon-btn.sm:disabled{opacity:.4;cursor:default}
+.icon-btn.ghost{background:none;border-color:transparent;color:var(--text-muted)}
+/* Ингредиенты в статье */
+.ingr-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ingr-head h3{margin:0;font-size:1.05rem;color:var(--primary)}
+.ingr-head h3 small{font-weight:400;color:var(--text-muted);font-size:.85rem}
+.ingr-serv{display:flex;align-items:center;gap:8px;font-size:.9rem;white-space:nowrap}
+.ingr-list{list-style:none;margin:0 0 8px;padding:0}
+.ingr-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.92rem}
+.ingr-list li b{white-space:nowrap;font-weight:700}
+.ingr-note{font-size:.8rem;color:var(--text-muted);margin:6px 0}
+.ingr-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px}
+/* Список покупок */
+.shop-add{display:flex;gap:8px;align-items:flex-start}
+.shop-add .search-box{flex:1}
+.shop-list{list-style:none;margin:0 0 12px;padding:0}
+.shop-list li{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.shop-list label{flex:1;display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;min-height:44px}
+.shop-list input[type=checkbox]{width:22px;height:22px;accent-color:var(--primary);flex:none}
+.shop-name{flex:1}
+.shop-qty{color:var(--text-muted);font-size:.88rem;white-space:nowrap}
+.shop-list li.done .shop-name,.shop-list li.done .shop-qty{text-decoration:line-through;opacity:.55}
+.shop-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty-shop p{margin:0 0 10px}
+/* Плашка «Доступна новая версия» */
+.update-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border-radius:14px;background:var(--secondary-soft,var(--surface-alt));border:1px solid var(--border);font-size:.88rem}
+.update-bar span{flex:1 1 100%}
+.update-bar .btn{text-decoration:none;padding:7px 12px}

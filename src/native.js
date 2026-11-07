@@ -51,6 +51,14 @@ export async function saveTextFile(name, text) {
   return 'downloaded';
 }
 
+// --- «Поделиться» текстом (список покупок) ---
+/** Android: системное окно «Поделиться». Браузер: Web Share API, иначе копирование в буфер. */
+export async function shareText(title, text) {
+  if (isNative) { await Share.share({ title, text, dialogTitle: title }); return 'shared'; }
+  if (navigator.share) { await navigator.share({ title, text }); return 'shared'; }
+  await navigator.clipboard.writeText(text); return 'copied';
+}
+
 // --- Кнопка и жест «Назад» ---
 /** На Android «Назад» возвращает на предыдущий экран приложения; выход — только с главной. */
 export function initBackButton(handleBack) {

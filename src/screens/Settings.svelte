@@ -1,15 +1,27 @@
 <script>
   import { ARTICLES } from '../data/index.js';
-  import { state, saveState, setTheme, setFontScale } from '../store.svelte.js';
+  import { state as app, saveState, setTheme, setFontScale } from '../store.svelte.js'; // не «state»: конфликт с руной $state
   import { navigate } from '../router.js';
   import { exportBackup, downloadBackup, importBackup, importBackupFile, resetProgress } from '../backup.js';
   import { isNative } from '../native.js';
+  import { APP_VERSION, checkUpdate, RELEASES_PAGE } from '../update.js';
+  import { updateInfo } from '../update-state.svelte.js';
+  import { toast } from '../toast.js';
 
-  const favArts = $derived(ARTICLES.filter(a => state.favIds.includes(a.id)));
+  let checking = $state(false);
+  async function checkNow() {
+    checking = true;
+    const up = await checkUpdate({ force: true });
+    checking = false;
+    if (up) { updateInfo.value = up; window.scrollTo(0, 0); }
+    else toast('Установлена последняя версия (или нет связи с GitHub)');
+  }
+
+  const favArts = $derived(ARTICLES.filter(a => app.favIds.includes(a.id)));
   const SCALES = [[0.95, 'А-'], [1, '100%'], [1.12, 'А+'], [1.25, 'А++']];
   let area, fileInput;
 
-  function unFav(id) { state.favIds.splice(state.favIds.indexOf(id), 1); saveState(); }
+  function unFav(id) { app.favIds.splice(app.favIds.indexOf(id), 1); saveState(); }
   function favKey(e, id) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('article', id); } }
 </script>
 
@@ -29,12 +41,12 @@
   <h3 style="margin:0 0 10px 0;">Оформление и читаемость</h3>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
     <span>Цветовая тема</span>
-    <div class="seg"><button class:on={state.theme === 'light'} onclick={() => setTheme('light')}>Светлая</button><button class:on={state.theme === 'dark'} onclick={() => setTheme('dark')}>Тёмная</button></div>
+    <div class="seg"><button class:on={app.theme === 'light'} onclick={() => setTheme('light')}>Светлая</button><button class:on={app.theme === 'dark'} onclick={() => setTheme('dark')}>Тёмная</button></div>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <span>Размер шрифта</span>
     <div style="display:flex;gap:6px;">
-      {#each SCALES as [v, t]}<button class="btn {state.fontScale === v ? '' : 'outline'}" onclick={() => setFontScale(v)}>{t}</button>{/each}
+      {#each SCALES as [v, t]}<button class="btn {app.fontScale === v ? '' : 'outline'}" onclick={() => setFontScale(v)}>{t}</button>{/each}
     </div>
   </div>
 </div>
@@ -53,4 +65,14 @@
   </div>
   <input bind:this={fileInput} type="file" accept=".json,application/json,text/plain" hidden onchange={e => importBackupFile(e.currentTarget, area)}>
   <textarea bind:this={area} id="backupArea" class="field" rows="3" style="margin-top:10px;" maxlength="1000000" aria-label="Резервная копия JSON" placeholder="Здесь появится резервная копия. Для импорта вставьте сюда JSON и нажмите «Импорт из поля»"></textarea>
+</div>
+
+<div class="card">
+  <h3 style="margin:0 0 10px 0;">О приложении</h3>
+  <p style="margin:0 0 10px;font-size:.9rem;">Версия: <b>{APP_VERSION}</b></p>
+  {#if isNative}
+    <button class="btn outline" onclick={checkNow} disabled={checking}>{checking ? 'Проверяю…' : 'Проверить обновления'}</button>
+  {:else}
+    <a class="link" href={RELEASES_PAGE} target="_blank" rel="noopener">Скачать приложение для Android →</a>
+  {/if}
 </div>

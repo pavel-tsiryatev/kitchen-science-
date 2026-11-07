@@ -10,6 +10,7 @@ export const state = $state({
   labTab: 'quiz', // quiz | journal
   secFilter: 'ALL',
   dishGroup: 'ALL', // подгруппа в разделе «Популярные блюда»
+  shopping: [], // список покупок: { key, name, qty, unit, done, src }
   searchQuery: '',
   currentArticleId: null,
   glossTerm: null, // термин, к которому прокрутить экран глоссария
@@ -82,11 +83,21 @@ export function sanitizeSaved(s) {
   if (isA(s.recipeItems)) o.recipeItems = s.recipeItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), amount: ns(x.amount), unit: ['г', 'мл', 'шт'].includes(x.unit) ? x.unit : 'г' }));
   if (isA(s.bakerItems)) o.bakerItems = s.bakerItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), pct: ns(x.pct) }));
   if (isA(s.recentIds)) o.recentIds = [...new Set(s.recentIds.filter(x => ids.has(x)))].slice(0, 6);
+  if (isA(s.shopping)) {
+    const okQty = q => q === null || (typeof q === 'number' && Number.isFinite(q) && q > 0) || (isA(q) && q.length === 2 && q.every(v => typeof v === 'number' && Number.isFinite(v) && v > 0));
+    const keys = new Set();
+    o.shopping = s.shopping.slice(0, 300).filter(x => obj(x) && typeof x.name === 'string' && x.name.trim() && typeof x.unit === 'string' && okQty(x.qty ?? null)).map(x => {
+      const name = st(x.name, 120).trim(), unit = st(x.unit, 24);
+      let key = typeof x.key === 'string' && x.key ? st(x.key, 160) : name.toLowerCase() + '|' + unit;
+      while (keys.has(key)) key += '+'; keys.add(key);
+      return { key, name, qty: x.qty ?? null, unit, done: x.done === true, src: isA(x.src) ? x.src.filter(id => ids.has(id)).slice(0, 20) : [] };
+    });
+  }
   ['bakerFlour', 'basePortions', 'targetPortions'].forEach(k => { if (s[k] !== undefined) o[k] = ns(s[k]); });
   return o;
 }
 export function snapshot() {
-  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds };
+  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping };
 }
 export async function loadState() {
   let raw = null;

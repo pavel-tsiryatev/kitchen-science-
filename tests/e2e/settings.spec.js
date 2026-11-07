@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { open, btn, toast, saved, KEY, TOTAL } from './helpers.js';
 
-const toSettings = page => page.locator('header .icon-btn').click();
+const toSettings = page => page.getByRole('button', { name: 'Настройки' }).click();
 // Chromium не читает файлы для <input type=file> по путям с кириллицей, а папка
 // результатов Playwright называется по имени теста. Поэтому файлы — во временной папке.
 const tmpFile = name => path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'kuhnya-')), name);
@@ -73,4 +73,10 @@ test('повреждённые сохранённые данные: сообще
   await expect(toast(page)).toContainText('не удалось прочитать');
   expect(await page.evaluate(k => localStorage.getItem(k + '_corrupt'), KEY)).toBe('{сломано');
   await expect(page.locator('.mono-s')).toHaveText(`0 из ${TOTAL}`);
+});
+
+test('в настройках видна версия приложения', async ({ page }) => {
+  await open(page);
+  await toSettings(page);
+  await expect(page.getByText(/Версия:/)).toContainText(/\d+\.\d+\.\d+/);
 });

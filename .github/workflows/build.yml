@@ -40,8 +40,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - run: npm ci
-      - run: npm run build
 
+      # Версия нужна до сборки: она попадает в приложение (проверка обновлений)
       - name: Версия
         run: |
           if [ "$IS_RELEASE" = "true" ]; then
@@ -49,6 +49,8 @@ jobs:
           else
             echo "VERSION_NAME=$(node -p 'require("./package.json").version')-dev.${GITHUB_RUN_NUMBER}" >> "$GITHUB_ENV"
           fi
+
+      - run: npm run build
 
       - run: node scripts/prepare-android.mjs
 
