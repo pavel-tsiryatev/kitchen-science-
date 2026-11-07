@@ -7,6 +7,7 @@
   import { APP_VERSION, checkUpdate, RELEASES_PAGE } from '../update.js';
   import { updateInfo } from '../update-state.svelte.js';
   import { toast } from '../toast.js';
+  import { ui } from '../ui-state.svelte.js';
 
   let checking = $state(false);
   async function checkNow() {
@@ -70,6 +71,7 @@
 <div class="card">
   <h3 style="margin:0 0 10px 0;">О приложении</h3>
   <p style="margin:0 0 10px;font-size:.9rem;">Версия: <b>{APP_VERSION}</b></p>
+  <button class="btn outline" style="margin-bottom:8px" onclick={() => ui.onboarding = true}>Показать знакомство с приложением</button>
   {#if isNative}
     <button class="btn outline" onclick={checkNow} disabled={checking}>{checking ? 'Проверяю…' : 'Проверить обновления'}</button>
   {:else}

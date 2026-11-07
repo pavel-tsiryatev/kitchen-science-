@@ -11,6 +11,16 @@
   import IngredientsCard from '../components/IngredientsCard.svelte';
   import NotesCard from '../components/NotesCard.svelte';
   import Figure from '../components/Figure.svelte';
+  import { recipeText } from '../recipeText.js';
+  import { shareText } from '../native.js';
+  import { toast } from '../toast.js';
+
+  async function share() {
+    try {
+      const how = await shareText(a.title.split(':')[0], recipeText(a, app.servingsFor[a.id]));
+      if (how === 'copied') toast(a.ingredients ? 'Рецепт скопирован в буфер обмена' : 'Текст скопирован в буфер обмена');
+    } catch (e) { if (!/cancel|abort/i.test(String(e && (e.message || e.name)))) toast('Не удалось поделиться'); }
+  }
   import { FIGURES } from '../data/index.js';
   import { GLOSSARY } from '../data/index.js';
   import { compileGlossary, linkTerms } from '../glossary.js';
@@ -56,6 +66,9 @@
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
   <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0].replace(/,$/, '')}</span></button>
   <div style="display:flex;gap:6px;">
+    <button class="btn outline" style="padding:8px 12px;" onclick={share}>
+      <Icon name="share" size={20} /><span class="sr">{a.ingredients ? 'Поделиться рецептом' : 'Поделиться'}</span>
+    </button>
     <button class="btn {isFav ? '' : 'outline'}" style="padding:8px 12px;" onclick={() => toggle(app.favIds, a.id)}>
       <Icon name="star" size={20} /><span class="sr">{isFav ? 'Убрать из избранного' : 'В избранное'}</span>
     </button>

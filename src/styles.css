@@ -455,3 +455,12 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .menu-pick{margin-top:8px}
 .menu-pick-list{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow-y:auto}
 .menu-days{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+/* Знакомство при первом запуске */
+.onb{position:fixed;inset:0;z-index:200;background:rgba(20,16,12,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;animation:screen-in .25s ease-out}
+.onb-card{width:100%;max-width:440px;background:var(--surface);border-radius:22px;padding:24px 20px calc(16px + env(safe-area-inset-bottom));box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.onb-ic{width:72px;height:72px;border-radius:20px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.onb-slide h2{font-family:var(--serif);font-size:1.3rem;margin:0 0 8px}
+.onb-slide p{margin:0;color:var(--text-muted);line-height:1.5;min-height:4.5em}
+.onb-dots{margin:16px 0 12px}
+.onb-nav{display:flex;justify-content:space-between;align-items:center}
+.onb-nav .btn{min-width:120px;justify-content:center}
