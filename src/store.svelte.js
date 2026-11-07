@@ -1,6 +1,7 @@
 import { ARTICLES } from './data/index.js';
 import { toast } from './toast.js';
 import { isNative, readStored, writeStoredNative } from './native.js';
+import { emptyMenu, sanitizeMenu } from './menu.js';
 
 // Реактивное состояние приложения (Svelte 5 $state), загрузка/сохранение в localStorage, тема и шрифт
 export const STORAGE_KEY = 'kuhnya_science_v1';
@@ -13,6 +14,7 @@ export const state = $state({
   shopping: [], // список покупок: { key, name, qty, unit, done, src }
   notes: {}, // свои заметки к статьям: { id: текст }
   fridge: [], // продукты для «Что приготовить» (id из src/data/products.json)
+  menu: emptyMenu(), // меню на неделю: { mon: [{ id, servings }], … }
   servingsFor: {}, // выбранное число порций по статьям (не сохраняется)
   collectionId: null, // открытая подборка
   searchQuery: '',
@@ -98,12 +100,13 @@ export function sanitizeSaved(s) {
     });
   }
   if (obj(s.notes)) { o.notes = {}; for (const [k, v] of Object.entries(s.notes)) if (ids.has(k) && typeof v === 'string' && v.trim()) o.notes[k] = v.slice(0, 2000); }
+  if (s.menu !== undefined) { const m = sanitizeMenu(s.menu, ARTICLES); if (m) o.menu = m; }
   if (isA(s.fridge)) o.fridge = [...new Set(s.fridge.filter(x => typeof x === 'string' && /^[a-z_-]{1,30}$/.test(x)))].slice(0, 100);
   ['bakerFlour', 'basePortions', 'targetPortions'].forEach(k => { if (s[k] !== undefined) o[k] = ns(s[k]); });
   return o;
 }
 export function snapshot() {
-  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping, notes: state.notes, fridge: state.fridge };
+  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping, notes: state.notes, fridge: state.fridge, menu: state.menu };
 }
 export async function loadState() {
   let raw = null;

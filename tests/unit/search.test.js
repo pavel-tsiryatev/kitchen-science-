@@ -82,3 +82,18 @@ describe('подсветка и фрагмент', () => {
     expect(snippet({ what: 'текст' }, ['майонез'])).toBeNull();
   });
 });
+
+describe('поиск по ингредиентам', async () => {
+  const { ARTICLES } = await import('../../src/data/index.js');
+  const S = await import('../../src/search.js');
+  const I = S.buildIndex(ARTICLES);
+  it('«кабачки» находит блюда, где они в составе, первыми', () => {
+    const ids = S.search(I, 'кабачки').slice(0, 2).map(r => r.article.id).sort();
+    expect(ids).toEqual(['i44', 'i61']);
+  });
+  it('совпавшие ингредиенты для строки «В составе»', () => {
+    const a = ARTICLES.find(x => x.id === 'i53');
+    expect(S.ingredientHits(a, S.queryStems('молоко'))).toEqual(['Молоко']);
+    expect(S.ingredientHits(a, [])).toEqual([]);
+  });
+});

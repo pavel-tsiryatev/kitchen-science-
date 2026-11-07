@@ -35,7 +35,7 @@
   <button class="link gl-entry" onclick={() => navigate('tables')}>Таблицы: температуры, сроки, меры и веса, замены →</button>
 </div>
 <input type="search" id="catSearchInput" class="search-box"
-  placeholder="Поиск по {ARTICLES.length} статьям, терминам и процессам..." aria-label="Поиск по {ARTICLES.length} статьям, терминам и процессам..."
+  placeholder="Поиск по {ARTICLES.length} статьям, продуктам и терминам..." aria-label="Поиск по {ARTICLES.length} статьям, продуктам и терминам..."
   bind:value={app.searchQuery}>
 
 <div class="pill-bar">

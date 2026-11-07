@@ -54,3 +54,41 @@ test('подборки на главной открываются и «Наза�
   await page.goBack();
   await expect(page.locator('.col-card').first()).toBeVisible();
 });
+
+test('меню на неделю: из рецепта в день, порции, список покупок', async ({ page }) => {
+  await open(page);
+  await openDish(page, 'блины');
+  await page.getByRole('button', { name: 'В меню' }).click();
+  await page.getByRole('button', { name: 'Вторник' }).click();
+  await page.goBack();
+  await page.fill('#catSearchInput', 'оладьи на кефире');
+  await page.locator('.card-clickable').first().click();
+  await page.getByRole('button', { name: 'В меню' }).click();
+  await page.getByRole('button', { name: 'Четверг' }).click();
+  await page.getByRole('button', { name: 'Открыть меню →' }).click();
+
+  await expect(page.locator('h1')).toHaveText('Меню на неделю');
+  const tue = page.locator('.menu-day', { hasText: 'Вторник' });
+  await expect(tue.locator('.menu-item')).toContainText('Блины');
+  await tue.getByRole('button', { name: 'Больше порций' }).click();
+  await expect(tue.locator('.menu-item')).toContainText('5 порц.');
+  // добавление прямо на экране меню
+  const sun = page.locator('.menu-day', { hasText: 'Воскресенье' });
+  await sun.getByRole('button', { name: '+ Блюдо' }).click();
+  await sun.locator('input').fill('плов');
+  await sun.locator('.pill', { hasText: 'Плов' }).click();
+  await expect(sun.locator('.menu-item')).toContainText('Плов');
+  expect((await saved(page)).menu.sun).toEqual([{ id: 'i12', servings: 6 }]);
+
+  await page.getByRole('button', { name: 'Собрать список покупок' }).click();
+  await expect(page.locator('h1')).toHaveText('Список покупок');
+  await expect(page.locator('.shop-list li', { hasText: 'Мука' })).toBeVisible();
+  await expect(page.locator('.shop-list .shop-name', { hasText: /^Рис$/ })).toBeVisible();
+});
+
+test('поиск по продукту: «кабачки» → блюда с «В составе»', async ({ page }) => {
+  await open(page);
+  await nav(page, 'catalog');
+  await page.fill('#catSearchInput', 'кабачки');
+  await expect(page.locator('.card-clickable', { hasText: 'Овощное рагу' }).locator('.ed-ingr')).toContainText('В составе: Кабачки');
+});

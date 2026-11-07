@@ -419,3 +419,13 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;animation-delay:0s!important}
 }
 .fig .f-left{text-anchor:start}
+.ed-ingr{font-style:normal;color:var(--secondary)}
+/* Меню на неделю */
+.menu-day h3{margin:0;font-size:1rem}
+.menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.menu-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px dashed var(--border);flex-wrap:wrap}
+.menu-name{background:none;border:0;padding:4px 0;color:var(--primary);font-weight:600;text-align:left;cursor:pointer;flex:1 1 140px;font-size:.92rem}
+.menu-empty{margin:0;font-size:.84rem;color:var(--text-muted)}
+.menu-pick{margin-top:8px}
+.menu-pick-list{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow-y:auto}
+.menu-days{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
