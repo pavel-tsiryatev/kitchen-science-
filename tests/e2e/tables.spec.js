@@ -6,7 +6,7 @@ test('справочные таблицы: вход из Библиотеки, �
   await nav(page, 'catalog');
   await page.getByRole('button', { name: /Таблицы: температуры/ }).click();
   await expect(page.locator('h1')).toHaveText('Таблицы');
-  await expect(page.locator('.ref-table')).toHaveCount(4);
+  await expect(page.locator('.ref-table')).toHaveCount(5);
   const temps = page.locator('#tbl-temps');
   await expect(temps.locator('tr', { hasText: 'Птица' })).toContainText('74 °C');
   await expect(page.locator('#tbl-storage tr', { hasText: 'Варёный рис' })).toContainText('до 1 суток');

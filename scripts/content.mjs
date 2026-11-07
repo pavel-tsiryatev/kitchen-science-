@@ -35,7 +35,7 @@ export const EVIDENCE = {
   unverified: 'Источники ещё не сверены',
 };
 
-export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+export const SECTION_IDS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
 /** Подгруппы раздела I «Популярные блюда» (src/data/dish-groups.json) */
 export const DISH_GROUP_IDS = DISH_GROUPS.map(g => g.id);
 const DOI_RE = /^10\.\d{4,9}\/\S+$/;
@@ -104,7 +104,7 @@ export function parseArticle(text, file = 'статья.md') {
     if (!sec) fail(file, `неизвестный раздел «## ${heading}». Допустимы: ${BODY_SECTIONS.map(([h]) => h).join('; ')}`);
     if (body[sec[1]] !== undefined) fail(file, `раздел «## ${heading}» встречается дважды`);
     // Абзацы разделяются пустой строкой; переносы внутри абзаца — просто пробелы
-    body[sec[1]] = content.replace(/\r/g, '').split(/\n[ \t]*\n/).map(p => p.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n\n');
+    body[sec[1]] = content.replace(/\r/g, '').split(/\n[ \t]*\n/).map(joinLines).filter(Boolean).join('\n\n');
   }
   for (const [heading, key, required] of BODY_SECTIONS) {
     if (body[key]) a[key] = body[key];
@@ -166,6 +166,21 @@ function parseIngredients(ing, file) {
   const out = { servings, items };
   if (ing.title !== undefined) out.title = str(ing.title, file, 'ingredients.title');
   return out;
+}
+
+/**
+ * Строки абзаца склеиваются в одну, но пункты списков («- …», «1. …») остаются
+ * на отдельных строках; маркер «-» заменяется на «•».
+ */
+export function joinLines(p) {
+  const out = [];
+  for (const raw of p.split('\n')) {
+    const l = raw.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\s+/g, ' ').trim(); // **жирный** в приложении не выделяется
+    if (!l) continue;
+    if (/^(?:[-*]|\d{1,2}\.)\s/.test(l) || !out.length) out.push(l.replace(/^[-*]\s/, '• '));
+    else out[out.length - 1] += ' ' + l;
+  }
+  return out.join('\n');
 }
 
 /** Все статьи из папки: проверка уникальности id и ссылок между статьями. */
