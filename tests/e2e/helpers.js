@@ -30,5 +30,6 @@ export const lab = async (page, tab) => { await nav(page, 'tools'); await pill(p
 /** Дорисовать весь список карточек (Библиотека рисует их порциями по мере прокрутки) */
 export async function showAllCards(page) {
   const more = page.locator('.cards-more-btn');
-  while (await more.count()) await more.click();
+  // кнопка может исчезнуть сама, если карточки догрузились при прокрутке, — тогда просто проверяем снова
+  while (await more.count()) await more.click({ timeout: 2000 }).catch(() => {});
 }
