@@ -6,9 +6,13 @@
   import FigOnion from '../figures/FigOnion.svelte';
   import FigDoneness from '../figures/FigDoneness.svelte';
   import FigLeidenfrost from '../figures/FigLeidenfrost.svelte';
+  import FigEmulsion from '../figures/FigEmulsion.svelte';
+  import FigPuff from '../figures/FigPuff.svelte';
+  import FigIce from '../figures/FigIce.svelte';
+  import FigSalt from '../figures/FigSalt.svelte';
 
   let { id } = $props();
-  const C = { boil: FigBoil, oven: FigOven, onion: FigOnion, doneness: FigDoneness, leidenfrost: FigLeidenfrost };
+  const C = { boil: FigBoil, oven: FigOven, onion: FigOnion, doneness: FigDoneness, leidenfrost: FigLeidenfrost, emulsion: FigEmulsion, puff: FigPuff, ice: FigIce, salt: FigSalt };
   const f = $derived(FIGURES.find(x => x.id === id));
   const Comp = $derived(C[id]);
 </script>
