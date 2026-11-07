@@ -10,6 +10,8 @@
   import TermSheet from '../components/TermSheet.svelte';
   import IngredientsCard from '../components/IngredientsCard.svelte';
   import NotesCard from '../components/NotesCard.svelte';
+  import Figure from '../components/Figure.svelte';
+  import { FIGURES } from '../data/index.js';
   import { GLOSSARY } from '../data/index.js';
   import { compileGlossary, linkTerms } from '../glossary.js';
 
@@ -79,6 +81,7 @@
     <h4>{i + 1}. {title}</h4>
     {#each linked[key] as parts}<p class="art-p">{#each parts as part}{#if part.term}<button class="term" onclick={() => openTerm = part.term}>{part.text}</button>{:else}{part.text}{/if}{/each}</p>{/each}
   </div>
+  {#each (a.figures || []).filter(id => FIGURES.find(f => f.id === id)?.after === key) as fid (fid)}<Figure id={fid} />{/each}
 {/each}
 
 <div class="art-block Summary">

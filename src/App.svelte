@@ -34,13 +34,15 @@
 <header class="app-bar">
   <div class="brand" role="button" tabindex="0" onclick={() => navigate('home')} onkeydown={brandKey}><svg class="ic mark-ic" style="width:30px;height:30px" aria-hidden="true"><use href="#i-flask" /></svg><div><b>Кухня.</b><span class="s">Наука вкуса</span></div></div>
   <div class="bar-actions">
-    <button class="icon-btn cart-btn" onclick={() => navigate('shopping')} title="Список покупок" aria-label="Список покупок{shopLeft ? `, осталось ${shopLeft}` : ''}"><Icon name="cart" />{#if shopLeft}<span class="badge">{shopLeft > 99 ? '99+' : shopLeft}</span>{/if}</button>
+    <button class="icon-btn cart-btn" onclick={() => navigate('shopping')} title="Список покупок" aria-label="Список покупок{shopLeft ? `, осталось ${shopLeft}` : ''}"><Icon name="cart" />{#if shopLeft}{#key shopLeft}<span class="badge">{shopLeft > 99 ? '99+' : shopLeft}</span>{/key}{/if}</button>
     <button class="icon-btn" onclick={() => navigate('settings')} title="Настройки" aria-label="Настройки"><Icon name="sliders" /></button>
   </div>
 </header>
 
 <main id="app-Main">
   <UpdateBanner />
+  {#key state.tab + (state.tab === 'article' ? state.currentArticleId : '')}
+  <div class="screen-in">
   {#if state.tab === 'home'}<Home />
   {:else if state.tab === 'catalog'}<Catalog />
   {:else if state.tab === 'article'}<Article />
@@ -55,6 +57,8 @@
   {:else if state.tab === 'fridge'}<Fridge />
   {:else if state.tab === 'collection'}<Collection />
   {/if}
+  </div>
+  {/key}
 </main>
 
 <TimerBar />

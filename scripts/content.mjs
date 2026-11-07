@@ -2,7 +2,7 @@
 //
 // Формат файла (подробно — docs/CONTENT.md):
 //   ---
-//   id, section, group (только для раздела I), title, idea, related, evidence, reviewed, ingredients, quiz, sources   ← YAML
+//   id, section, group (только для раздела I), title, idea, related, evidence, reviewed, ingredients, figures, quiz, sources   ← YAML
 //   ---
 //   ## Что происходит
 //   ...текст, абзацы через пустую строку...
@@ -14,6 +14,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import DISH_GROUPS from '../src/data/dish-groups.json' with { type: 'json' };
+import FIGURES from '../src/data/figures.json' with { type: 'json' };
 
 /** Заголовок раздела в Markdown → поле статьи. Порядок = порядок показа в приложении. */
 export const BODY_SECTIONS = [
@@ -81,6 +82,11 @@ export function parseArticle(text, file = 'статья.md') {
 
   // Вопрос
   if (meta.ingredients !== undefined) a.ingredients = parseIngredients(meta.ingredients, file);
+  if (meta.figures !== undefined) {
+    const ids = FIGURES.map(f => f.id);
+    if (!Array.isArray(meta.figures) || meta.figures.some(f => !ids.includes(f))) fail(file, `«figures» — список схем из: ${ids.join(', ')}`);
+    a.figures = meta.figures;
+  }
   const q = meta.quiz;
   if (!q || typeof q !== 'object') fail(file, 'нет блока «quiz»');
   a.quiz = { q: str(q.question, file, 'quiz.question'), opts: q.options, a: q.answer, exp: str(q.explanation, file, 'quiz.explanation') };

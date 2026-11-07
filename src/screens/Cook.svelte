@@ -19,7 +19,8 @@
   let i = $state(0);
   const page = $derived(pages[Math.min(i, pages.length - 1)]);
 
-  function go(d) { i = Math.min(pages.length - 1, Math.max(0, i + d)); }
+  let dir = $state(1);
+  function go(d) { const n = Math.min(pages.length - 1, Math.max(0, i + d)); if (n !== i) { dir = d; i = n; } }
   function key(e) { if (e.key === 'ArrowRight') go(1); if (e.key === 'ArrowLeft') go(-1); }
   let x0 = null;
   const ts = e => { x0 = e.changedTouches[0].clientX; };
@@ -47,7 +48,8 @@
   <h1 class="cook-title">{name}</h1>
   <div class="cook-dots" aria-hidden="true">{#each pages as _, k}<span class:on={k === i}></span>{/each}</div>
 
-  <section class="cook-page" aria-live="polite">
+  {#key i}
+  <section class="cook-page {dir > 0 ? 'step-next' : 'step-prev'}" aria-live="polite">
     {#if page.kind === 'ingr'}
       <div class="cook-kicker">Ингредиенты · {servings} порц.</div>
       <ul class="ingr-list cook-ingr">{#each items as it (it.name)}<li><span>{it.name}</span><b>{fmtQty(it.qty, it.unit)}</b></li>{/each}</ul>
@@ -64,6 +66,7 @@
       {#key a.id}<NotesCard id={a.id} open />{/key}
     {/if}
   </section>
+  {/key}
 
   <div class="cook-nav">
     <button class="btn outline" onclick={() => go(-1)} disabled={i === 0}>← Назад</button>
