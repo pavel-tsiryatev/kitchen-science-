@@ -42,6 +42,7 @@
   {/each}
   <button class="dir t-dish wide" onclick={() => navigate('catalog', 'I')}><Icon name="pan" /><b>Популярные блюда</b><span>Сырники, картошка, паста — рецепт и почему он работает</span></button>
   <button class="dir t-skill wide" onclick={() => navigate('catalog', 'J')}><Icon name="therm" /><b>Базовые навыки</b><span>Сковорода, соль, нож, соусы, духовка, термометр</span></button>
+  <button class="dir t-jar wide" onclick={() => navigate('catalog', 'K')}><Icon name="jar" /><b>Домашние заготовки</b><span>Квашеная капуста, огурцы, маринады, варенье — безопасно</span></button>
 </div>
 <div class="eyebrow"><h3>Подборки</h3></div>
 <div class="cols" role="list">

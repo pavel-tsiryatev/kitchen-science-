@@ -358,3 +358,4 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .timer-n{font-size:.82rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .timer-x{background:rgba(255,255,255,.18);border:0;color:inherit;border-radius:10px;min-width:44px;min-height:40px;font-weight:700;cursor:pointer}
 .fr-links{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.t-jar{background:var(--secondary-soft)}
