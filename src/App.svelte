@@ -18,6 +18,8 @@
   import Fridge from './screens/Fridge.svelte';
   import Collection from './screens/Collection.svelte';
   import Menu from './screens/Menu.svelte';
+  import Onboarding from './components/Onboarding.svelte';
+  import { ui } from './ui-state.svelte.js';
 
   const NAV = [
     ['home', 'home', 'Главная'],
@@ -64,6 +66,8 @@
 </main>
 
 <TimerBar />
+
+{#if ui.onboarding}<Onboarding />{/if}
 
 <nav class="bottom-nav" aria-label="Основная навигация">
   {#each NAV as [tab, icon, label]}

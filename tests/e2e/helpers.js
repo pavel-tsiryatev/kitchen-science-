@@ -7,13 +7,14 @@ export const TOTAL = readdirSync(new URL('../../content/articles', import.meta.u
 export const KEY = 'kuhnya_science_v1';
 
 /** Открыть приложение с чистыми данными (или с заданным сохранённым состоянием) */
-export async function open(page, saved) {
-  await page.addInitScript(([key, data]) => {
+export async function open(page, saved, { onboarding = false } = {}) {
+  await page.addInitScript(([key, data, onb]) => {
     if (sessionStorage.getItem('__init')) return; // только при первом открытии, не после reload
     sessionStorage.setItem('__init', '1');
     localStorage.clear();
+    if (!onb) localStorage.setItem('kuhnya_onboarded', '1'); // знакомство мешало бы остальным сценариям
     if (data) localStorage.setItem(key, data);
-  }, [KEY, saved === undefined ? null : typeof saved === 'string' ? saved : JSON.stringify({ schema: 2, ...saved })]);
+  }, [KEY, saved === undefined ? null : typeof saved === 'string' ? saved : JSON.stringify({ schema: 2, ...saved }), onboarding]);
   page.on('dialog', d => d.accept());
   await page.goto('/');
   await expect(page.locator('#app-Main')).not.toBeEmpty();
