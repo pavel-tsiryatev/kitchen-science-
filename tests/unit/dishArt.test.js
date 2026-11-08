@@ -17,7 +17,7 @@ describe('иллюстрации', () => {
     ['i26', 'eggs'], // «не трескались» — не треска
     ['i9', 'soup'], ['i47', 'soup'], ['i85', 'fish'], ['i32', 'fish'], ['i21', 'chicken'],
     ['i15', 'meat'], ['i77', 'pasta'], ['i8', 'pancakes'], ['i16', 'dumplings'], ['i87', 'dairy'],
-    ['i52', 'cake'], ['i19', 'bake'], ['i14', 'salad'], ['i71', 'sauce'], ['i6', 'grain'],
+    ['i52', 'cake'], ['i68', 'cake'], ['i42', 'meat'], ['i19', 'bake'], ['i14', 'salad'], ['i71', 'sauce'], ['i6', 'grain'],
     ['i86', 'veg'], ['k4', 'jar'],
   ])('%s → %s', (id, k) => expect(kind(id)).toBe(k));
   it('для каждого вида нарисована картинка', () => {
