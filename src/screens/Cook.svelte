@@ -2,7 +2,7 @@
   /** Режим «Готовлю»: шаги крупно по одному, свайп, таймеры из шагов, экран не гаснет */
   import { onMount, onDestroy } from 'svelte';
   import { ARTICLES } from '../data/index.js';
-  import { state as app, findDish } from '../store.svelte.js';
+  import { state as app, findDish, cycleFontScale } from '../store.svelte.js';
   import { parseSteps, findTimers } from '../steps.js';
   import { scaleIngredients, fmtQty } from '../ingredients.js';
   import { startTimer } from '../timers.svelte.js';
@@ -46,6 +46,7 @@
   <div class="cook-top">
     <button class="btn outline" onclick={() => history.back()}>✕ Закрыть</button>
     <span class="cook-awake">{awake ? 'Экран не погаснет' : ''}</span>
+    <button class="btn outline font-btn" onclick={() => toast('Размер текста: ' + cycleFontScale())} aria-label="Размер текста">Аа</button>
   </div>
   <h1 class="cook-title">{name}</h1>
   <div class="cook-dots" aria-hidden="true">{#each pages as _, k}<span class:on={k === i}></span>{/each}</div>

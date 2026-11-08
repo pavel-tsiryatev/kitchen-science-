@@ -159,6 +159,16 @@ export function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState();
 
 export function setFontScale(v) { state.fontScale = v; applyThemeAndFont(); saveState(); }
 
+/** Размеры текста: значение и подпись */
+export const FONT_SCALES = [[0.95, 'А-'], [1, '100%'], [1.12, 'А+'], [1.25, 'А++'], [1.4, 'А+++']];
+/** Следующий размер по кругу (кнопка «Аа»); возвращает подпись в процентах */
+export function cycleFontScale() {
+  const i = FONT_SCALES.findIndex(([v]) => v === state.fontScale);
+  const v = FONT_SCALES[(i + 1) % FONT_SCALES.length][0];
+  setFontScale(v);
+  return Math.round(v * 100) + '%';
+}
+
 /** Блюдо по id: статья справочника или свой рецепт (в виде статьи) */
 export function findDish(id) {
   if (isMine(id)) { const r = state.myRecipes.find(x => x.id === id); return r ? recipeArticle(r) : null; }

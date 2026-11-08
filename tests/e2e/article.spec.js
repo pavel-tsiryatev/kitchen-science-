@@ -81,3 +81,17 @@ test('схемы в статьях: режимы кипения и прожар�
   await page.locator('.card-clickable').first().click();
   await expect(page.locator('.fig figcaption')).toContainText('Степени прожарки');
 });
+
+test('кнопка «Аа» в статье увеличивает текст и запоминает размер', async ({ page }) => {
+  await open(page);
+  await page.locator('.cover .btn').click();
+  const p = page.locator('.art-p').first();
+  const size = async () => parseFloat(await p.evaluate(el => getComputedStyle(el).fontSize));
+  const before = await size();
+  await page.getByRole('button', { name: 'Размер текста' }).click();
+  await expect(page.locator('#toast')).toContainText('112%');
+  expect(await size()).toBeGreaterThan(before * 1.08);
+  await page.reload();
+  await page.locator('.cover .btn').click();
+  expect(await size()).toBeGreaterThan(before * 1.08);
+});

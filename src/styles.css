@@ -505,3 +505,5 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .cooked-hist button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.9rem}
 .cooked-hist small{color:var(--text-muted);white-space:nowrap}
 .menu-stale{margin-bottom:12px}.menu-stale p{margin:0 0 8px;font-size:.88rem;color:var(--text-muted)}
+
+.font-btn{font:700 1rem var(--serif);min-width:44px;justify-content:center}
