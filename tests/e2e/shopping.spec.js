@@ -52,3 +52,17 @@ test('у блюда — примерная калорийность на пор�
   await row.click();
   await expect(page.locator('.nutr .ingr-note')).toContainText('по средним табличным данным');
 });
+
+test('у блюда в шапке — иллюстрация, у научной статьи — нет', async ({ page }) => {
+  await open(page);
+  await nav(page, 'catalog');
+  await page.fill('#catSearchInput', 'жареная картошка');
+  await expect(page.locator('.card-clickable').first().locator('.dish-art')).toBeVisible();
+  await page.locator('.card-clickable').first().click();
+  await expect(page.locator('.art-head .dish-art')).toBeVisible();
+  await page.goBack();
+  await page.fill('#catSearchInput', 'клейковина');
+  await page.locator('.card-clickable', { hasText: 'клейковин' }).first().click();
+  await expect(page.locator('.art-head')).toBeVisible();
+  await expect(page.locator('.art-head .dish-art')).toHaveCount(0);
+});

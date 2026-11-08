@@ -11,6 +11,8 @@
   import IngredientsCard from '../components/IngredientsCard.svelte';
   import NotesCard from '../components/NotesCard.svelte';
   import Figure from '../components/Figure.svelte';
+  import DishArt from '../components/DishArt.svelte';
+  import { dishArt } from '../dishArt.js';
   import { recipeText } from '../recipeText.js';
   import { shareText } from '../native.js';
   import { toast } from '../toast.js';
@@ -78,7 +80,7 @@
   </div>
 </div>
 
-<header class="art-head"><div class="kicker">{sec.title} · {readMin(a)} мин</div>
+<header class="art-head">{#if dishArt(a)}<DishArt kind={dishArt(a)} />{/if}<div class="kicker">{sec.title} · {readMin(a)} мин</div>
   <h2>{a.title}</h2>
   {#if a.evidence !== 'unverified'}
     <div class="evidence ev-{a.evidence}" title={EVIDENCE_LABEL[a.evidence]}><Icon name="check" size={14} />Источники проверены · уровень доказательности: {EVIDENCE_LABEL[a.evidence].split(':')[0].toLowerCase()}</div>

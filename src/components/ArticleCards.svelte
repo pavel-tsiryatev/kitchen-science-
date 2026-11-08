@@ -1,4 +1,6 @@
 <script>
+  import DishArt from './DishArt.svelte';
+  import { dishArt } from '../dishArt.js';
   import { SECTIONS } from '../data/index.js';
   import { state as app } from '../store.svelte.js'; // не «state»: конфликт с руной $state
   import { navigate } from '../router.js';
@@ -36,7 +38,7 @@
     {@const sec = SECTIONS.find(s => s.id === a.sec)}
     {@const ex = extract(a)}
     <div class="card card-ed card-clickable" role="button" tabindex="0" onclick={() => navigate('article', a.id)} onkeydown={e => onKey(e, a.id)}>
-      <div class="tile {tileOf(a.sec)}"><Icon name={glyphOf(a.sec)} size={22} /></div>
+      {#if dishArt(a)}<DishArt kind={dishArt(a)} size="tile" />{:else}<div class="tile {tileOf(a.sec)}"><Icon name={glyphOf(a.sec)} size={22} /></div>{/if}
       <div style="min-width:0"><div class="ed-t"><Marked text={a.title} {stems} /></div><div class="ed-d"><Marked text={a.idea} {stems} /></div>
       {#if stems.length && ingredientHits(a, stems).length}<div class="ed-s ed-ingr">В составе: <Marked text={ingredientHits(a, stems).join(', ')} {stems} /></div>
       {:else if ex}<div class="ed-s">«<Marked text={ex} {stems} />»</div>{/if}
