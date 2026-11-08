@@ -507,3 +507,11 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .menu-stale{margin-bottom:12px}.menu-stale p{margin:0 0 8px;font-size:.88rem;color:var(--text-muted)}
 
 .font-btn{font:700 1rem var(--serif);min-width:44px;justify-content:center}
+
+.my-photo{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin-top:4px}
+.my-photo-actions{display:flex;gap:8px;flex-wrap:wrap;font-weight:400}
+.my-photo-add{align-self:flex-start;font-weight:600;cursor:pointer}
+.my-photo-actions label{cursor:pointer}
+.my-photo-head{width:100%;max-height:280px;object-fit:cover;border-radius:16px;margin:0 0 14px;display:block}
+.my-card.with-photo{display:grid;grid-template-columns:64px 1fr;column-gap:12px;align-items:center}
+.my-card.with-photo .my-thumb{grid-row:1 / span 2;width:64px;height:64px;object-fit:cover;border-radius:10px}

@@ -19,7 +19,8 @@
 {#if state.myRecipes.length}
   <div class="my-list">
     {#each state.myRecipes as r (r.id)}
-      <button class="card card-clickable my-card" onclick={() => navigate('myrecipe', r.id)}>
+      <button class="card card-clickable my-card" class:with-photo={r.photo} onclick={() => navigate('myrecipe', r.id)}>
+        {#if r.photo}<img class="my-thumb" src={r.photo} alt="">{/if}
         <b>{r.title}</b>
         <small>{r.servings} порц. · ингредиентов: {r.items.length} · шагов: {r.steps.length}{kcal(r) ? ` · ≈ ${kcal(r)} ккал` : ''}</small>
       </button>

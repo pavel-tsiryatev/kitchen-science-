@@ -65,3 +65,24 @@ test('свой рецепт: создание, порции, покупки, «�
   await page.getByRole('button', { name: /Меню на неделю/ }).click();
   await expect(page.locator('.menu-day').first()).not.toContainText('Оладьи');
 });
+
+test('свой рецепт: количество перед названием и фото блюда', async ({ page }) => {
+  await open(page);
+  await nav(page, 'favorites');
+  await page.getByRole('button', { name: 'Добавить рецепт' }).click();
+  await page.getByLabel('Название').fill('Блинчики');
+  await page.getByLabel(/Ингредиенты/).fill('200 г муки\n2 яйца\n1,5 стакана молока\nщепотка соли');
+  const preview = page.locator('.my-preview');
+  await expect(preview.locator('li', { hasText: 'Мука' })).toContainText('200 г');
+  await expect(preview.locator('li', { hasText: 'Яйца' })).toContainText('2 шт');
+  await expect(preview.locator('li', { hasText: 'Молоко' })).toContainText('1½ стакана');
+  // крошечная PNG-картинка 2×2
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP8z8DAwMDAxMDAwMAAAB4AAwHp0ffGAAAAAElFTkSuQmCC', 'base64');
+  await page.getByLabel('Фото блюда').setInputFiles({ name: 'dish.png', mimeType: 'image/png', buffer: png });
+  await expect(page.locator('.my-photo')).toBeVisible();
+  await page.getByRole('button', { name: 'Сохранить' }).click();
+  await expect(page.locator('.my-photo-head')).toBeVisible();
+  await page.reload();
+  await nav(page, 'favorites');
+  await expect(page.locator('.my-card .my-thumb')).toBeVisible();
+});

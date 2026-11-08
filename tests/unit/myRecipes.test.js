@@ -56,3 +56,36 @@ describe('шаги и хранение', () => {
     expect(newRecipeId(123)).toBe('u123');
   });
 });
+
+describe('количество перед названием', () => {
+  it.each([
+    ['200 г муки', { name: 'Мука', qty: 200, unit: 'г' }],
+    ['2 яйца', { name: 'Яйца', qty: 2, unit: 'шт' }],
+    ['1–2 ст. л. сахара', { name: 'Сахар', qty: [1, 2], unit: 'ст. л.' }],
+    ['1,5 стакана молока', { name: 'Молоко', qty: 1.5, unit: 'стакан' }],
+    ['3 зубчика чеснока', { name: 'Чеснок', qty: 3, unit: 'зубчик' }],
+    ['½ ч. л. соды', { name: 'Сода', qty: 0.5, unit: 'ч. л.' }],
+    ['50 г сливочного масла', { name: 'Сливочное масло', qty: 50, unit: 'г' }],
+    ['1 банка фасоли', { name: 'Фасоль', qty: 1, unit: 'банка' }],
+    ['2 столовые ложки сметаны', { name: 'Сметана', qty: 2, unit: 'ст. л.' }],
+    ['300 г брокколи', { name: 'Брокколи', qty: 300, unit: 'г' }],
+    ['щепотка соли', { name: 'Соль', qty: null, unit: 'щепотка' }],
+    ['2 луковицы', { name: 'Лук', qty: 2, unit: 'шт' }],
+  ])('%s', (line, out) => expect(p(line)).toEqual(out));
+});
+
+describe('фото рецепта', async () => {
+  const { okPhoto, photosSize } = await import('../../src/myRecipes.js');
+  const jpg = 'data:image/jpeg;base64,' + 'A'.repeat(100);
+  it('сохраняется только корректная и небольшая картинка', () => {
+    expect(okPhoto(jpg)).toBe(true);
+    expect(okPhoto('data:image/svg+xml;base64,AAAA')).toBe(false);
+    expect(okPhoto('javascript:alert(1)')).toBe(false);
+    expect(okPhoto('data:image/jpeg;base64,' + 'A'.repeat(400000))).toBe(false);
+    const [r] = sanitizeMyRecipes([{ id: 'u1', title: 'С фото', photo: jpg }]);
+    expect(r.photo).toBe(jpg);
+    expect(sanitizeMyRecipes([{ id: 'u2', title: 'Плохое фото', photo: 'http://x' }])[0].photo).toBeUndefined();
+    expect(recipeArticle(r).photo).toBe(jpg);
+    expect(photosSize([r, { photo: null }])).toBe(jpg.length);
+  });
+});

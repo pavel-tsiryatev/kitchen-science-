@@ -25,6 +25,7 @@
 
 {#if a}
   <header class="art-head">
+    {#if a.photo}<img class="my-photo-head" src={a.photo} alt="Фото блюда «{a.title}»">{/if}
     <div class="kicker">Мой рецепт</div>
     <h2>{a.title}</h2>
   </header>
