@@ -1,12 +1,15 @@
 <script>
   import { ARTICLES } from '../data/index.js';
-  import { state } from '../store.svelte.js';
+  import { state, findDish, dishScreen } from '../store.svelte.js';
+  import { fmtDate } from '../cooked.js';
   import { navigate } from '../router.js';
   import ArticleCards from '../components/ArticleCards.svelte';
   import { recipeArticle } from '../myRecipes.js';
   import { perServing } from '../nutrition.js';
 
   const favArts = $derived(ARTICLES.filter(a => state.favIds.includes(a.id)));
+  // история: последние 15 записей о блюдах, которые ещё существуют
+  const history = $derived(state.cooked.filter(x => findDish(x.id)).slice(0, 15));
   const kcal = r => (r.items.length ? perServing({ servings: r.servings, items: r.items })?.kcal : null);
 </script>
 
@@ -26,6 +29,15 @@
   <div class="card my-empty">
     <p>Добавьте свои блюда: для них заработают пересчёт порций, список покупок, меню на неделю, режим «Готовлю» с таймерами и примерная калорийность.</p>
     <button class="btn" onclick={() => navigate('myedit', 'new')}>Добавить рецепт</button>
+  </div>
+{/if}
+
+{#if history.length}
+  <div class="eyebrow"><h3>Что я готовил</h3><span class="mono-s">{state.cooked.length}</span></div>
+  <div class="card cooked-hist">
+    {#each history as x (x.id + x.date)}
+      <button onclick={() => navigate(dishScreen(x.id), x.id)}><span>{findDish(x.id).title.split(':')[0]}</span><small>{x.rating ? '★'.repeat(x.rating) + ' · ' : ''}{fmtDate(x.date)}</small></button>
+    {/each}
   </div>
 {/if}
 

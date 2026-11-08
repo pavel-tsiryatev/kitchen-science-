@@ -12,6 +12,7 @@
   import NotesCard from '../components/NotesCard.svelte';
   import Figure from '../components/Figure.svelte';
   import DishArt from '../components/DishArt.svelte';
+  import CookedCard from '../components/CookedCard.svelte';
   import { dishArt } from '../dishArt.js';
   import { recipeText } from '../recipeText.js';
   import { shareText } from '../native.js';
@@ -88,7 +89,7 @@
   <div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
 
 {#if a.ingredients}
-  {#key a.id}<IngredientsCard article={a} />{/key}
+  {#key a.id}<IngredientsCard article={a} />{#if a.sec === 'I'}<CookedCard id={a.id} />{/if}{/key}
 {/if}
 
 {#each blocks as [cls, title, key], i (key)}

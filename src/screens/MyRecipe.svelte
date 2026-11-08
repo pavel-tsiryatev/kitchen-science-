@@ -5,6 +5,7 @@
   import { toast } from '../toast.js';
   import IngredientsCard from '../components/IngredientsCard.svelte';
   import NotesCard from '../components/NotesCard.svelte';
+  import CookedCard from '../components/CookedCard.svelte';
   import { emptyMenu, DAY_IDS } from '../menu.js';
 
   const a = $derived(findDish(app.currentArticleId));
@@ -41,7 +42,7 @@
     </section>
   {/if}
 
-  {#key a.id}<NotesCard id={a.id} />{/key}
+  {#key a.id}<CookedCard id={a.id} /><NotesCard id={a.id} />{/key}
 
   <div class="shop-actions">
     <button class="btn outline" onclick={() => navigate('myedit', a.id)}>Изменить</button>

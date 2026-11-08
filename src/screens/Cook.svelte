@@ -8,6 +8,7 @@
   import { startTimer } from '../timers.svelte.js';
   import { toast } from '../toast.js';
   import NotesCard from '../components/NotesCard.svelte';
+  import CookedCard from '../components/CookedCard.svelte';
 
   const a = $derived(findDish(app.currentArticleId) || ARTICLES[0]);
   const name = $derived(a.title.split(':')[0]);
@@ -64,7 +65,7 @@
     {:else}
       <div class="cook-kicker">Готово</div>
       <p class="cook-text">Приятного аппетита! Запишите, что получилось и что изменить в следующий раз.</p>
-      {#key a.id}<NotesCard id={a.id} open />{/key}
+      {#key a.id}{#if a.ingredients}<CookedCard id={a.id} open />{/if}<NotesCard id={a.id} open />{/key}
     {/if}
   </section>
   {/key}
