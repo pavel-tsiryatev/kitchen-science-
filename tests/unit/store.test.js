@@ -121,3 +121,21 @@ describe('loadState / saveState', () => {
     expect(JSON.parse(localStorage.getItem(KEY))).toMatchObject({ theme: 'dark', fontScale: 1.12 });
   });
 });
+
+describe('свои рецепты в сохранённых данных', () => {
+  it('меню, покупки и заметки могут ссылаться на свой рецепт; избранное и прочитанное — нет', async () => {
+    const store = await import('../../src/store.svelte.js');
+    const o = store.sanitizeSaved({
+      myRecipes: [{ id: 'u1', title: 'Мой суп', servings: 2, items: [{ name: 'Вода', qty: 1, unit: 'л' }], steps: [] }],
+      menu: { mon: [{ id: 'u1', servings: 2 }, { id: 'u999', servings: 1 }] },
+      notes: { u1: 'вкусно', u999: 'нет' },
+      shopping: [{ name: 'Вода', qty: 1000, unit: 'мл', src: ['u1', 'u999'] }],
+      favIds: ['u1'], readIds: ['u1'],
+    });
+    expect(o.myRecipes).toHaveLength(1);
+    expect(o.menu.mon).toEqual([{ id: 'u1', servings: 2 }]);
+    expect(o.notes).toEqual({ u1: 'вкусно' });
+    expect(o.shopping[0].src).toEqual(['u1']);
+    expect(o.favIds).toEqual([]); expect(o.readIds).toEqual([]);
+  });
+});

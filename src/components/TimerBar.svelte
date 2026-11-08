@@ -3,6 +3,7 @@
   import { onDestroy } from 'svelte';
   import { timers, tick, cancelTimer, fmtLeft, ring } from '../timers.svelte.js';
   import { navigate } from '../router.js';
+  import { dishScreen } from '../store.svelte.js';
 
   let iv = null;
   $effect(() => {
@@ -20,7 +21,7 @@
   <div class="timer-bar" role="region" aria-label="Таймеры">
     {#each timers.list as t (t.id)}
       <div class="timer" class:done={t.done}>
-        <button class="timer-main" onclick={() => t.articleId && navigate('article', t.articleId)}>
+        <button class="timer-main" onclick={() => t.articleId && navigate(dishScreen(t.articleId), t.articleId)}>
           <span class="timer-t">{t.done ? 'Готово!' : fmtLeft(t.end - timers.now)}</span>
           <span class="timer-n">{t.title} · {t.label}</span>
         </button>

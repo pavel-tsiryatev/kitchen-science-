@@ -18,6 +18,8 @@
   import Fridge from './screens/Fridge.svelte';
   import Collection from './screens/Collection.svelte';
   import Menu from './screens/Menu.svelte';
+  import MyRecipe from './screens/MyRecipe.svelte';
+  import MyRecipeEdit from './screens/MyRecipeEdit.svelte';
   import Onboarding from './components/Onboarding.svelte';
   import { ui } from './ui-state.svelte.js';
 
@@ -29,7 +31,7 @@
   ];
   // Статья подсвечивает «Библиотеку», журнал и тесты — «Лабораторию»
   const shopLeft = $derived(state.shopping.filter(x => !x.done).length);
-  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', cook: 'catalog', collection: 'home', fridge: 'home', menu: 'home', lab: 'tools' }[state.tab] || state.tab);
+  const activeNav = $derived({ article: 'catalog', glossary: 'catalog', tables: 'catalog', cook: 'catalog', collection: 'home', fridge: 'home', menu: 'home', lab: 'tools', myrecipe: 'favorites', myedit: 'favorites' }[state.tab] || state.tab);
 
   function brandKey(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('home'); } }
 </script>
@@ -44,7 +46,7 @@
 
 <main id="app-Main">
   <UpdateBanner />
-  {#key state.tab + (state.tab === 'article' ? state.currentArticleId : '')}
+  {#key state.tab + (state.tab === 'article' || state.tab === 'myrecipe' ? state.currentArticleId : '') + (state.tab === 'myedit' ? state.editRecipeId : '')}
   <div class="screen-in">
   {#if state.tab === 'home'}<Home />
   {:else if state.tab === 'catalog'}<Catalog />
@@ -60,6 +62,8 @@
   {:else if state.tab === 'fridge'}<Fridge />
   {:else if state.tab === 'collection'}<Collection />
   {:else if state.tab === 'menu'}<Menu />
+  {:else if state.tab === 'myrecipe'}<MyRecipe />
+  {:else if state.tab === 'myedit'}<MyRecipeEdit />
   {/if}
   </div>
   {/key}

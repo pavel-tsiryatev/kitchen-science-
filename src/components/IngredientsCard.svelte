@@ -50,7 +50,7 @@
   {#if nutr}
     <div class="nutr">
       <button class="nutr-row" onclick={() => nutrHelp = !nutrHelp} aria-expanded={nutrHelp} aria-label="Пищевая ценность на порцию, примерно">
-        <span class="nutr-kcal">≈ {nutr.kcal} ккал<small> на порцию</small></span>
+        <span class="nutr-kcal">≈ {nutr.kcal} ккал<small>&nbsp;на порцию</small></span>
         <span class="nutr-macros">Б {nutr.p} · Ж {nutr.f} · У {nutr.c} г</span>
         <span class="nutr-q" aria-hidden="true">?</span>
       </button>

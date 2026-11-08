@@ -33,7 +33,7 @@ test('избранное и «прочитано» видны в карточк�
   expect(await saved(page)).toMatchObject({ favIds: ['a1'], readIds: ['a1'] });
 
   await nav(page, 'favorites');
-  await expect(page.locator('.sub')).toHaveText('Избранные статьи: 1');
+  await expect(page.locator('.eyebrow', { hasText: 'Избранные статьи' }).locator('.mono-s')).toHaveText('1');
   await expect(page.locator('.ed-m')).toContainText('✓ изучено · ★');
 
   await page.locator('.brand').click();

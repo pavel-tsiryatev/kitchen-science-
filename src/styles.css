@@ -296,6 +296,7 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .ingr-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.92rem}
 .ingr-list li b{white-space:nowrap;font-weight:700}
 .nutr{margin:2px 0 6px}
+.menu-kcal{display:block;font-size:.78rem;font-weight:500;color:var(--text-muted);margin-top:2px}
 .nutr-row{all:unset;box-sizing:border-box;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;width:100%;padding:8px 10px;border-radius:10px;background:var(--surface-alt);cursor:pointer;font-size:.88rem}
 .nutr-kcal{font-weight:800;color:var(--primary)}.nutr-kcal small{font-weight:400;color:var(--text-muted);font-size:.8rem}
 .nutr-macros{color:var(--text-muted)}
@@ -471,3 +472,18 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .onb-nav{display:flex;justify-content:space-between;align-items:center}
 .onb-nav .btn{min-width:120px;justify-content:center}
 .cards-more{height:1px}.cards-more-btn{width:100%;justify-content:center;margin-bottom:12px}
+
+/* ---------- Свои рецепты ---------- */
+.my-list{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.my-card{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:4px;width:100%;padding:14px 16px;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.my-card b{font:700 1.05rem/1.25 var(--serif)}.my-card small{color:var(--text-muted);font-size:.82rem}
+.my-empty p{margin:0 0 12px;line-height:1.5}
+.my-edit{display:flex;flex-direction:column;gap:12px}
+.my-edit .fl{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.9rem}
+.my-edit .field{font:inherit;font-weight:400;padding:10px 12px;width:100%;box-sizing:border-box}
+.my-edit textarea.field{resize:vertical;line-height:1.45}
+.my-err{color:#B3261E;font-size:.85rem;margin:-6px 0 0}
+.my-preview{margin-top:-4px}
+.my-steps h3{margin:0 0 8px;font-size:1.05rem;color:var(--primary)}
+.my-steps ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;line-height:1.5}
+.btn.danger{color:#B3261E;border-color:#B3261E}

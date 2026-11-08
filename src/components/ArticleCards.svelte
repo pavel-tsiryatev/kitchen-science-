@@ -1,6 +1,7 @@
 <script>
   import DishArt from './DishArt.svelte';
   import { dishArt } from '../dishArt.js';
+  import { dishNutrition } from '../nutrition.js';
   import { SECTIONS } from '../data/index.js';
   import { state as app } from '../store.svelte.js'; // не «state»: конфликт с руной $state
   import { navigate } from '../router.js';
@@ -42,7 +43,7 @@
       <div style="min-width:0"><div class="ed-t"><Marked text={a.title} {stems} /></div><div class="ed-d"><Marked text={a.idea} {stems} /></div>
       {#if stems.length && ingredientHits(a, stems).length}<div class="ed-s ed-ingr">В составе: <Marked text={ingredientHits(a, stems).join(', ')} {stems} /></div>
       {:else if ex}<div class="ed-s">«<Marked text={ex} {stems} />»</div>{/if}
-      <div class="ed-m">{readMin(a)} мин · {sec.title}{app.readIds.includes(a.id) ? ' · ✓ изучено' : ''}{app.favIds.includes(a.id) ? ' · ★' : ''}</div></div></div>
+      <div class="ed-m">{readMin(a)} мин · {sec.title}{dishNutrition(a) ? ` · ≈ ${dishNutrition(a).kcal} ккал` : ""}{app.readIds.includes(a.id) ? ' · ✓ изучено' : ''}{app.favIds.includes(a.id) ? ' · ★' : ''}</div></div></div>
   {/each}
   {#if shown < list.length}
     {#key shown}<div use:more class="cards-more" aria-hidden="true"></div>{/key}
