@@ -83,3 +83,18 @@ test('популярные блюда делятся на подгруппы, «
   await pill(page, 'Все (');
   await expect(page.locator('.sub-pills')).toHaveCount(0);
 });
+
+test('фильтр «без…» в блюдах', async ({ page }) => {
+  await open(page);
+  await nav(page, 'catalog');
+  await page.locator('.pill', { hasText: 'Популярные блюда' }).click();
+  await page.getByRole('button', { name: 'Без мяса и рыбы' }).click();
+  await expect(page.locator('.diet-note')).toBeVisible();
+  await page.fill('#catSearchInput', 'стейк');
+  await expect(page.locator('.card-clickable', { hasText: 'Стейк на сковороде' })).toHaveCount(0);
+  await page.fill('#catSearchInput', 'рататуй');
+  await expect(page.locator('.card-clickable', { hasText: 'Рататуй' })).toHaveCount(1);
+  await page.getByRole('button', { name: '✓ Без мяса и рыбы' }).click();
+  await page.fill('#catSearchInput', 'стейк');
+  await expect(page.locator('.card-clickable', { hasText: 'Стейк на сковороде' })).toHaveCount(1);
+});

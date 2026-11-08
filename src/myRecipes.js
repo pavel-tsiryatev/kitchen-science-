@@ -57,7 +57,46 @@ export function parseIngredientLine(line) {
       return { name: cap(m[1].replace(/[—–:,-]+$/, '').trim()), qty: b === null ? round(a) : [round(a), round(b)], unit };
     }
   }
+  // количество перед названием: «200 г муки», «2 яйца», «1–2 ст. л. сахара», «щепотка соли»
+  const pinch = /^(щепотка|щепотку|немного)\s+(.+)$/i.exec(s);
+  if (pinch) return { name: nominative(pinch[2]), qty: null, unit: pinch[1].toLowerCase() === 'немного' ? 'немного' : 'щепотка' };
+  const f = new RegExp(`^${N}(?:\\s*[–—-]\\s*${N})?\\s*(.+)$`).exec(s);
+  if (f) {
+    const a = num(f[1]), b = f[2] ? num(f[2]) : null;
+    let rest = f[3].trim(), unit = 'шт';
+    // единица — первые одно-три слова остатка
+    const words = rest.split(' ');
+    for (let k = Math.min(3, words.length - 1); k >= 1; k--) {
+      const u = unitOf(words.slice(0, k).join(' '));
+      if (u) { unit = u; rest = words.slice(k).join(' '); break; }
+    }
+    if (rest && Number.isFinite(a) && a > 0 && (b === null || (Number.isFinite(b) && b > a))) {
+      return { name: nominative(rest), qty: b === null ? round(a) : [round(a), round(b)], unit };
+    }
+  }
   return { name: cap(s), qty: null, unit: 'по вкусу' };
+}
+
+// Частые продукты в родительном падеже («200 г муки») → именительный («Мука»)
+const GEN = {
+  'муки': 'мука', 'сахара': 'сахар', 'сахарной пудры': 'сахарная пудра', 'соли': 'соль', 'молока': 'молоко', 'воды': 'вода',
+  'масла': 'масло', 'сливочного масла': 'сливочное масло', 'растительного масла': 'растительное масло', 'оливкового масла': 'оливковое масло',
+  'яйца': 'яйца', 'яиц': 'яйца', 'яйцо': 'яйцо', 'желтка': 'желтки', 'желтков': 'желтки', 'белка': 'белки', 'белков': 'белки',
+  'чеснока': 'чеснок', 'лука': 'лук', 'луковицы': 'лук', 'луковиц': 'лук', 'моркови': 'морковь', 'морковки': 'морковь', 'морковок': 'морковь',
+  'картофеля': 'картофель', 'картофелин': 'картофель', 'картошки': 'картофель', 'сметаны': 'сметана', 'творога': 'творог', 'сыра': 'сыр',
+  'кефира': 'кефир', 'сливок': 'сливки', 'йогурта': 'йогурт', 'риса': 'рис', 'гречки': 'гречка', 'пшена': 'пшено', 'фарша': 'фарш', 'мяса': 'мясо',
+  'курицы': 'курица', 'куриного филе': 'куриное филе', 'соды': 'сода', 'разрыхлителя': 'разрыхлитель', 'дрожжей': 'дрожжи', 'мёда': 'мёд', 'меда': 'мёд',
+  'томатной пасты': 'томатная паста', 'перца': 'перец', 'зелени': 'зелень', 'укропа': 'укроп', 'петрушки': 'петрушка', 'лимонного сока': 'лимонный сок',
+  'уксуса': 'уксус', 'овсяных хлопьев': 'овсяные хлопья', 'хлопьев': 'овсяные хлопья', 'корицы': 'корица', 'крахмала': 'крахмал', 'макарон': 'макароны',
+  'помидоров': 'помидоры', 'помидора': 'помидоры', 'огурцов': 'огурцы', 'огурца': 'огурцы', 'грибов': 'грибы', 'шампиньонов': 'шампиньоны',
+  'бананов': 'бананы', 'банана': 'бананы', 'яблок': 'яблоки', 'яблока': 'яблоки', 'лимона': 'лимон', 'лимонов': 'лимон', 'кабачка': 'кабачки', 'кабачков': 'кабачки',
+  'зубчика чеснока': 'чеснок', 'зубчиков чеснока': 'чеснок', 'свёклы': 'свёкла', 'свеклы': 'свёкла', 'капусты': 'капуста', 'тыквы': 'тыква',
+  'ванилина': 'ванилин', 'какао': 'какао', 'орехов': 'орехи', 'изюма': 'изюм', 'бульона': 'бульон', 'фасоли': 'фасоль', 'чечевицы': 'чечевица',
+};
+function nominative(name) {
+  const n = name.trim().replace(/[.,;]+$/, '');
+  const low = n.toLowerCase();
+  return cap(GEN[low] || n);
 }
 const cap = s => (s ? s[0].toUpperCase() + s.slice(1) : s);
 const round = x => Math.round(x * 1000) / 1000;
@@ -92,17 +131,27 @@ export function sanitizeMyRecipes(list) {
       .map(x => ({ name: x.name.trim().slice(0, 80), qty: x.qty ?? null, unit: x.unit.slice(0, 24) }));
     const steps = (Array.isArray(r.steps) ? r.steps : []).filter(x => typeof x === 'string' && x.trim()).slice(0, 40).map(x => x.trim().slice(0, 1000));
     seen.add(r.id);
-    out.push({ id: r.id, title, servings, items, steps });
+    const rec = { id: r.id, title, servings, items, steps };
+    if (okPhoto(r.photo)) rec.photo = r.photo;
+    out.push(rec);
   }
   return out;
 }
+
+/** Фото блюда: сжатая картинка data:image/… не больше ~300 КБ */
+export const PHOTO_MAX = 300000;
+export const okPhoto = p => typeof p === 'string' && p.length <= PHOTO_MAX && /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(p);
+/** Сколько места занимают все фото (символов) */
+export const photosSize = list => (list || []).reduce((n, r) => n + (r.photo ? r.photo.length : 0), 0);
+/** Общий предел для фото: данные приложения хранятся в памяти телефона ограниченного размера */
+export const PHOTOS_TOTAL_MAX = 3000000;
 
 const asArticle = new WeakMap();
 /** Свой рецепт в виде «статьи» для общих экранов (кэшируется на объект рецепта) */
 export function recipeArticle(r) {
   if (!asArticle.has(r)) {
     asArticle.set(r, {
-      id: r.id, sec: 'I', mine: true, title: r.title, idea: '',
+      id: r.id, sec: 'I', mine: true, title: r.title, idea: '', photo: r.photo || null,
       ingredients: r.items.length ? { servings: r.servings, items: r.items } : null,
       steps: r.steps.map((text, i) => ({ section: '', n: i + 1, text })),
     });

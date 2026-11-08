@@ -5,12 +5,15 @@
   import { navigate } from '../router.js';
   import { toast } from '../toast.js';
   import { dayKcal } from '../nutrition.js';
+  import { staleFavorites, fmtDate } from '../cooked.js';
 
   const find = findDish;
 
   const DISHES = $derived(allDishes());
   const name = id => (findDish(id)?.title || '').split(':')[0];
   const total = $derived(menuCount(app.menu));
+  // понравившиеся блюда, которые давно не готовили
+  const stale = $derived(staleFavorites(app.cooked, { exists: id => !!findDish(id)?.ingredients }));
   const dishWord = n => (n % 10 === 1 && n % 100 !== 11 ? 'блюдо' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'блюда' : 'блюд');
 
   let pickFor = $state(null), q = $state('');
@@ -32,6 +35,13 @@
 
 <h1 class="screen-title">Меню на неделю</h1>
 <p class="sub">{total ? `${total} ${dishWord(total)} в меню. Соберите из них список покупок одной кнопкой.` : 'Добавляйте блюда в дни недели здесь или кнопкой «В меню» в рецепте.'}</p>
+
+{#if stale.length}
+  <section class="card menu-stale">
+    <p>Давно не готовили — то, что понравилось:</p>
+    <div class="menu-pick-list">{#each stale as x (x.id)}<button class="pill" onclick={() => navigate(dishScreen(x.id), x.id)}>{findDish(x.id).title.split(':')[0]} · {fmtDate(x.last)}</button>{/each}</div>
+  </section>
+{/if}
 
 {#each DAYS as [d, short, full] (d)}
   {@const dk = dayKcal(app.menu[d], find)}

@@ -1,6 +1,6 @@
 <script>
   import { ARTICLES } from '../data/index.js';
-  import { state as app, saveState, setTheme, setFontScale } from '../store.svelte.js'; // не «state»: конфликт с руной $state
+  import { state as app, saveState, setTheme, setFontScale, FONT_SCALES } from '../store.svelte.js'; // не «state»: конфликт с руной $state
   import { navigate } from '../router.js';
   import { exportBackup, downloadBackup, importBackup, importBackupFile, resetProgress } from '../backup.js';
   import { isNative } from '../native.js';
@@ -19,7 +19,7 @@
   }
 
   const favArts = $derived(ARTICLES.filter(a => app.favIds.includes(a.id)));
-  const SCALES = [[0.95, 'А-'], [1, '100%'], [1.12, 'А+'], [1.25, 'А++']];
+  const SCALES = FONT_SCALES;
   let area, fileInput;
 
   function unFav(id) { app.favIds.splice(app.favIds.indexOf(id), 1); saveState(); }
@@ -46,7 +46,7 @@
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <span>Размер шрифта</span>
-    <div style="display:flex;gap:6px;">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
       {#each SCALES as [v, t]}<button class="btn {app.fontScale === v ? '' : 'outline'}" onclick={() => setFontScale(v)}>{t}</button>{/each}
     </div>
   </div>

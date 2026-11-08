@@ -92,3 +92,18 @@ test('поиск по продукту: «кабачки» → блюда с «�
   await page.fill('#catSearchInput', 'кабачки');
   await expect(page.locator('.card-clickable', { hasText: 'Овощное рагу' }).locator('.ed-ingr')).toContainText('В составе: Кабачки');
 });
+
+test('«Приготовил»: оценка, сводка в статье, история в «Сохранённом»', async ({ page }) => {
+  await open(page);
+  await nav(page, 'catalog');
+  await page.fill('#catSearchInput', 'жареная картошка');
+  await page.locator('.card-clickable').first().click();
+  const card = page.locator('.cooked');
+  await expect(card).toContainText('Ещё не готовили');
+  await card.getByRole('button', { name: '✓ Приготовил' }).click();
+  await card.getByRole('button', { name: 'Оценка 5 из 5' }).click();
+  await expect(card).toContainText('Готовили 1 раз · последний раз сегодня');
+  await nav(page, 'favorites');
+  await expect(page.locator('.cooked-hist')).toContainText('Жареная картошка');
+  await expect(page.locator('.cooked-hist')).toContainText('★★★★★ · сегодня');
+});

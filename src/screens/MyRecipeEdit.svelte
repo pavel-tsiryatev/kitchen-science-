@@ -3,7 +3,8 @@
   import { state as app, saveState } from '../store.svelte.js';
   import { navigate } from '../router.js';
   import { toast } from '../toast.js';
-  import { parseIngredientLine, ingredientLine, parseStepsText, newRecipeId, sanitizeMyRecipes } from '../myRecipes.js';
+  import { parseIngredientLine, ingredientLine, parseStepsText, newRecipeId, sanitizeMyRecipes, photosSize, PHOTOS_TOTAL_MAX, okPhoto } from '../myRecipes.js';
+  import { shrinkPhoto } from '../photo.js';
   import { fmtQty } from '../ingredients.js';
   import { perServing } from '../nutrition.js';
 
@@ -13,6 +14,21 @@
   let ingrText = $state(editing ? editing.items.map(ingredientLine).join('\n') : '');
   let stepsText = $state(editing ? editing.steps.join('\n') : '');
   let tried = $state(false);
+  let photo = $state(editing?.photo || null), busy = $state(false);
+
+  async function pickPhoto(e) {
+    const f = e.currentTarget.files?.[0]; e.currentTarget.value = '';
+    if (!f) return;
+    busy = true;
+    try {
+      const p = await shrinkPhoto(f);
+      const others = photosSize(app.myRecipes.filter(r => r.id !== editing?.id));
+      if (!okPhoto(p)) toast('Не удалось обработать фото');
+      else if (others + p.length > PHOTOS_TOTAL_MAX) toast('Слишком много фото: удалите фото у других рецептов');
+      else photo = p;
+    } catch (err) { toast('Не удалось открыть фото'); }
+    busy = false;
+  }
 
   const items = $derived(ingrText.split('\n').map(parseIngredientLine).filter(Boolean).slice(0, 60));
   const steps = $derived(parseStepsText(stepsText));
@@ -23,7 +39,7 @@
     tried = true;
     if (!titleOk) { toast('Введите название рецепта'); return; }
     const id = editing?.id || newRecipeId();
-    const [r] = sanitizeMyRecipes([{ id, title, servings: Math.round(servings) || 2, items, steps }]);
+    const [r] = sanitizeMyRecipes([{ id, title, servings: Math.round(servings) || 2, items, steps, photo }]);
     app.myRecipes = editing ? app.myRecipes.map(x => (x.id === id ? r : x)) : [r, ...app.myRecipes];
     saveState();
     toast(editing ? 'Рецепт сохранён' : 'Рецепт добавлен');
@@ -48,8 +64,20 @@
     </div>
   </div>
 
+  <div class="fl">Фото блюда
+    {#if photo}
+      <img class="my-photo" src={photo} alt="Фото блюда">
+      <div class="my-photo-actions">
+        <label class="btn outline sm">Заменить<input type="file" accept="image/*" onchange={pickPhoto} hidden></label>
+        <button class="btn outline sm" onclick={() => photo = null}>Убрать фото</button>
+      </div>
+    {:else}
+      <label class="btn outline sm my-photo-add">{busy ? 'Обработка…' : '+ Добавить фото'}<input type="file" accept="image/*" onchange={pickPhoto} hidden aria-label="Фото блюда"></label>
+    {/if}
+  </div>
+
   <label class="fl">Ингредиенты — по одному в строке
-    <textarea class="field" rows="7" bind:value={ingrText} placeholder={'Мука — 200 г\nЯйца — 2 шт\nМолоко — 1,5 стакана\nСоль — по вкусу'}></textarea>
+    <textarea class="field" rows="7" bind:value={ingrText} placeholder={'Мука — 200 г\n2 яйца\n1,5 стакана молока\nСоль по вкусу'}></textarea>
   </label>
   {#if items.length}
     <ul class="ingr-list my-preview" aria-label="Как приложение поняло ингредиенты">

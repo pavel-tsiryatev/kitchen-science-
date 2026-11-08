@@ -5,6 +5,7 @@
   import { toast } from '../toast.js';
   import IngredientsCard from '../components/IngredientsCard.svelte';
   import NotesCard from '../components/NotesCard.svelte';
+  import CookedCard from '../components/CookedCard.svelte';
   import { emptyMenu, DAY_IDS } from '../menu.js';
 
   const a = $derived(findDish(app.currentArticleId));
@@ -24,6 +25,7 @@
 
 {#if a}
   <header class="art-head">
+    {#if a.photo}<img class="my-photo-head" src={a.photo} alt="Фото блюда «{a.title}»">{/if}
     <div class="kicker">Мой рецепт</div>
     <h2>{a.title}</h2>
   </header>
@@ -41,7 +43,7 @@
     </section>
   {/if}
 
-  {#key a.id}<NotesCard id={a.id} />{/key}
+  {#key a.id}<CookedCard id={a.id} /><NotesCard id={a.id} />{/key}
 
   <div class="shop-actions">
     <button class="btn outline" onclick={() => navigate('myedit', a.id)}>Изменить</button>

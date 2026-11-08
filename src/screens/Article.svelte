@@ -1,6 +1,6 @@
 <script>
   import { ARTICLES, SECTIONS } from '../data/index.js';
-  import { state as app, saveState } from '../store.svelte.js'; // не «state»: имя конфликтует с руной $state
+  import { state as app, saveState, cycleFontScale } from '../store.svelte.js'; // не «state»: имя конфликтует с руной $state
   import { navigate } from '../router.js';
   import { readMin, paragraphs } from '../utils.js';
   import { EVIDENCE_LABEL } from '../data/index.js';
@@ -12,6 +12,7 @@
   import NotesCard from '../components/NotesCard.svelte';
   import Figure from '../components/Figure.svelte';
   import DishArt from '../components/DishArt.svelte';
+  import CookedCard from '../components/CookedCard.svelte';
   import { dishArt } from '../dishArt.js';
   import { recipeText } from '../recipeText.js';
   import { shareText } from '../native.js';
@@ -68,6 +69,7 @@
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
   <button class="btn outline" style="padding:8px 12px;" onclick={() => navigate('catalog', a.sec)}><Icon name="back" size={20} /><span>{sec.title.split(' ')[0].replace(/,$/, '')}</span></button>
   <div style="display:flex;gap:6px;">
+    <button class="btn outline font-btn" style="padding:8px 12px;" onclick={() => toast('Размер текста: ' + cycleFontScale())} aria-label="Размер текста">Аа</button>
     <button class="btn outline" style="padding:8px 12px;" onclick={share}>
       <Icon name="share" size={20} /><span class="sr">{a.ingredients ? 'Поделиться рецептом' : 'Поделиться'}</span>
     </button>
@@ -88,7 +90,7 @@
   <div class="lead"><span class="lbl">Краткий ответ</span>{a.idea}</div></header>
 
 {#if a.ingredients}
-  {#key a.id}<IngredientsCard article={a} />{/key}
+  {#key a.id}<IngredientsCard article={a} />{#if a.sec === 'I'}<CookedCard id={a.id} />{/if}{/key}
 {/if}
 
 {#each blocks as [cls, title, key], i (key)}
