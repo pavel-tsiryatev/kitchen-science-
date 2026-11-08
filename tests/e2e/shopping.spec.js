@@ -36,3 +36,19 @@ test('рецепт: пересчёт порций и список покупок
   await page.getByRole('button', { name: 'Убрать купленное' }).click();
   await expect(page.locator('.shop-list li', { hasText: 'Картофель' })).toHaveCount(0);
 });
+
+test('у блюда — примерная калорийность на порцию с пояснением', async ({ page }) => {
+  await open(page);
+  await nav(page, 'catalog');
+  await page.fill('#catSearchInput', 'жареная картошка');
+  await page.locator('.card-clickable').first().click();
+  const row = page.getByRole('button', { name: 'Пищевая ценность на порцию, примерно' });
+  await expect(row).toContainText(/≈ \d+ ккал/);
+  await expect(row).toContainText(/Б \d+ · Ж \d+ · У \d+ г/);
+  // от числа порций калорийность на порцию не меняется
+  const before = await row.textContent();
+  await page.getByRole('button', { name: 'Больше порций' }).click();
+  await expect(row).toHaveText(before);
+  await row.click();
+  await expect(page.locator('.nutr .ingr-note')).toContainText('по средним табличным данным');
+});

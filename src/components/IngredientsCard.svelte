@@ -6,6 +6,7 @@
   import { toast } from '../toast.js';
   import Icon from './Icon.svelte';
   import { DAYS, addToMenu } from '../menu.js';
+  import { perServing } from '../nutrition.js';
 
   let { article } = $props();
   const ing = $derived(article.ingredients);
@@ -14,6 +15,9 @@
   const servings = $derived(app.servingsFor[article.id] || ing.servings);
   const items = $derived(scaleIngredients(ing, servings));
   const changed = $derived(servings !== ing.servings);
+  // калорийность — только для блюд, не для заготовок в банках
+  const nutr = $derived(article.sec === 'I' ? perServing(ing) : null);
+  let nutrHelp = $state(false);
 
   function step(d) { app.servingsFor[article.id] = Math.min(50, Math.max(1, servings + d)); added = false; }
   let pickDay = $state(false), inMenu = $state(false);
@@ -43,6 +47,16 @@
       <li><span>{it.name}</span><b>{fmtQty(it.qty, it.unit)}</b></li>
     {/each}
   </ul>
+  {#if nutr}
+    <div class="nutr">
+      <button class="nutr-row" onclick={() => nutrHelp = !nutrHelp} aria-expanded={nutrHelp} aria-label="Пищевая ценность на порцию, примерно">
+        <span class="nutr-kcal">≈ {nutr.kcal} ккал<small> на порцию</small></span>
+        <span class="nutr-macros">Б {nutr.p} · Ж {nutr.f} · У {nutr.c} г</span>
+        <span class="nutr-q" aria-hidden="true">?</span>
+      </button>
+      {#if nutrHelp}<p class="ingr-note">На одну порцию, примерно: по средним табличным данным для сырых продуктов. Не учтены ингредиенты без количества («по вкусу», масло для фритюра), а у мяса на кости — точный вес костей. Реальная цифра зависит от жирности продуктов и того, сколько масла впитается.</p>{/if}
+    </div>
+  {/if}
   {#if changed}<p class="ingr-note">Количества в шагах рецепта ниже указаны на {ing.servings} — ориентируйтесь на этот список.</p>{/if}
   <div class="ingr-actions">
     <button class="btn" onclick={addAll}><Icon name="cart" size={18} /><span>В список покупок</span></button>

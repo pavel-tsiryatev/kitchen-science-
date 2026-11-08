@@ -295,6 +295,11 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .ingr-list{list-style:none;margin:0 0 8px;padding:0}
 .ingr-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:.92rem}
 .ingr-list li b{white-space:nowrap;font-weight:700}
+.nutr{margin:2px 0 6px}
+.nutr-row{all:unset;box-sizing:border-box;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;width:100%;padding:8px 10px;border-radius:10px;background:var(--surface-alt);cursor:pointer;font-size:.88rem}
+.nutr-kcal{font-weight:800;color:var(--primary)}.nutr-kcal small{font-weight:400;color:var(--text-muted);font-size:.8rem}
+.nutr-macros{color:var(--text-muted)}
+.nutr-q{margin-left:auto;width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--text-muted)}
 .ingr-note{font-size:.8rem;color:var(--text-muted);margin:6px 0}
 .ingr-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px}
 /* Список покупок */
