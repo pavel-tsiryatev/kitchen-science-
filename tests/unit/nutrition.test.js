@@ -74,3 +74,19 @@ describe('на порцию', () => {
     expect(perServing({ servings: 2, items: [['Сахар', 100, 'г'], ['Соль', null, 'по вкусу']] })).not.toBeNull();
   });
 });
+
+describe('калорийность в карточках и меню', async () => {
+  const { dishNutrition, dayKcal } = await import('../../src/nutrition.js');
+  const find = id => ARTICLES.find(a => a.id === id);
+  it('только для блюд', () => {
+    expect(dishNutrition(find('i1'))).not.toBeNull();
+    expect(dishNutrition(find('a1'))).toBeNull();
+    expect(dishNutrition(find('k1'))).toBeNull();
+  });
+  it('день меню — по одной порции каждого блюда, блюда без расчёта считаются отдельно', () => {
+    const one = dishNutrition(find('i1')).kcal + dishNutrition(find('i26')).kcal;
+    expect(dayKcal([{ id: 'i1', servings: 4 }, { id: 'i26', servings: 2 }], find)).toEqual({ kcal: one, unknown: 0 });
+    expect(dayKcal([{ id: 'i49', servings: 2 }], find)).toEqual({ kcal: 0, unknown: 1 });
+    expect(dayKcal(undefined, find)).toEqual({ kcal: 0, unknown: 0 });
+  });
+});

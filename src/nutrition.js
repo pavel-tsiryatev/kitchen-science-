@@ -45,3 +45,25 @@ export function perServing(ing) {
   const n = ing.servings || 1;
   return { kcal: Math.round(sum.kcal / n / 10) * 10, p: Math.round(sum.p / n), f: Math.round(sum.f / n), c: Math.round(sum.c / n) };
 }
+
+// Калорийность статьи из справочника не меняется — считаем один раз
+const cache = new WeakMap();
+/** Пищевая ценность блюда на порцию (с кэшем) или null — для научных статей, заготовок и нераспознанных составов */
+export function dishNutrition(a) {
+  if (!a || a.sec !== 'I' || !a.ingredients) return null;
+  if (!cache.has(a)) cache.set(a, perServing(a.ingredients));
+  return cache.get(a);
+}
+
+/**
+ * Калорийность дня меню на одного человека — по одной порции каждого блюда:
+ * [{ id, servings }] → { kcal, unknown } (unknown — сколько блюд без расчёта)
+ */
+export function dayKcal(items, find) {
+  let kcal = 0, unknown = 0;
+  for (const x of items || []) {
+    const n = dishNutrition(find(x.id));
+    if (n) kcal += n.kcal; else unknown++;
+  }
+  return { kcal: Math.round(kcal / 10) * 10, unknown };
+}

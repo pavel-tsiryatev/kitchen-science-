@@ -5,6 +5,9 @@
   import { DAYS, addToMenu, menuCount, menuToShopping, emptyMenu } from '../menu.js';
   import { navigate } from '../router.js';
   import { toast } from '../toast.js';
+  import { dayKcal } from '../nutrition.js';
+
+  const find = id => ARTICLES.find(a => a.id === id);
 
   const DISHES = ARTICLES.filter(a => a.ingredients);
   const name = id => (ARTICLES.find(a => a.id === id)?.title || '').split(':')[0];
@@ -32,8 +35,9 @@
 <p class="sub">{total ? `${total} ${dishWord(total)} в меню. Соберите из них список покупок одной кнопкой.` : 'Добавляйте блюда в дни недели здесь или кнопкой «В меню» в рецепте.'}</p>
 
 {#each DAYS as [d, short, full] (d)}
+  {@const dk = dayKcal(app.menu[d], find)}
   <section class="card menu-day">
-    <div class="menu-head"><h3>{full}</h3><button class="link" onclick={() => { pickFor = pickFor === d ? null : d; q = ''; }}>{pickFor === d ? 'Закрыть' : '+ Блюдо'}</button></div>
+    <div class="menu-head"><h3>{full}{#if dk.kcal}<small class="menu-kcal">≈ {dk.kcal} ккал на человека{dk.unknown ? " (без учёта блюд, где расчёта нет)" : ""}</small>{/if}</h3><button class="link" onclick={() => { pickFor = pickFor === d ? null : d; q = ''; }}>{pickFor === d ? 'Закрыть' : '+ Блюдо'}</button></div>
     {#each app.menu[d] || [] as x, k (x.id)}
       <div class="menu-item">
         <button class="menu-name" onclick={() => navigate('article', x.id)}>{name(x.id)}</button>
