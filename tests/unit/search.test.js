@@ -88,8 +88,9 @@ describe('поиск по ингредиентам', async () => {
   const S = await import('../../src/search.js');
   const I = S.buildIndex(ARTICLES);
   it('«кабачки» находит блюда, где они в составе, первыми', () => {
-    const ids = S.search(I, 'кабачки').slice(0, 2).map(r => r.article.id).sort();
-    expect(ids).toEqual(['i44', 'i61']);
+    // кабачок в названии или в составе: оладьи, рагу, икра — выше статей, где он лишь упомянут
+    const ids = S.search(I, 'кабачки').slice(0, 3).map(r => r.article.id).sort();
+    expect(ids).toEqual(['i44', 'i61', 'k9']);
   });
   it('совпавшие ингредиенты для строки «В составе»', () => {
     const a = ARTICLES.find(x => x.id === 'i53');
