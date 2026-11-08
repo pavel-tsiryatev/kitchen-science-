@@ -1,16 +1,15 @@
 <script>
   /** Меню на неделю: блюда по дням и список покупок на всю неделю одной кнопкой */
-  import { ARTICLES } from '../data/index.js';
-  import { state as app, saveState } from '../store.svelte.js';
+  import { state as app, saveState, findDish, allDishes, dishScreen } from '../store.svelte.js';
   import { DAYS, addToMenu, menuCount, menuToShopping, emptyMenu } from '../menu.js';
   import { navigate } from '../router.js';
   import { toast } from '../toast.js';
   import { dayKcal } from '../nutrition.js';
 
-  const find = id => ARTICLES.find(a => a.id === id);
+  const find = findDish;
 
-  const DISHES = ARTICLES.filter(a => a.ingredients);
-  const name = id => (ARTICLES.find(a => a.id === id)?.title || '').split(':')[0];
+  const DISHES = $derived(allDishes());
+  const name = id => (findDish(id)?.title || '').split(':')[0];
   const total = $derived(menuCount(app.menu));
   const dishWord = n => (n % 10 === 1 && n % 100 !== 11 ? 'блюдо' : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100) ? 'блюда' : 'блюд');
 
@@ -24,7 +23,7 @@
   function remove(day, k) { app.menu[day] = app.menu[day].filter((_, j) => j !== k); saveState(); }
   function toShopping() {
     const before = app.shopping.length;
-    app.shopping = menuToShopping(app.menu, ARTICLES, app.shopping); saveState();
+    app.shopping = menuToShopping(app.menu, allDishes(), app.shopping); saveState();
     toast(`Список покупок обновлён: ${app.shopping.length - before > 0 ? '+' + (app.shopping.length - before) + ' продуктов' : 'количества добавлены'}`);
     navigate('shopping');
   }
@@ -40,7 +39,7 @@
     <div class="menu-head"><h3>{full}{#if dk.kcal}<small class="menu-kcal">≈ {dk.kcal} ккал на человека{dk.unknown ? " (без учёта блюд, где расчёта нет)" : ""}</small>{/if}</h3><button class="link" onclick={() => { pickFor = pickFor === d ? null : d; q = ''; }}>{pickFor === d ? 'Закрыть' : '+ Блюдо'}</button></div>
     {#each app.menu[d] || [] as x, k (x.id)}
       <div class="menu-item">
-        <button class="menu-name" onclick={() => navigate('article', x.id)}>{name(x.id)}</button>
+        <button class="menu-name" onclick={() => navigate(dishScreen(x.id), x.id)}>{name(x.id)}</button>
         <div class="ingr-serv">
           <button class="icon-btn sm" onclick={() => setServ(d, k, -1)} disabled={x.servings <= 1} aria-label="Меньше порций">−</button>
           <span><b>{x.servings}</b> порц.</span>

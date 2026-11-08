@@ -2,6 +2,7 @@ import { ARTICLES } from './data/index.js';
 import { toast } from './toast.js';
 import { isNative, readStored, writeStoredNative } from './native.js';
 import { emptyMenu, sanitizeMenu } from './menu.js';
+import { sanitizeMyRecipes, recipeArticle, isMine } from './myRecipes.js';
 
 // Реактивное состояние приложения (Svelte 5 $state), загрузка/сохранение в localStorage, тема и шрифт
 export const STORAGE_KEY = 'kuhnya_science_v1';
@@ -15,6 +16,8 @@ export const state = $state({
   notes: {}, // свои заметки к статьям: { id: текст }
   fridge: [], // продукты для «Что приготовить» (id из src/data/products.json)
   menu: emptyMenu(), // меню на неделю: { mon: [{ id, servings }], … }
+  myRecipes: [], // свои рецепты: { id: 'u…', title, servings, items, steps }
+  editRecipeId: null, // какой свой рецепт редактируется ('new' — новый)
   servingsFor: {}, // выбранное число порций по статьям (не сохраняется)
   collectionId: null, // открытая подборка
   searchQuery: '',
@@ -70,14 +73,18 @@ export function getPendingMsg() { return pendingMsg; }
 
 export function sanitizeSaved(s) {
   if (!s || typeof s !== 'object' || Array.isArray(s)) return null;
-  const ids = new Set(ARTICLES.map(a => a.id)), o = {}, isA = Array.isArray;
+  const isA = Array.isArray, o = {};
+  // свои рецепты проверяются первыми: на них могут ссылаться меню, список покупок и заметки
+  if (isA(s.myRecipes)) o.myRecipes = sanitizeMyRecipes(s.myRecipes);
+  const mine = o.myRecipes || [];
+  const ids = new Set([...ARTICLES.map(a => a.id), ...mine.map(r => r.id)]);
   const ns = v => { const n = parseFloat(String(v).replace(',', '.')); return Number.isFinite(n) ? String(n) : ''; };
   const st = (v, n) => String(v == null ? '' : v).slice(0, n);
   const obj = x => x && typeof x === 'object' && !isA(x);
   if (s.theme === 'dark' || s.theme === 'light') o.theme = s.theme;
   const fs = parseFloat(s.fontScale); if (Number.isFinite(fs)) o.fontScale = Math.min(1.4, Math.max(0.85, fs));
-  if (isA(s.readIds)) o.readIds = [...new Set(s.readIds.filter(x => ids.has(x)))];
-  if (isA(s.favIds)) o.favIds = [...new Set(s.favIds.filter(x => ids.has(x)))];
+  if (isA(s.readIds)) o.readIds = [...new Set(s.readIds.filter(x => ids.has(x) && !isMine(x)))];
+  if (isA(s.favIds)) o.favIds = [...new Set(s.favIds.filter(x => ids.has(x) && !isMine(x)))];
   if (obj(s.quizScores)) { o.quizScores = {}; for (const a of ARTICLES) { const v = s.quizScores[a.id]; if (Number.isInteger(v) && v >= 0 && v < a.quiz.opts.length) o.quizScores[a.id] = v; } }
   if (isA(s.journal)) {
     const seen = new Set();
@@ -88,7 +95,7 @@ export function sanitizeSaved(s) {
   }
   if (isA(s.recipeItems)) o.recipeItems = s.recipeItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), amount: ns(x.amount), unit: ['г', 'мл', 'шт'].includes(x.unit) ? x.unit : 'г' }));
   if (isA(s.bakerItems)) o.bakerItems = s.bakerItems.slice(0, 60).filter(obj).map(x => ({ name: st(x.name, 80), pct: ns(x.pct) }));
-  if (isA(s.recentIds)) o.recentIds = [...new Set(s.recentIds.filter(x => ids.has(x)))].slice(0, 6);
+  if (isA(s.recentIds)) o.recentIds = [...new Set(s.recentIds.filter(x => ids.has(x) && !isMine(x)))].slice(0, 6);
   if (isA(s.shopping)) {
     const okQty = q => q === null || (typeof q === 'number' && Number.isFinite(q) && q > 0) || (isA(q) && q.length === 2 && q.every(v => typeof v === 'number' && Number.isFinite(v) && v > 0));
     const keys = new Set();
@@ -100,13 +107,13 @@ export function sanitizeSaved(s) {
     });
   }
   if (obj(s.notes)) { o.notes = {}; for (const [k, v] of Object.entries(s.notes)) if (ids.has(k) && typeof v === 'string' && v.trim()) o.notes[k] = v.slice(0, 2000); }
-  if (s.menu !== undefined) { const m = sanitizeMenu(s.menu, ARTICLES); if (m) o.menu = m; }
+  if (s.menu !== undefined) { const m = sanitizeMenu(s.menu, [...ARTICLES, ...mine.map(recipeArticle)]); if (m) o.menu = m; }
   if (isA(s.fridge)) o.fridge = [...new Set(s.fridge.filter(x => typeof x === 'string' && /^[a-z_-]{1,30}$/.test(x)))].slice(0, 100);
   ['bakerFlour', 'basePortions', 'targetPortions'].forEach(k => { if (s[k] !== undefined) o[k] = ns(s[k]); });
   return o;
 }
 export function snapshot() {
-  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping, notes: state.notes, fridge: state.fridge, menu: state.menu };
+  return { schema: SCHEMA, theme: state.theme, fontScale: state.fontScale, readIds: state.readIds, favIds: state.favIds, quizScores: state.quizScores, journal: state.journal, recipeItems: state.recipeItems, bakerFlour: state.bakerFlour, bakerItems: state.bakerItems, basePortions: state.basePortions, targetPortions: state.targetPortions, recentIds: state.recentIds, shopping: state.shopping, notes: state.notes, fridge: state.fridge, menu: state.menu, myRecipes: state.myRecipes };
 }
 export async function loadState() {
   let raw = null;
@@ -145,3 +152,15 @@ export function saveState() {
 export function setTheme(t) { state.theme = t; applyThemeAndFont(); saveState(); }
 
 export function setFontScale(v) { state.fontScale = v; applyThemeAndFont(); saveState(); }
+
+/** Блюдо по id: статья справочника или свой рецепт (в виде статьи) */
+export function findDish(id) {
+  if (isMine(id)) { const r = state.myRecipes.find(x => x.id === id); return r ? recipeArticle(r) : null; }
+  return ARTICLES.find(a => a.id === id) || null;
+}
+/** Все блюда с ингредиентами: свои рецепты и статьи справочника */
+export function allDishes() {
+  return [...state.myRecipes.map(recipeArticle).filter(a => a.ingredients), ...ARTICLES.filter(a => a.ingredients)];
+}
+/** Экран для блюда: свой рецепт или статья */
+export const dishScreen = id => (isMine(id) ? 'myrecipe' : 'article');

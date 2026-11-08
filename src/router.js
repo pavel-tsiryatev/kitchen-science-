@@ -11,7 +11,8 @@ export function navigate(tab, param = null, fromPop = false) {
   }
   if (tab === 'catalog' && param) { state.secFilter = param; state.dishGroup = 'ALL'; }
   if (tab === 'glossary') state.glossTerm = param;
-  if (tab === 'cook' && param) state.currentArticleId = param;
+  if ((tab === 'cook' || tab === 'myrecipe') && param) state.currentArticleId = param;
+  if (tab === 'myedit') state.editRecipeId = param || 'new';
   if (tab === 'collection' && param) state.collectionId = param;
   if (tab === 'article' && param) { state.currentArticleId = param; state.recentIds = [param, ...(state.recentIds || []).filter(x => x !== param)].slice(0, 6); saveState(); }
   if (!fromPop) { try { history.pushState({ tab, sec: state.secFilter, grp: state.dishGroup, col: state.collectionId, art: state.currentArticleId, sub: state.subTab, lab: state.labTab, depth: depth + 1 }, ''); depth++; } catch (e) {} }

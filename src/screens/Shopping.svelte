@@ -1,7 +1,6 @@
 <script>
   /** Список покупок: продукты из рецептов, отметки «куплено», «Поделиться» */
-  import { state as app, saveState } from '../store.svelte.js';
-  import { ARTICLES } from '../data/index.js';
+  import { state as app, saveState, findDish, dishScreen } from '../store.svelte.js';
   import { fmtQty, addToList, listText } from '../ingredients.js';
   import { navigate } from '../router.js';
   import { shareText } from '../native.js';
@@ -10,7 +9,7 @@
 
   const todo = $derived(app.shopping.filter(x => !x.done));
   const done = $derived(app.shopping.filter(x => x.done));
-  const dishes = $derived([...new Set(app.shopping.flatMap(x => x.src || []))].map(id => ARTICLES.find(a => a.id === id)).filter(Boolean));
+  const dishes = $derived([...new Set(app.shopping.flatMap(x => x.src || []))].map(findDish).filter(Boolean));
   let newItem = $state('');
 
   function toggle(x) { x.done = !x.done; saveState(); }
@@ -53,7 +52,7 @@
   </div>
   {#if dishes.length}
     <div class="ref-more" style="margin-top:12px">Из рецептов:
-      {#each dishes as d, i (d.id)}<button class="link" onclick={() => navigate('article', d.id)}>{d.title.split(':')[0]}</button>{i < dishes.length - 1 ? ' · ' : ''}{/each}
+      {#each dishes as d, i (d.id)}<button class="link" onclick={() => navigate(dishScreen(d.id), d.id)}>{d.title.split(':')[0]}</button>{i < dishes.length - 1 ? ' · ' : ''}{/each}
     </div>
   {/if}
 {:else}

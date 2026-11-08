@@ -2,16 +2,17 @@
   /** Режим «Готовлю»: шаги крупно по одному, свайп, таймеры из шагов, экран не гаснет */
   import { onMount, onDestroy } from 'svelte';
   import { ARTICLES } from '../data/index.js';
-  import { state as app } from '../store.svelte.js';
+  import { state as app, findDish } from '../store.svelte.js';
   import { parseSteps, findTimers } from '../steps.js';
   import { scaleIngredients, fmtQty } from '../ingredients.js';
   import { startTimer } from '../timers.svelte.js';
   import { toast } from '../toast.js';
   import NotesCard from '../components/NotesCard.svelte';
 
-  const a = $derived(ARTICLES.find(x => x.id === app.currentArticleId) || ARTICLES[0]);
+  const a = $derived(findDish(app.currentArticleId) || ARTICLES[0]);
   const name = $derived(a.title.split(':')[0]);
-  const steps = $derived(parseSteps(a.practice));
+  // у своих рецептов шаги уже разбиты по строкам
+  const steps = $derived(a.steps || parseSteps(a.practice));
   const servings = $derived(a.ingredients ? app.servingsFor[a.id] || a.ingredients.servings : 0);
   const items = $derived(a.ingredients ? scaleIngredients(a.ingredients, servings) : []);
   // страницы: [ингредиенты] + шаги + «Готово»
