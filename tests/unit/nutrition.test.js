@@ -10,6 +10,7 @@ describe('таблица пищевой ценности', () => {
   it('значения правдоподобны: белки, жиры и углеводы сходятся с калорийностью', () => {
     for (const x of TABLE) {
       expect(() => new RegExp(x.match), x.match).not.toThrow();
+      if (x.alcohol) continue; // калории вина — в основном от спирта
       const est = x.p * 4 + x.f * 9 + x.c * 4;
       // допускаем расхождение (клетчатка, алкоголь, округление таблиц)
       expect(Math.abs(est - x.kcal), `${x.match}: ${est} vs ${x.kcal}`).toBeLessThanOrEqual(Math.max(25, x.kcal * 0.15));
