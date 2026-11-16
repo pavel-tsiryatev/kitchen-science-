@@ -136,7 +136,7 @@ function parseSource(s, file, i, evidence) {
     url: str(s.url, file, `${at}.url`, { optional: true }),
     note: str(s.note, file, `${at}.note`, { optional: true }),
   };
-  if (!Number.isInteger(src.year) || src.year < 1800 || src.year > 2100) fail(file, `${at}: год «year» должен быть числом`);
+  if (!Number.isInteger(src.year) || src.year < 1500 || src.year > 2100) fail(file, `${at}: год «year» должен быть числом`);
   if (src.doi && !DOI_RE.test(src.doi)) fail(file, `${at}: DOI «${src.doi}» не похож на DOI (10.xxxx/…)`);
   if (src.isbn) { const n = src.isbn.replace(/[-\s]/g, ''); if (!ISBN_RE.test(n)) fail(file, `${at}: неверный ISBN «${src.isbn}»`); src.isbn = n; }
   if (src.url && !/^https:\/\//.test(src.url)) fail(file, `${at}: ссылка должна начинаться с https://`);
