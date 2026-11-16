@@ -57,6 +57,7 @@
   {#each ROWS as [i, t, d, k]}
     <button class="row" onclick={() => labGo(k)}><Icon name={i} size={22} /><span><b>{t}</b><small>{d}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   {/each}
+  <button class="row" onclick={() => { state.searchQuery = ''; state.secFilter = 'I'; state.dishGroup = 'haute'; navigate('catalog'); }}><Icon name="star" size={22} /><span><b>Высокая кухня</b><small>Робюшон, Бокюз, Блюменталь, Адриа и другие: история, наука и домашние версии</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   <button class="row" onclick={() => navigate('favorites')}><Icon name="pan" size={22} /><span><b>Мои рецепты</b><small>{state.myRecipes.length ? `${state.myRecipes.length} — с пересчётом порций, покупками и меню` : 'Добавьте свои блюда: порции, покупки, меню, таймеры'}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   <button class="row" onclick={() => navigate('shopping')}><Icon name="cart" size={22} /><span><b>Список покупок</b><small>{state.shopping.length ? `${state.shopping.filter(x => !x.done).length} продуктов осталось купить` : 'Ингредиенты из рецептов с галочками'}</small></span><span class="go"><Icon name="chev" size={18} /></span></button>
   <button class="row" onclick={() => navigate('tables')}><Icon name="therm" size={22} /><span><b>Справочные таблицы</b><small>Температуры, варка, масло для жарки, сроки хранения, меры и веса, замены</small></span><span class="go"><Icon name="chev" size={18} /></span></button>

@@ -98,3 +98,19 @@ test('фильтр «без…» в блюдах', async ({ page }) => {
   await page.fill('#catSearchInput', 'стейк');
   await expect(page.locator('.card-clickable', { hasText: 'Стейк на сковороде' })).toHaveCount(1);
 });
+
+test('«Высокая кухня» легко найти: строка на главной, ссылка в Библиотеке, кнопка подгруппы на экране', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: /Высокая кухня Робюшон/ }).click();
+  await expect(page.locator('.sub-pills .pill.haute')).toHaveClass(/active/);
+  await expect(page.locator('.card-clickable', { hasText: 'Робюшона' })).toBeVisible();
+  await expect(page.locator('.card-clickable', { hasText: 'Жареная картошка' })).toHaveCount(0);
+  await nav(page, 'home');
+  await nav(page, 'catalog');
+  await page.locator('.pill', { hasText: 'Популярные блюда' }).click();
+  await page.locator('.sub-pills .pill').first().click();
+  // кнопка подгруппы видна без прокрутки ряда вбок
+  await expect(page.locator('.sub-pills .pill.haute')).toBeInViewport();
+  await page.getByRole('button', { name: /★ Высокая кухня: \d+ знаменитых блюд/ }).click();
+  await expect(page.locator('.card-clickable', { hasText: 'Бокюза' })).toBeVisible();
+});
