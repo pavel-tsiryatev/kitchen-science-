@@ -515,3 +515,8 @@ a.pill{text-decoration:none;display:inline-flex;align-items:center}
 .my-photo-head{width:100%;max-height:280px;object-fit:cover;border-radius:16px;margin:0 0 14px;display:block}
 .my-card.with-photo{display:grid;grid-template-columns:64px 1fr;column-gap:12px;align-items:center}
 .my-card.with-photo .my-thumb{grid-row:1 / span 2;width:64px;height:64px;object-fit:cover;border-radius:10px}
+
+/* подгруппы блюд и фильтры «без…» переносятся на новые строки, чтобы ничего не пряталось за краем экрана */
+.sub-pills{flex-wrap:wrap;overflow:visible;row-gap:8px}
+.pill.haute{border-color:var(--primary);color:var(--primary);font-weight:700}
+.pill.haute.active{background:var(--primary);color:#fff}

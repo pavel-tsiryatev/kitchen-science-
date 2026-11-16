@@ -29,6 +29,7 @@
       (f !== 'I' || fitsDiets(a, app.diet)));
   });
   function setSec(id) { app.secFilter = id; app.dishGroup = 'ALL'; }
+  function openHaute() { app.searchQuery = ''; app.secFilter = 'I'; app.dishGroup = 'haute'; }
   function toggleDiet(id) { app.diet = app.diet.includes(id) ? app.diet.filter(x => x !== id) : [...app.diet, id]; saveState(); }
 </script>
 
@@ -36,6 +37,7 @@
 <div class="ref-entries">
   <button class="link gl-entry" onclick={() => navigate('glossary')}>Глоссарий: {GLOSSARY.length} терминов простыми словами →</button>
   <button class="link gl-entry" onclick={() => navigate('tables')}>Таблицы: температуры, варка, жарка, сроки, меры и веса, замены →</button>
+  <button class="link gl-entry" onclick={openHaute}>★ Высокая кухня: {groupCount('haute')} знаменитых блюд шефов →</button>
 </div>
 <input type="search" id="catSearchInput" class="search-box"
   placeholder="Поиск по {ARTICLES.length} статьям, продуктам и терминам..." aria-label="Поиск по {ARTICLES.length} статьям, продуктам и терминам..."
@@ -55,7 +57,7 @@
   <div class="pill-bar sub-pills" role="group" aria-label="Виды блюд">
     <button class="pill" class:active={app.dishGroup === 'ALL'} onclick={() => app.dishGroup = 'ALL'}>Все блюда ({DISHES.length})</button>
     {#each DISH_GROUPS as g (g.id)}
-      <button class="pill" class:active={app.dishGroup === g.id} onclick={() => app.dishGroup = g.id}>{g.title} ({groupCount(g.id)})</button>
+      <button class="pill" class:haute={g.id === 'haute'} class:active={app.dishGroup === g.id} onclick={() => app.dishGroup = g.id}>{g.id === 'haute' ? '★ ' : ''}{g.title} ({groupCount(g.id)})</button>
     {/each}
   </div>
   <div class="pill-bar sub-pills diet-pills" role="group" aria-label="Ограничения по составу">
