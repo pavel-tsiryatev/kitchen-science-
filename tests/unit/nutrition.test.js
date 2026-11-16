@@ -59,7 +59,7 @@ describe('на порцию', () => {
       const n = perServing(a.ingredients);
       if (!n) continue;
       shown++;
-      expect(n.kcal, a.id).toBeGreaterThan(50);
+      expect(n.kcal, a.id).toBeGreaterThan(20); // сферификация из фруктового пюре — около 30 ккал
       expect(n.kcal, a.id).toBeLessThan(1200);
     }
     expect(shown).toBeGreaterThan(dishes.length - 5);
