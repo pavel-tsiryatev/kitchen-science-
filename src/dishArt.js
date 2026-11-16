@@ -1,6 +1,8 @@
 // Какая иллюстрация подходит блюду или заготовке: по разделу, группе и словам в названии.
 const RULES = [
   ['jar', a => a.sec === 'K'],
+  ['mug', a => a.group === 'drinks' && /какао|чай|шоколад|сбитен|глинтвейн/i.test(a.title)],
+  ['drink', a => a.group === 'drinks'],
   ['dumplings', a => /пельмен|варени(?!е)/i.test(a.title)],
   ['soup', a => a.group === 'soup' || /(^|\s)суп(?![а-яё])/i.test(a.title)],
   ['pancakes', a => /блин|оладь|драник|сырник/i.test(a.title)],

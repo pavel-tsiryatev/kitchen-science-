@@ -88,6 +88,19 @@
       <path d="M64 44c0-10 16-12 20-4 6-6 16 0 12 10-2 10-10 18-18 18s-14-12-14-24z" class="pepper" />
       <path d="M78 38l2-8" class="green-line" />
       <ellipse cx="40" cy="62" rx="8" ry="5" class="tomato" />
+    {:else if kind === 'drink'}
+      <ellipse cx="60" cy="78" rx="30" ry="5" class="plate" />
+      <path d="M40 22h40l-5 54H45z" class="glass" />
+      <path d="M42 36h36l-3.5 38h-29z" class="drink-liquid" />
+      <path d="M68 12l-8 50" class="straw" />
+      <circle cx="54" cy="44" r="4" class="ice" /><circle cx="64" cy="52" r="3.5" class="ice" />
+      <circle cx="82" cy="24" r="8" class="lemon" /><path d="M82 16v16M74 24h16" class="lemon-line" />
+    {:else if kind === 'mug'}
+      <ellipse cx="60" cy="78" rx="34" ry="6" class="plate" />
+      <rect x="34" y="34" width="44" height="42" rx="8" class="cup-mug" />
+      <path d="M78 44c12 0 12 20 0 20" class="mug-handle" />
+      <ellipse cx="56" cy="36" rx="20" ry="4" class="cocoa" />
+      <path d="M48 26c-3-4 3-6 0-10M60 24c-3-4 3-6 0-10" class="steam" />
     {:else if kind === 'jar'}
       <rect x="38" y="26" width="44" height="52" rx="8" class="glass" />
       <rect x="40" y="18" width="40" height="10" rx="3" class="lid" />
@@ -136,4 +149,6 @@
   .glass { fill: #DDEBE9; stroke: #A9C4C0; stroke-width: 1.5; opacity: .9; } .lid { fill: #C9A23A; }
   .pickle { fill: #B9C98A; opacity: .8; } .cucumber-slice { fill: #8DB463; stroke: #5E8E3E; stroke-width: 1.5; }
   .glare { stroke: #FFFFFF; stroke-width: 3; opacity: .7; }
+  .drink-liquid { fill: #D2453A; opacity: .85; } .straw { stroke: #6F795A; stroke-width: 3; } .ice { fill: #FFFFFF; opacity: .7; }
+  .cup-mug { fill: #F4EFE6; stroke: #CFC5B5; stroke-width: 1.5; } .mug-handle { fill: none; stroke: #CFC5B5; stroke-width: 5; } .cocoa { fill: #7A4A2E; }
 </style>
